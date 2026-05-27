@@ -47,7 +47,7 @@ export function Topbar() {
             <p className="px-2 py-1 text-xs" style={{ color: "#666666" }}>Profile menu</p>
             <button
               type="button"
-              onClick={() => void signOut({ redirectUrl: "/login" })}
+              onClick={() => void signOut({ redirectUrl: `${window.location.origin}/login` })}
               className="mt-1 w-full rounded-md px-2 py-2 text-left text-xs font-medium"
               style={{ color: "#FF4C3B", border: "1px solid #EEEEEE", backgroundColor: "#FFFFFF" }}
             >

@@ -50,7 +50,7 @@ export default function SettingsPage() {
           <div className="mt-3 flex flex-wrap gap-2">
             <button className="rounded-md px-3 py-2 text-sm" style={{ border: "1px solid #EEEEEE", color: "#111111", backgroundColor: "#FFFFFF" }} onClick={() => window.location.reload()}>Refresh Dashboard</button>
             <button className="rounded-md px-3 py-2 text-sm" style={{ border: "1px solid #EEEEEE", color: "#111111", backgroundColor: "#FFFFFF" }}>Check Notifications</button>
-            <button className="rounded-md px-3 py-2 text-sm" style={{ border: "1px solid #EEEEEE", color: "#FF4C3B", backgroundColor: "#FFFFFF" }} onClick={() => void signOut({ redirectUrl: "/login" })}>Logout</button>
+            <button className="rounded-md px-3 py-2 text-sm" style={{ border: "1px solid #EEEEEE", color: "#FF4C3B", backgroundColor: "#FFFFFF" }} onClick={() => void signOut({ redirectUrl: `${window.location.origin}/login` })}>Logout</button>
           </div>
         </section>
       </div>

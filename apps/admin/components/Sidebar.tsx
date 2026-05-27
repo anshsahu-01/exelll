@@ -56,7 +56,7 @@ export function Sidebar() {
       <div className="px-3 pb-4 pt-6 md:mt-auto">
         <button
           type="button"
-          onClick={() => void signOut({ redirectUrl: "/login" })}
+          onClick={() => void signOut({ redirectUrl: `${window.location.origin}/login` })}
           className="w-full rounded-md px-3 py-2 text-sm font-medium transition"
           style={{ border: "1px solid #EEEEEE", color: "#FF4C3B", backgroundColor: "#FFFFFF" }}
         >
