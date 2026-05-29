@@ -18,6 +18,11 @@ export async function getProducts(filters: ProductFilters = {}) {
   return { products, pagination: res.pagination };
 }
 
+export async function getProductById(id: string) {
+  const res = await apiRequest<ApiResponse<Product>>(`/products/${id}`);
+  return res.data;
+}
+
 export async function getCategories() {
   const res = await apiRequest<ApiResponse<Category[]>>('/categories');
   return Array.isArray(res.data) ? res.data : [];

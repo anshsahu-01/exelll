@@ -176,6 +176,7 @@
     "lodash.merge": "^4.6.2",
     "loose-envify": "^1.4.0",
     "lru-cache": "^5.1.1",
+    "lucide-react": "^1.17.0",
     "magic-string": "^0.30.21",
     "math-intrinsics": "^1.1.0",
     "merge2": "^1.4.1",
