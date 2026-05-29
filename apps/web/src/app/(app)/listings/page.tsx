@@ -1,36 +1,58 @@
-import { getProducts } from '@/lib/services'
+import { getProducts, getCategories } from '@/lib/services'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { SearchFilters } from '@/components/listings/SearchFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PackageSearch, AlertTriangle } from 'lucide-react'
+import { ProductFilters } from '@/types'
 
-// Page is dynamically rendered due to searchParams
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
-export default async function ListingsPage() {
+type PageProps = {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function ListingsPage({ searchParams }: PageProps) {
+  // Build real filters from URL search params
+  const filters: ProductFilters = {
+    search: typeof searchParams.search === 'string' ? searchParams.search : undefined,
+    categoryId: typeof searchParams.categoryId === 'string' ? searchParams.categoryId : undefined,
+    condition: typeof searchParams.condition === 'string' ? searchParams.condition : undefined,
+    sort: (typeof searchParams.sort === 'string' ? searchParams.sort : 'latest') as ProductFilters['sort'],
+    page: typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1,
+    limit: 24,
+  }
+
   let products = []
   let error = null
+  let categories = []
 
   try {
-    const res = await getProducts()
-    products = res.products
+    const [productsRes, categoriesRes] = await Promise.all([
+      getProducts(filters),
+      getCategories(),
+    ])
+    products = productsRes.products
+    categories = categoriesRes
   } catch (err: any) {
     error = err.message || 'Failed to load products'
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Campus Marketplace</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Discover items for sale from students around you
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Page header */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Marketplace</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {error
+            ? 'Something went wrong'
+            : `${products.length} listing${products.length !== 1 ? 's' : ''} found`}
+        </p>
       </div>
 
-      <SearchFilters />
+      {/* Functional filters — client component */}
+      <SearchFilters categories={categories} />
 
+      {/* Results */}
       {error ? (
         <EmptyState
           icon={AlertTriangle}
@@ -38,7 +60,7 @@ export default async function ListingsPage() {
           description={error}
         />
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {products.map((product) => (
             <ListingCard key={product.id} listing={product} />
           ))}
@@ -47,7 +69,7 @@ export default async function ListingsPage() {
         <EmptyState
           icon={PackageSearch}
           title="No listings found"
-          description="We couldn't find any items matching your current filters. Try adjusting your search criteria."
+          description="Try adjusting your search or filters."
         />
       )}
     </div>

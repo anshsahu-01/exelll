@@ -1,17 +1,14 @@
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
 import { DashboardHeader } from '@/components/layout/DashboardHeader'
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <DashboardSidebar />
-      <div className="flex flex-col flex-1 w-0 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <DashboardHeader />
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
+        {/* main must fill remaining height so dashboard split-layout works */}
+        <main className="flex-1 overflow-y-auto">
           {children}
         </main>
       </div>
