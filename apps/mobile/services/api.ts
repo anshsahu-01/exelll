@@ -1,5 +1,5 @@
 import { API_URL } from "@/utils/config";
-import { useAuthStore } from "@/store/authStore";
+import { getToken } from "@/utils/storage";
 
 export class ApiError extends Error {
   status: number;
@@ -22,7 +22,7 @@ export async function apiRequest<T>(
   options: RequestOptions = {}
 ): Promise<T> {
   const { method = "GET", body, token, isFormData = false } = options;
-  const authToken = token !== undefined ? token : useAuthStore.getState().token;
+  const authToken = token !== undefined ? token : await getToken();
 
   const headers: Record<string, string> = {};
   if (!isFormData) {
