@@ -1,7 +1,8 @@
 'use client'
 
+import Link from "next/link"
 import { UserButton } from "@clerk/nextjs"
-import { Bell, Search } from "lucide-react"
+import { Heart, ShoppingCart, Bell, Search } from "lucide-react"
 
 export function DashboardHeader() {
   return (
@@ -19,7 +20,23 @@ export function DashboardHeader() {
             />
           </div>
         </div>
-        <div className="flex items-center gap-4 lg:gap-6 ml-auto">
+        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 ml-auto">
+          <Link
+            href="/profile/favourites"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            aria-label="Open favourites"
+          >
+            <Heart className="h-5 w-5" />
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-rose-500" />
+          </Link>
+          <Link
+            href="/cart"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500" />
+          </Link>
           <button className="text-gray-400 hover:text-gray-500 transition-colors relative">
             <span className="sr-only">View notifications</span>
             <Bell className="h-6 w-6" />

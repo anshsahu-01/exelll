@@ -1,0 +1,349 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { Loader2, Search, Send, MessageSquare } from 'lucide-react'
+import { ConversationDetail, ConversationListItem, ChatMessage } from '@/types'
+import {
+  getConversationById,
+  getConversations,
+  sendConversationMessage,
+} from '@/lib/marketplace'
+
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(
+    new Date(value)
+  )
+}
+
+function formatAgo(value: string) {
+  const diff = Date.now() - new Date(value).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'now'
+  if (mins < 60) return `${mins}m`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h`
+  return `${Math.floor(hrs / 24)}d`
+}
+
+function Avatar({ name, image }: { name: string; image: string | null }) {
+  return image ? (
+    <Image src={image} alt={name} width={44} height={44} className="h-11 w-11 rounded-full object-cover" />
+  ) : (
+    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+      {name.charAt(0).toUpperCase()}
+    </div>
+  )
+}
+
+export function MessagesClient({ activeId }: { activeId?: string }) {
+  const router = useRouter()
+  const { getToken } = useAuth()
+  const [conversations, setConversations] = useState<ConversationListItem[]>([])
+  const [activeConversation, setActiveConversation] = useState<ConversationDetail | null>(null)
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(activeId ?? null)
+  const [loadingList, setLoadingList] = useState(true)
+  const [loadingThread, setLoadingThread] = useState(Boolean(activeId))
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState('')
+  const [search, setSearch] = useState('')
+  const [sending, setSending] = useState(false)
+
+  const filteredConversations = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return conversations
+    return conversations.filter((conversation) =>
+      [conversation.otherUser.name, conversation.productTitle, conversation.lastMessage?.content ?? '']
+        .join(' ')
+        .toLowerCase()
+        .includes(term)
+    )
+  }, [conversations, search])
+
+  const loadConversations = async () => {
+    try {
+      setError(null)
+      setLoadingList(true)
+      const token = await getToken()
+      const data = await getConversations(token ?? undefined)
+      setConversations(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load conversations')
+    } finally {
+      setLoadingList(false)
+    }
+  }
+
+  const loadThread = async (conversationId: string) => {
+    try {
+      setLoadingThread(true)
+      const token = await getToken()
+      const data = await getConversationById(conversationId, token ?? undefined)
+      setActiveConversation(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load conversation')
+      setActiveConversation(null)
+    } finally {
+      setLoadingThread(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadConversations()
+  }, [])
+
+  useEffect(() => {
+    if (activeId) {
+      setSelectedConversationId(activeId)
+      void loadThread(activeId)
+    } else {
+      setActiveConversation(null)
+      setSelectedConversationId(null)
+    }
+  }, [activeId])
+
+  const handleSend = async () => {
+    if (!selectedConversationId || !message.trim()) return
+    const content = message.trim()
+    try {
+      setSending(true)
+      const token = await getToken()
+      const sent = await sendConversationMessage(selectedConversationId, content, token ?? undefined)
+      setMessage('')
+      setActiveConversation((current) =>
+        current
+          ? { ...current, messages: [...current.messages, { ...sent, isMine: true }] }
+          : current
+      )
+      await loadConversations()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not send message')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const openConversation = async (conversationId: string) => {
+    setSelectedConversationId(conversationId)
+    setError(null)
+    await loadThread(conversationId)
+    if (activeId) {
+      router.replace(`/messages/${conversationId}`)
+    } else {
+      router.push(`/messages/${conversationId}`)
+    }
+  }
+
+  const activeConversationSummary = activeConversation ?? null
+
+  return (
+    <div className="h-[calc(100vh-4rem)] overflow-hidden bg-[#fafafa]">
+      <div className="grid h-full grid-cols-1 lg:grid-cols-[30%_70%]">
+      <aside className={`${activeId ? 'hidden lg:flex' : 'flex'} min-h-0 flex-col border-r border-gray-200 bg-white`}>
+        <div className="border-b border-gray-100 p-4">
+          <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3">
+            <Search className="h-4 w-4 text-gray-400" />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search conversations"
+              className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+            />
+          </div>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {loadingList ? (
+            <div className="flex h-full items-center justify-center text-sm text-gray-500">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading conversations
+            </div>
+          ) : filteredConversations.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+              <MessageSquare className="mb-3 h-10 w-10 text-gray-300" />
+              <p className="text-sm font-medium text-gray-700">No conversations yet</p>
+              <p className="mt-1 text-sm text-gray-500">Start one from a listing page.</p>
+            </div>
+          ) : (
+            filteredConversations.map((conversation) => {
+              const active = conversation.id === selectedConversationId
+              return (
+                <button
+                  key={conversation.id}
+                  type="button"
+                  onClick={() => void openConversation(conversation.id)}
+                  className={`flex w-full items-start gap-3 border-b border-gray-100 px-4 py-4 text-left transition hover:bg-gray-50 ${
+                    active ? 'bg-gray-50' : ''
+                  }`}
+                >
+                  <div className="relative shrink-0">
+                    <Avatar name={conversation.otherUser.name} image={conversation.otherUser.profileImage} />
+                    {conversation.productImage ? (
+                      <span className="absolute -right-1 -bottom-1 overflow-hidden rounded-lg border border-white shadow-sm">
+                        <Image
+                          src={conversation.productImage}
+                          alt={conversation.productTitle}
+                          width={24}
+                          height={24}
+                          className="h-6 w-6 object-cover"
+                        />
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="truncate text-sm font-semibold text-gray-900">
+                        {conversation.otherUser.name}
+                      </p>
+                      <span className="shrink-0 text-xs text-gray-400">
+                        {formatAgo(conversation.lastMessageAt)}
+                      </span>
+                    </div>
+                    <p className="truncate text-xs text-gray-500">{conversation.productTitle}</p>
+                    <p className="mt-1 truncate text-sm text-gray-600">
+                      {conversation.lastMessage ? conversation.lastMessage.content : 'No messages yet'}
+                    </p>
+                  </div>
+                  {!conversation.lastMessage?.isMine ? (
+                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-rose-500" />
+                  ) : null}
+                </button>
+              )
+            })
+          )}
+        </div>
+      </aside>
+
+      <main className="flex min-h-0 flex-col overflow-hidden bg-white">
+        {!activeConversationSummary ? (
+          <div className="flex h-full items-center justify-center px-6 text-center">
+            <div>
+              <MessageSquare className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+              <h1 className="text-lg font-semibold text-gray-900">
+                {activeId ? 'Conversation not found' : 'Select a conversation'}
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                Open a thread to view the live chat and reply.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="shrink-0 border-b border-gray-100 p-4">
+              <div className="flex items-center gap-3">
+                <Avatar
+                  name={activeConversationSummary.otherUser.name}
+                  image={activeConversationSummary.otherUser.profileImage}
+                />
+                <div className="min-w-0 flex-1">
+                  <h1 className="truncate text-base font-semibold text-gray-900">
+                    {activeConversationSummary.otherUser.name}
+                  </h1>
+                  <p className="truncate text-sm text-gray-500">
+                    {activeConversationSummary.otherUser.collegeName ?? 'Marketplace conversation'}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-3">
+                <div className="flex items-center gap-3">
+                  {activeConversationSummary.productImage ? (
+                    <Image
+                      src={activeConversationSummary.productImage}
+                      alt={activeConversationSummary.productTitle}
+                      width={72}
+                      height={72}
+                      className="h-16 w-16 rounded-xl object-cover"
+                    />
+                  ) : (
+                    <div className="h-16 w-16 rounded-xl bg-gray-200" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-gray-900">
+                      {activeConversationSummary.productTitle}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {activeConversationSummary.isSold ? 'Sold' : 'Active listing'}
+                    </p>
+                    <Link
+                      href={`/listings/${activeConversationSummary.productId}`}
+                      className="mt-2 inline-flex text-sm font-semibold text-gray-900 underline underline-offset-4"
+                    >
+                      View listing
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto bg-[#fafafa] p-4">
+              {loadingThread ? (
+                <div className="flex h-full items-center justify-center text-sm text-gray-500">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading thread
+                </div>
+              ) : activeConversationSummary.messages.length === 0 ? (
+                <div className="flex h-full items-center justify-center text-center">
+                  <div>
+                    <MessageSquare className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+                    <p className="text-sm font-medium text-gray-700">No messages yet</p>
+                    <p className="mt-1 text-sm text-gray-500">Send the first message below.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {activeConversationSummary.messages.map((item) => (
+                    <MessageBubble key={item.id} item={item} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="shrink-0 border-t border-gray-100 p-4">
+              <div className="flex items-end gap-3">
+                <textarea
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  placeholder="Write a message"
+                  rows={2}
+                  className="min-h-[56px] flex-1 resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={sending || !message.trim()}
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                >
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  Send
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+      </div>
+      {error ? (
+        <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black px-4 py-2 text-sm text-white shadow-lg">
+          {error}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function MessageBubble({ item }: { item: ChatMessage }) {
+  const mine = item.isMine
+  return (
+    <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+      <div
+        className={`max-w-[80%] rounded-3xl px-4 py-3 text-sm shadow-sm ${
+          mine ? 'rounded-br-md bg-black text-white' : 'rounded-bl-md bg-white text-gray-900'
+        }`}
+      >
+        <p>{item.content}</p>
+        <div className={`mt-2 text-xs ${mine ? 'text-white/70' : 'text-gray-400'}`}>
+          {formatTime(item.createdAt)}
+        </div>
+      </div>
+    </div>
+  )
+}
