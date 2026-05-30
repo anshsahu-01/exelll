@@ -3,94 +3,93 @@ import { ProductGallery } from '@/components/listings/ProductGallery'
 import { SellerInfo } from '@/components/listings/SellerInfo'
 import { Heart, MapPin, Share2, AlertCircle } from 'lucide-react'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { ListingCard } from '@/components/listings/ListingCard'
+import { PageBackButton } from '@/components/ui/PageBackButton'
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'
 
 export default async function ListingDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  
+
   let listing = null
   let relatedListings = []
-  
+
   try {
     listing = await getProductById(id)
     if (!listing) {
       notFound()
     }
-    
-    // Fetch related listings based on category
+
     const res = await getProducts({ categoryId: listing.categoryId, limit: 5 })
     relatedListings = res.products.filter((l) => l.id !== id).slice(0, 4)
   } catch (error) {
-    console.error("Failed to fetch product", error)
+    console.error('Failed to fetch product', error)
     notFound()
   }
 
-  const timeAgo = new Date(listing.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  const timeAgo = new Date(listing.createdAt).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Breadcrumb */}
-      <nav className="flex text-sm text-gray-500 mb-6">
-        <Link href="/listings" className="hover:text-black transition-colors">Marketplace</Link>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-6">
+        <PageBackButton href="/listings" label="Listings" />
+      </div>
+
+      <nav className="mb-6 flex text-sm text-gray-500">
+        <span>Marketplace</span>
         <span className="mx-2">/</span>
-        <span className="hover:text-black transition-colors cursor-pointer">{listing.category?.name || 'Uncategorized'}</span>
+        <span>{listing.category?.name || 'Uncategorized'}</span>
         <span className="mx-2">/</span>
-        <span className="text-gray-900 truncate max-w-[200px]">{listing.title}</span>
+        <span className="max-w-[200px] truncate text-gray-900">{listing.title}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        {/* Left Column - Gallery & Description */}
-        <div className="lg:col-span-2 space-y-8">
+      <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="space-y-8 lg:col-span-2">
           <ProductGallery images={listing.images} title={listing.title} />
-          
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {listing.description}
-            </p>
+          <div className="rounded-xl border border-gray-200 bg-white p-6">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Description</h2>
+            <p className="whitespace-pre-wrap leading-relaxed text-gray-700">{listing.description}</p>
           </div>
         </div>
 
-        {/* Right Column - Product Info, Actions & Seller */}
         <div className="flex flex-col gap-6">
-          <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4">
-            <div className="flex justify-between items-start gap-4">
-              <h1 className="text-2xl font-bold text-gray-900 leading-tight">{listing.title}</h1>
-              <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors shrink-0">
-                <Share2 className="w-5 h-5" />
+          <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-2xl font-bold leading-tight text-gray-900">{listing.title}</h1>
+              <button className="shrink-0 rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100">
+                <Share2 className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="text-3xl font-bold text-gray-900">${listing.price}</div>
-            
+
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full font-medium">
+              <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-800">
                 {listing.condition}
               </span>
-              <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full font-medium">
+              <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-800">
                 {listing.category?.name || 'Uncategorized'}
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-600 mt-2 text-sm">
-              <MapPin className="w-4 h-4 shrink-0" />
+            <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
+              <MapPin className="h-4 w-4 shrink-0" />
               <span>Seller location</span>
             </div>
-            <div className="text-sm text-gray-400">
-              Posted {timeAgo}
-            </div>
+            <div className="text-sm text-gray-400">Posted {timeAgo}</div>
 
-            <div className="h-px bg-gray-100 my-2" />
+            <div className="my-2 h-px bg-gray-100" />
 
-            <div className="flex flex-col gap-3 mt-2">
-              <button className="w-full bg-black text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors">
+            <div className="flex flex-col gap-3">
+              <button className="w-full rounded-xl bg-black py-3 font-medium text-white transition-colors hover:bg-gray-800">
                 Buy Now
               </button>
-              <button className="w-full bg-white text-black border-2 border-gray-200 py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:border-black transition-colors">
-                <Heart className="w-5 h-5" />
+              <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white py-3 font-medium text-black transition-colors hover:border-black">
+                <Heart className="h-5 w-5" />
                 Add to Favourites
               </button>
             </div>
@@ -98,8 +97,8 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
 
           <SellerInfo seller={listing.seller} />
 
-          <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl text-sm text-gray-600 border border-gray-200">
-            <AlertCircle className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
             <p>
               Meet in person at a public campus location to exchange items. Never send money in advance.
             </p>
@@ -107,11 +106,10 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      {/* Related Listings */}
       {relatedListings.length > 0 && (
-        <div className="pt-8 border-t border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">More like this</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="border-t border-gray-200 pt-8">
+          <h2 className="mb-6 text-xl font-bold text-gray-900">More like this</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {relatedListings.map((related) => (
               <ListingCard key={related.id} listing={related} />
             ))}
@@ -121,3 +119,4 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
     </div>
   )
 }
+
