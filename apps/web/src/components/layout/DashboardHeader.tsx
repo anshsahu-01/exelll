@@ -77,14 +77,15 @@ export function DashboardHeader() {
             aria-label="Open favourites"
           >
             <Heart className="h-5 w-5" />
-            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-rose-500" />
           </Link>
           <CartBadge />
-          <button className="text-gray-400 hover:text-gray-500 transition-colors relative">
-            <span className="sr-only">View notifications</span>
-            <Bell className="h-6 w-6" />
-            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-          </button>
+          <Link
+            href="/notifications"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            aria-label="Open notifications"
+          >
+            <Bell className="h-5 w-5" />
+          </Link>
           <div className="h-8 w-px bg-gray-200" />
           <Link
             href="/profile"
