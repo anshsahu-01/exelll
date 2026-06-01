@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useState, type FormEvent } from 'react'
-import { useAuth, useClerk, useUser } from '@clerk/nextjs'
+import { useAuth, useClerk, useReverification, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { AlertCircle, Camera, Loader2, Trash2, X } from 'lucide-react'
 import { getMe } from '@/lib/marketplace'
@@ -20,6 +20,17 @@ export function ProfileEditClient() {
   const router = useRouter()
   const { getToken } = useAuth()
   const { signOut } = useClerk()
+  const createEmailAddressWithReverification = useReverification(
+    async (nextEmail: string) => {
+      if (!clerkUser) {
+        throw new Error('Clerk user is unavailable')
+      }
+
+      return await (clerkUser as any).createEmailAddress({
+        email: nextEmail,
+      })
+    }
+  )
   const { user: clerkUser, isLoaded } = useUser()
   const [form, setForm] = useState({
     name: '',
@@ -189,11 +200,9 @@ export function ProfileEditClient() {
 
     let emailAddress: any
     try {
-      console.log('STEP 2: createEmailAddress start')
-      emailAddress = await (clerkUser as any).createEmailAddress({
-        emailAddress: nextEmail,
-      })
-      console.log('STEP 3: createEmailAddress success')
+      console.log('STEP 2: password reverification opened')
+      emailAddress = await createEmailAddressWithReverification(nextEmail)
+      console.log('STEP 3: password verified')
     } catch (error) {
       console.error('CREATE EMAIL FAILED:', error)
       const message = error instanceof Error ? error.message : 'CREATE EMAIL FAILED'
@@ -204,18 +213,19 @@ export function ProfileEditClient() {
       throw new Error(message)
     }
 
-    console.log('STEP 4: prepareVerification start')
+    console.log('STEP 4: createEmailAddress start')
     await emailAddress.prepareVerification({ strategy: 'email_code' })
-    console.log('STEP 5: OTP prepared')
+    console.log('createEmailAddress success')
     setPendingEmail({ id: emailAddress.id, email: nextEmail })
     setPendingOtpEmail({ id: emailAddress.id, email: nextEmail })
     setShowOtpVerification(true)
     setVerificationStep('sending')
     setRuntimeError(null)
-    console.log('STEP 6: OTP UI opened')
+    console.log('OTP prepared')
     setVerificationStep('idle')
     setVerificationCode('')
     setNotice({ type: 'success', message: 'We sent a verification code to your new email.' })
+    console.log('OTP UI visible')
     return true
   }
 
