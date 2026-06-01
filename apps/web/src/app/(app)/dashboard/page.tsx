@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
-import { getProducts, getConversations } from '@/lib/services'
-import { getMyOrders, getMySales } from '@/lib/marketplace'
+import { getProducts, getConversations, getMyOrders, getMySales } from '@/lib/services'
 import ProductGrid from '@/components/dashboard/ProductGrid'
 import ProductGridSkeleton from '@/components/dashboard/ProductGridSkeleton'
 import RecentActivityPanel from '@/components/dashboard/RecentActivityPanel'

@@ -1,4 +1,4 @@
-import { ApiResponse, Product, ProductFilters, Category, ConversationListItem } from '@/types';
+import { ApiResponse, Product, ProductFilters, Category, ConversationListItem, Order } from '@/types';
 import { apiRequest } from '@/lib/api';
 
 export async function getProducts(filters: ProductFilters = {}) {
@@ -31,6 +31,24 @@ export async function getCategories() {
 export async function getConversations(): Promise<ConversationListItem[]> {
   try {
     const res = await apiRequest<ApiResponse<ConversationListItem[]>>('/conversations');
+    return Array.isArray(res.data) ? res.data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getMyOrders() {
+  try {
+    const res = await apiRequest<ApiResponse<Order[]>>('/orders/my-orders');
+    return Array.isArray(res.data) ? res.data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getMySales() {
+  try {
+    const res = await apiRequest<ApiResponse<Order[]>>('/orders/my-sales');
     return Array.isArray(res.data) ? res.data : [];
   } catch {
     return [];
