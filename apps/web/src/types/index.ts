@@ -48,6 +48,14 @@ export interface Product {
   userId: string;
   seller: Seller;
   category: Pick<Category, "id" | "name">;
+  isFavourite?: boolean;
+}
+
+export interface Favourite {
+  id: string;
+  productId: string;
+  createdAt: string;
+  product: Product;
 }
 
 export interface MyProductsResponse {

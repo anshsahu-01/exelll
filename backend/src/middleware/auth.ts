@@ -114,3 +114,83 @@ export async function authenticate(
 
   next(new AppError("Invalid or expired token", 401));
 }
+
+export async function authenticateOptional(
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): Promise<void> {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    next();
+    return;
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    req.user = verifyToken(token);
+    next();
+    return;
+  } catch {
+    // legacy failed, try Clerk
+  }
+
+  try {
+    const auth = getAuth(req);
+    if (auth && auth.userId) {
+      const clerkId = auth.userId;
+      let user = await prisma.user.findUnique({ where: { clerkId } });
+
+      if (!user) {
+        const clerkUser = await clerkClient.users.getUser(clerkId);
+        const email = clerkUser.emailAddresses[0]?.emailAddress;
+        const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "Clerk User";
+        const profileImage = clerkUser.imageUrl || null;
+        const collegeName = (clerkUser.unsafeMetadata?.collegeName as string) || null;
+
+        if (email) {
+          user = await prisma.user.findUnique({ where: { email } });
+          if (user) {
+            if (user.isDeleted || user.deletedAt !== null) {
+              next(new AppError("Account deleted", 401));
+              return;
+            }
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: { clerkId, profileImage, isVerified: true, collegeName: user.collegeName || collegeName },
+            });
+          }
+        }
+
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              clerkId,
+              email: email || `${clerkId}@clerk.local`,
+              name,
+              profileImage,
+              collegeName,
+              isVerified: true,
+              password: null,
+            },
+          });
+        }
+      }
+
+      if (user.isDeleted || user.deletedAt !== null) {
+        next(new AppError("Account deleted", 401));
+        return;
+      }
+
+      req.user = { userId: user.id, role: user.role };
+      next();
+      return;
+    }
+  } catch {
+    // ignore optional auth failures
+  }
+
+  next();
+}

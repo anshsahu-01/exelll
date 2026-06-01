@@ -24,7 +24,8 @@ export const getMyProducts = asyncHandler(async (req: Request, res: Response) =>
 
 export const getAllProducts = asyncHandler(async (req: Request, res: Response) => {
   const result = await productService.getAllProducts(
-    getValidated<GetProductsQuery>(req, "query")
+    getValidated<GetProductsQuery>(req, "query"),
+    req.user?.userId
   );
   res.json({
     success: true,
@@ -35,7 +36,7 @@ export const getAllProducts = asyncHandler(async (req: Request, res: Response) =
 
 export const getProductById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = getValidated<{ id: string }>(req, "params");
-  const product = await productService.getProductById(id);
+  const product = await productService.getProductById(id, req.user?.userId);
   res.json({ success: true, data: product });
 });
 

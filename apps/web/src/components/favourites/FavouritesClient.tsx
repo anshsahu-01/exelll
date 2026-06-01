@@ -1,0 +1,114 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
+import { Loader2, Heart, ArrowRight } from 'lucide-react'
+import { getMyFavourites, removeFavourite } from '@/lib/marketplace'
+import { Favourite } from '@/types'
+
+export function FavouritesClient() {
+  const { getToken } = useAuth()
+  const [items, setItems] = useState<Favourite[]>([])
+  const [loading, setLoading] = useState(true)
+  const [removingId, setRemovingId] = useState<string | null>(null)
+
+  const load = async () => {
+    setLoading(true)
+    try {
+      const token = await getToken()
+      setItems(await getMyFavourites(token ?? undefined))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void load()
+    const refresh = () => {
+      void load()
+    }
+    window.addEventListener('favourites-updated', refresh)
+    return () => window.removeEventListener('favourites-updated', refresh)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getToken])
+
+  const handleRemove = async (productId: string) => {
+    setRemovingId(productId)
+    try {
+      const token = await getToken()
+      await removeFavourite(productId, token ?? undefined)
+      setItems((current) => current.filter((item) => item.productId !== productId))
+      window.dispatchEvent(new Event('favourites-updated'))
+    } finally {
+      setRemovingId(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
+        <h1 className="text-2xl font-semibold text-gray-950">Favourites</h1>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="rounded-[2rem] border border-gray-200 bg-white p-10 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+            <Heart className="h-6 w-6 text-gray-400" />
+          </div>
+          <h2 className="mt-4 text-lg font-semibold text-gray-950">No favourites yet</h2>
+          <p className="mt-2 text-sm text-gray-500">Tap the heart on any listing to save it here.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {items.map((item) => (
+            <div key={item.id} className="overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white">
+              <div className="relative h-52 bg-gray-100">
+                {item.product.images?.[0] ? (
+                  <Image src={item.product.images[0]} alt={item.product.title} fill className="object-cover" />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-gray-400">No image</div>
+                )}
+                <div className="absolute right-3 top-3 rounded-full bg-white/95 p-2 shadow-sm">
+                  <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="text-base font-semibold text-gray-950">{item.product.title}</h3>
+                <p className="mt-1 text-lg font-bold text-gray-950">₹{item.product.price}</p>
+                <p className="mt-1 text-sm text-gray-500">Seller: {item.product.seller.name}</p>
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => void handleRemove(item.productId)}
+                    disabled={removingId === item.productId}
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                  >
+                    {removingId === item.productId ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    Remove
+                  </button>
+                  <Link
+                    href={`/products/${item.productId}`}
+                    className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+                  >
+                    Open listing
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

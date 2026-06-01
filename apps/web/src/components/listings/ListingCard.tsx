@@ -2,20 +2,43 @@
 
 import { Heart } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Product } from '@/types'
+import { useAuth } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { toggleFavourite } from '@/lib/marketplace'
 
 interface ListingCardProps {
   listing: Product
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
+  const { getToken } = useAuth()
+  const router = useRouter()
+  const [isFavorite, setIsFavorite] = useState(listing.isFavourite ?? false)
+  const [isToggling, setIsToggling] = useState(false)
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  useEffect(() => {
+    setIsFavorite(listing.isFavourite ?? false)
+  }, [listing.isFavourite])
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsFavorite(!isFavorite)
+    const next = !isFavorite
+    setIsFavorite(next)
+    setIsToggling(true)
+    try {
+      const token = await getToken()
+      const result = await toggleFavourite(listing.id, token ?? undefined)
+      setIsFavorite(result.favourited)
+      window.dispatchEvent(new Event('favourites-updated'))
+      router.refresh()
+    } catch {
+      setIsFavorite(listing.isFavourite ?? false)
+    } finally {
+      setIsToggling(false)
+    }
   }
 
   const imageUrl = listing.images && listing.images.length > 0 ? listing.images[0] : null
@@ -35,10 +58,11 @@ export function ListingCard({ listing }: ListingCardProps) {
         />
         <button 
           onClick={handleFavoriteClick}
+          disabled={isToggling}
           className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white text-gray-600 hover:text-red-500 transition-colors z-10 shadow-sm"
         >
           <Heart 
-            className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} 
+            className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} 
           />
         </button>
         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md">

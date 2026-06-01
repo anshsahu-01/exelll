@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "../../middleware/auth";
+import { authenticate, authenticateOptional } from "../../middleware/auth";
 import {
   handleProductImageUpload,
   processOptionalProductImages,
@@ -34,12 +34,14 @@ router.get(
 
 router.get(
   "/",
+  authenticateOptional,
   validate(getProductsQuerySchema, "query"),
   productController.getAllProducts
 );
 
 router.get(
   "/:id",
+  authenticateOptional,
   validate(productIdParamSchema, "params"),
   productController.getProductById
 );

@@ -53,7 +53,7 @@ model User {
   mobileNumber String?
   location     String?
   bio          String?
-  isDeleted    Boolean  @default(false)
+  isDeleted    Boolean   @default(false)
   deletedAt    DateTime?
 
   products              Product[]
@@ -62,9 +62,24 @@ model User {
   messages              Message[]
   ordersAsBuyer         Order[]        @relation("OrderBuyer")
   ordersAsSeller        Order[]        @relation("OrderSeller")
+  favourites            Favourite[]
 
   @@index([email])
   @@index([role])
+}
+
+model Favourite {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }
 
 model Category {
@@ -95,6 +110,7 @@ model Product {
 
   conversations Conversation[]
   orders        Order[]
+  favourites    Favourite[]
 
   @@index([userId])
   @@index([categoryId])
@@ -143,19 +159,19 @@ model Message {
 }
 
 model Order {
-  id              String        @id @default(uuid())
-  productId       String
-  buyerId         String
-  sellerId        String
-  amount          Decimal       @db.Decimal(10, 2)
-  paymentMethod   PaymentMethod
-  paymentStatus   PaymentStatus @default(payment_pending)
-  utrNumber       String?
+  id                String        @id @default(uuid())
+  productId         String
+  buyerId           String
+  sellerId          String
+  amount            Decimal       @db.Decimal(10, 2)
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus @default(payment_pending)
+  utrNumber         String?
   paymentScreenshot String?
-  orderStatus     OrderStatus   @default(pending)
-  mobileNumber    String?
-  locationDetails String        @default("")
-  createdAt       DateTime      @default(now())
+  orderStatus       OrderStatus   @default(pending)
+  mobileNumber      String?
+  locationDetails   String        @default("")
+  createdAt         DateTime      @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   buyer   User    @relation("OrderBuyer", fields: [buyerId], references: [id], onDelete: Cascade)

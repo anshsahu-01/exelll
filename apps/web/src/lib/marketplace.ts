@@ -4,6 +4,7 @@ import {
   ConversationDetail,
   ConversationListItem,
   CreateProductInput,
+  Favourite,
   MyProductsResponse,
   Order,
   Product,
@@ -104,6 +105,31 @@ export async function updateListingStatus(
     token,
   })
   return res.data
+}
+
+export async function getMyFavouriteIds(token?: string) {
+  const res = await request<ApiResponse<string[]>>('/favourites/me/ids', { token })
+  return Array.isArray(res.data) ? res.data : []
+}
+
+export async function getMyFavourites(token?: string) {
+  const res = await request<ApiResponse<Favourite[]>>('/favourites/me', { token })
+  return Array.isArray(res.data) ? res.data : []
+}
+
+export async function toggleFavourite(productId: string, token?: string) {
+  const res = await request<ApiResponse<{ favourited: boolean }>>(`/favourites/${productId}/toggle`, {
+    method: 'PATCH',
+    token,
+  })
+  return res.data
+}
+
+export async function removeFavourite(productId: string, token?: string) {
+  await request(`/favourites/${productId}`, {
+    method: 'DELETE',
+    token,
+  })
 }
 
 export async function updateOrderStatus(

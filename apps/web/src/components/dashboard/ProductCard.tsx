@@ -1,37 +1,76 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { Product } from '@/types';
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
+import { Heart } from 'lucide-react'
+import { Product } from '@/types'
+import { toggleFavourite } from '@/lib/marketplace'
 
 export default function ProductCard({ product }: { product: Product }) {
-  const imageUrl = product.images?.[0] || '';
+  const { getToken } = useAuth()
+  const router = useRouter()
+  const [isFavourite, setIsFavourite] = useState(product.isFavourite ?? false)
+  const [isToggling, setIsToggling] = useState(false)
+
+  useEffect(() => {
+    setIsFavourite(product.isFavourite ?? false)
+  }, [product.isFavourite])
+
+  const handleFavouriteToggle = async () => {
+    const nextFavourite = !isFavourite
+    setIsFavourite(nextFavourite)
+    setIsToggling(true)
+    const token = await getToken()
+    try {
+      const result = await toggleFavourite(product.id, token ?? undefined)
+      setIsFavourite(result.favourited)
+      window.dispatchEvent(new Event('favourites-updated'))
+      router.refresh()
+    } catch {
+      setIsFavourite(product.isFavourite ?? false)
+    } finally {
+      setIsToggling(false)
+    }
+  }
+
+  const imageUrl = product.images?.[0] || ''
 
   return (
-    <Link href={`/products/${product.id}`} className="block border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-      <div className="w-full h-48 bg-gray-100 relative">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white transition-shadow hover:shadow-md">
+      <div className="relative h-48 w-full bg-gray-100">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={product.title}
-            className="w-full h-full object-cover"
-          />
+          <Image src={imageUrl} alt={product.title} fill className="object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
+          <div className="flex h-full w-full items-center justify-center text-gray-400">
             No Image
           </div>
         )}
-        {product.isSold && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+        <button
+          type="button"
+          onClick={handleFavouriteToggle}
+          disabled={isToggling}
+          className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition hover:scale-105"
+          aria-label={isFavourite ? 'Remove favourite' : 'Add favourite'}
+          title={isFavourite ? 'Remove favourite' : 'Add favourite'}
+        >
+          <Heart className={`h-4 w-4 ${isFavourite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} />
+        </button>
+        {product.isSold ? (
+          <div className="absolute right-2 top-2 rounded bg-red-500 px-2 py-1 text-xs text-white">
             SOLD
           </div>
-        )}
+        ) : null}
       </div>
-      <div className="p-3">
-        <h3 className="font-semibold text-sm truncate">{product.title}</h3>
-        <p className="text-lg font-bold mt-1">₹{product.price}</p>
-        <p className="text-xs text-gray-500 mt-1">{product.category?.name}</p>
-        <p className="text-xs text-gray-400 mt-1">by {product.seller?.name}</p>
-      </div>
-    </Link>
-  );
+
+      <Link href={`/products/${product.id}`} className="block p-3">
+        <h3 className="truncate text-sm font-semibold">{product.title}</h3>
+        <p className="mt-1 text-lg font-bold">₹{product.price}</p>
+        <p className="mt-1 text-xs text-gray-500">{product.category?.name}</p>
+        <p className="mt-1 text-xs text-gray-400">by {product.seller?.name}</p>
+      </Link>
+    </div>
+  )
 }

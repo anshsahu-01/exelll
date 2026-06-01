@@ -8,17 +8,18 @@ import { ProductFilters } from '@/types'
 export const dynamic = 'force-dynamic'
 
 type PageProps = {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export default async function ListingsPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams
   // Build real filters from URL search params
   const filters: ProductFilters = {
-    search: typeof searchParams.search === 'string' ? searchParams.search : undefined,
-    categoryId: typeof searchParams.categoryId === 'string' ? searchParams.categoryId : undefined,
-    condition: typeof searchParams.condition === 'string' ? searchParams.condition : undefined,
-    sort: (typeof searchParams.sort === 'string' ? searchParams.sort : 'latest') as ProductFilters['sort'],
-    page: typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1,
+    search: typeof resolvedSearchParams.search === 'string' ? resolvedSearchParams.search : undefined,
+    categoryId: typeof resolvedSearchParams.categoryId === 'string' ? resolvedSearchParams.categoryId : undefined,
+    condition: typeof resolvedSearchParams.condition === 'string' ? resolvedSearchParams.condition : undefined,
+    sort: (typeof resolvedSearchParams.sort === 'string' ? resolvedSearchParams.sort : 'latest') as ProductFilters['sort'],
+    page: typeof resolvedSearchParams.page === 'string' ? parseInt(resolvedSearchParams.page) : 1,
     limit: 24,
   }
 

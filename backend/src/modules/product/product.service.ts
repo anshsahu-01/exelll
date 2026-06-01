@@ -43,6 +43,22 @@ function formatProduct(product: ProductWithRelations) {
   };
 }
 
+async function getFavouriteProductIds(userId?: string) {
+  if (!userId) return new Set<string>();
+  const favourites = await prisma.favourite.findMany({
+    where: { userId },
+    select: { productId: true },
+  });
+  return new Set(favourites.map((item) => item.productId));
+}
+
+function annotateFavourite<T extends { id: string }>(items: T[], favouriteIds: Set<string>) {
+  return items.map((item) => ({
+    ...item,
+    isFavourite: favouriteIds.has(item.id),
+  }));
+}
+
 async function ensureCategoryExists(categoryId: string): Promise<void> {
   const category = await prisma.category.findUnique({
     where: { id: categoryId },
@@ -75,7 +91,7 @@ export async function createProduct(userId: string, input: CreateProductInput) {
   return formatProduct(product);
 }
 
-export async function getAllProducts(query: GetProductsQuery) {
+export async function getAllProducts(query: GetProductsQuery, userId?: string) {
   const { page, limit, sort } = query;
   const skip = (page - 1) * limit;
   const where = buildProductWhere(query);
@@ -92,13 +108,15 @@ export async function getAllProducts(query: GetProductsQuery) {
     prisma.product.count({ where }),
   ]);
 
+  const favouriteIds = await getFavouriteProductIds(userId);
+
   return {
-    products: products.map(formatProduct),
+    products: annotateFavourite(products.map(formatProduct), favouriteIds),
     pagination: getPaginationMeta(page, limit, total) satisfies PaginationMeta,
   };
 }
 
-export async function getProductById(id: string) {
+export async function getProductById(id: string, userId?: string) {
   const product = await prisma.product.findUnique({
     where: { id },
     include: productInclude,
@@ -108,7 +126,11 @@ export async function getProductById(id: string) {
     throw new AppError("Product not found", 404);
   }
 
-  return formatProduct(product);
+  const favouriteIds = await getFavouriteProductIds(userId);
+  return {
+    ...formatProduct(product),
+    isFavourite: favouriteIds.has(id),
+  };
 }
 
 export async function getMyProducts(userId: string) {
@@ -122,10 +144,11 @@ export async function getMyProducts(userId: string) {
   });
 
   const formatted = products.map(formatProduct);
+  const favouriteIds = await getFavouriteProductIds(userId);
 
   return {
-    active: formatted.filter((p) => p.status === ProductStatus.ACTIVE),
-    sold: formatted.filter((p) => p.status === ProductStatus.SOLD),
+    active: annotateFavourite(formatted.filter((p) => p.status === ProductStatus.ACTIVE), favouriteIds),
+    sold: annotateFavourite(formatted.filter((p) => p.status === ProductStatus.SOLD), favouriteIds),
   };
 }
 
@@ -166,7 +189,11 @@ export async function updateProduct(
     include: productInclude,
   });
 
-  return formatProduct(updated);
+  const favouriteIds = await getFavouriteProductIds(userId);
+  return {
+    ...formatProduct(updated),
+    isFavourite: favouriteIds.has(id),
+  };
 }
 
 export async function updateProductStatus(
