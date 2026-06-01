@@ -15,6 +15,7 @@ import {
   updateOrderStatus,
 } from '@/lib/marketplace'
 import { Order } from '@/types'
+import { formatINR } from '@/lib/format'
 
 type Mode = 'buyer' | 'seller' | 'detail'
 
@@ -87,7 +88,7 @@ export function OrdersClient({
   const handleMessage = async (productId: string) => {
     const token = await getToken()
     const conversation = await createConversation(productId, token ?? undefined)
-    router.push(`/messages/${conversation.id}`)
+    router.push(`/messages/₹{conversation.id}`)
   }
 
   const handleStatusUpdate = async (current: Order, nextStatus: 'confirmed' | 'cancelled' | 'shipped' | 'delivered') => {
@@ -111,8 +112,39 @@ export function OrdersClient({
 
   if (loading) {
     return (
-      <div className="flex min-h-[45vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between rounded-[2rem] border border-gray-200 bg-white p-6">
+          <div className="space-y-3">
+            <div className="h-7 w-40 animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-4 w-64 animate-pulse rounded-2xl bg-gray-200" />
+          </div>
+          <div className="h-10 w-24 animate-pulse rounded-full bg-gray-200" />
+        </div>
+
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-[2rem] border border-gray-200 bg-white p-4 sm:p-5">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_auto] lg:items-center">
+                <div className="flex gap-4">
+                  <div className="h-24 w-24 animate-pulse rounded-2xl bg-gray-200" />
+                  <div className="min-w-0 space-y-3">
+                    <div className="h-5 w-56 animate-pulse rounded-2xl bg-gray-200" />
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="h-4 w-36 animate-pulse rounded-2xl bg-gray-200" />
+                      <div className="h-4 w-28 animate-pulse rounded-2xl bg-gray-200" />
+                      <div className="h-4 w-32 animate-pulse rounded-2xl bg-gray-200" />
+                      <div className="h-4 w-24 animate-pulse rounded-2xl bg-gray-200" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3 lg:justify-end">
+                  <div className="h-10 w-40 animate-pulse rounded-full bg-gray-200" />
+                  <div className="h-10 w-36 animate-pulse rounded-full bg-gray-200" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -160,7 +192,7 @@ export function OrdersClient({
                 <p className="text-sm text-gray-500">Order details</p>
                 <h1 className="mt-1 text-2xl font-semibold text-gray-950">{order.product.title}</h1>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[order.orderStatus]}`}>
+                  <span className={`rounded-full border px-3 py-1 text-xs font-medium ₹{statusStyles[order.orderStatus]}`}>
                     {statusLabelMap[order.orderStatus]}
                   </span>
                   <span className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600">
@@ -220,14 +252,14 @@ export function OrdersClient({
                 {orderTimeline.map((status, index) => (
                   <div key={status} className="flex items-start gap-4">
                     <div
-                      className={`mt-1 h-4 w-4 rounded-full border-2 ${
+                      className={`mt-1 h-4 w-4 rounded-full border-2 ₹{
                         index <= timelineIndex
                           ? 'border-black bg-black'
                           : 'border-gray-300 bg-white'
                       }`}
                     />
                     <div className="pb-4">
-                      <p className={`text-sm font-medium ${index <= timelineIndex ? 'text-gray-950' : 'text-gray-400'}`}>
+                      <p className={`text-sm font-medium ₹{index <= timelineIndex ? 'text-gray-950' : 'text-gray-400'}`}>
                         {statusLabelMap[status]}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -279,7 +311,7 @@ export function OrdersClient({
                 </div>
               </div>
               <Link
-                href={`/listings/${order.product.id}`}
+                href={`/listings/₹{order.product.id}`}
                 className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-black"
               >
                 View listing
@@ -364,7 +396,7 @@ export function OrdersClient({
 
                   <div className="flex flex-wrap gap-3 lg:justify-end">
                     <Link
-                      href={`/profile/orders/${current.id}`}
+                      href={`/profile/orders/₹{current.id}`}
                       className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
                     >
                       View order details

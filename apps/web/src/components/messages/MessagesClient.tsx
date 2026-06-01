@@ -156,8 +156,17 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto">
           {loadingList ? (
-            <div className="flex h-full items-center justify-center text-sm text-gray-500">
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading conversations
+            <div className="space-y-4 p-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="h-11 w-11 animate-pulse rounded-full bg-gray-200" />
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="h-4 w-2/3 animate-pulse rounded-2xl bg-gray-200" />
+                    <div className="h-3 w-full animate-pulse rounded-2xl bg-gray-200" />
+                    <div className="h-3 w-3/4 animate-pulse rounded-2xl bg-gray-200" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : filteredConversations.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
@@ -278,8 +287,12 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
 
             <div className="min-h-0 flex-1 overflow-y-auto bg-[#fafafa] p-4">
               {loadingThread ? (
-                <div className="flex h-full items-center justify-center text-sm text-gray-500">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading thread
+                <div className="space-y-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+                      <div className="h-16 w-[70%] animate-pulse rounded-3xl bg-gray-200" />
+                    </div>
+                  ))}
                 </div>
               ) : activeConversationSummary.messages.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">

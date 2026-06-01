@@ -8,7 +8,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Heart,
-  Loader2,
   MessageSquare,
   PencilLine,
   ShoppingBag,
@@ -140,8 +139,32 @@ export function ProfileHubClient() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+      <div className="mx-auto max-w-6xl space-y-8 px-4 py-6 sm:px-6 lg:px-8">
+        <section className="rounded-[2rem] border border-gray-200 bg-white p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="h-24 w-24 animate-pulse rounded-full bg-gray-200" />
+              <div className="space-y-3">
+                <div className="h-8 w-56 animate-pulse rounded-2xl bg-gray-200" />
+                <div className="h-4 w-40 animate-pulse rounded-2xl bg-gray-200" />
+                <div className="h-4 w-28 animate-pulse rounded-2xl bg-gray-200" />
+              </div>
+            </div>
+            <div className="h-12 w-36 animate-pulse rounded-full bg-gray-200" />
+          </div>
+        </section>
+
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-24 animate-pulse rounded-[1.5rem] bg-gray-200" />
+          ))}
+        </section>
+
+        <section className="grid gap-4 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-24 animate-pulse rounded-[1.5rem] bg-gray-200" />
+          ))}
+        </section>
       </div>
     )
   }

@@ -7,6 +7,7 @@ import { Product } from '@/types'
 import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { toggleFavourite } from '@/lib/marketplace'
+import { formatINR } from '@/lib/format'
 
 interface ListingCardProps {
   listing: Product
@@ -73,7 +74,7 @@ export function ListingCard({ listing }: ListingCardProps) {
       <div className="p-4 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-2 mb-1">
           <h3 className="font-semibold text-gray-900 line-clamp-1">{listing.title}</h3>
-          <span className="font-bold text-gray-900">${listing.price}</span>
+          <span className="font-bold text-gray-900">{formatINR(listing.price)}</span>
         </div>
         
         <p className="text-sm text-gray-500 mb-4 line-clamp-1">{listing.category?.name || 'Uncategorized'}</p>

@@ -6,6 +6,7 @@ import { useAuth } from '@clerk/nextjs'
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { getCart, removeCartItem, updateCartItem } from '@/lib/marketplace'
+import { formatINR } from '@/lib/format'
 
 type CartItem = Awaited<ReturnType<typeof getCart>>['items'][number]
 
@@ -49,7 +50,46 @@ export function CartPageClient() {
   }
 
   if (loading) {
-    return <div className="px-4 py-10 text-sm text-gray-500">Loading cart...</div>
+    return (
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
+        <section className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <article key={i} className="rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="flex gap-4">
+                <div className="h-28 w-28 shrink-0 animate-pulse rounded-2xl bg-gray-200" />
+                <div className="min-w-0 flex-1 space-y-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="h-5 w-64 animate-pulse rounded-2xl bg-gray-200" />
+                      <div className="h-4 w-32 animate-pulse rounded-2xl bg-gray-200" />
+                      <div className="h-4 w-24 animate-pulse rounded-2xl bg-gray-200" />
+                    </div>
+                    <div className="h-9 w-9 animate-pulse rounded-full bg-gray-200" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 animate-pulse rounded-full bg-gray-200" />
+                    <div className="h-4 w-10 animate-pulse rounded-2xl bg-gray-200" />
+                    <div className="h-9 w-9 animate-pulse rounded-full bg-gray-200" />
+                    <div className="ml-auto h-4 w-28 animate-pulse rounded-2xl bg-gray-200" />
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
+        <aside className="h-fit rounded-[1.75rem] border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="h-6 w-28 animate-pulse rounded-2xl bg-gray-200" />
+          <div className="mt-4 space-y-3">
+            <div className="h-4 w-full animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-4 w-5/6 animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-4 w-4/5 animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-px w-full bg-gray-200" />
+            <div className="h-5 w-3/5 animate-pulse rounded-2xl bg-gray-200" />
+          </div>
+          <div className="mt-6 h-12 w-full animate-pulse rounded-2xl bg-gray-200" />
+        </aside>
+      </div>
+    )
   }
 
   if (items.length === 0) {
@@ -83,7 +123,7 @@ export function CartPageClient() {
                   <div className="min-w-0">
                     <h2 className="truncate text-lg font-semibold text-gray-950">{item.product.title}</h2>
                     <p className="mt-1 text-sm text-gray-500">Seller: {item.product.seller.name}</p>
-                    <p className="mt-1 text-sm font-semibold text-gray-900">${Number(item.product.price).toFixed(2)}</p>
+                    <p className="mt-1 text-sm font-semibold text-gray-900">{formatINR(item.product.price)}</p>
                   </div>
                   <button onClick={() => handleRemove(item.productId)} className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-950">
                     <Trash2 className="h-4 w-4" />
@@ -98,7 +138,7 @@ export function CartPageClient() {
                     <Plus className="h-4 w-4" />
                   </button>
                   <div className="ml-auto text-sm text-gray-500">
-                    Subtotal: <span className="font-semibold text-gray-950">${(Number(item.product.price) * item.quantity).toFixed(2)}</span>
+                    Subtotal: <span className="font-semibold text-gray-950">{formatINR(Number(item.product.price) * item.quantity)}</span>
                   </div>
                 </div>
               </div>
@@ -111,10 +151,10 @@ export function CartPageClient() {
         <h2 className="text-xl font-semibold text-gray-950">Summary</h2>
         <div className="mt-4 space-y-3 text-sm text-gray-600">
           <div className="flex items-center justify-between"><span>Total items</span><span>{items.reduce((sum, item) => sum + item.quantity, 0)}</span></div>
-          <div className="flex items-center justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-          <div className="flex items-center justify-between"><span>Delivery</span><span>$0.00</span></div>
+          <div className="flex items-center justify-between"><span>Subtotal</span><span>{formatINR(subtotal)}</span></div>
+          <div className="flex items-center justify-between"><span>Delivery</span><span>{formatINR(0)}</span></div>
           <div className="h-px bg-gray-200" />
-          <div className="flex items-center justify-between text-base font-semibold text-gray-950"><span>Final total</span><span>${subtotal.toFixed(2)}</span></div>
+          <div className="flex items-center justify-between text-base font-semibold text-gray-950"><span>Final total</span><span>{formatINR(subtotal)}</span></div>
         </div>
         <Link href="/checkout?mode=cart" className="mt-6 block rounded-2xl bg-black px-4 py-3 text-center text-sm font-semibold text-white">
           Proceed to Checkout

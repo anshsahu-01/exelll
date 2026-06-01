@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createOrder, getCart, getProductById, removeCartItem } from '@/lib/marketplace'
 import { useUser } from '@clerk/nextjs'
 import { Upload, Loader2, CreditCard, Wallet, CheckCircle2, X, FileImage } from 'lucide-react'
+import { formatINR } from '@/lib/format'
 
 type CheckoutProduct = Awaited<ReturnType<typeof getProductById>>
 
@@ -134,7 +135,7 @@ export function CheckoutPageClient() {
       setError('Please complete all delivery fields.')
       return false
     }
-    if (!/^\d{10,15}$/.test(form.mobileNumber.trim())) {
+    if (!/^\d{10,15}₹/.test(form.mobileNumber.trim())) {
       setError('Mobile number must be 10 to 15 digits.')
       return false
     }
@@ -209,7 +210,27 @@ export function CheckoutPageClient() {
   }
 
   if (loading) {
-    return <div className="rounded-[2rem] border border-gray-200 bg-white p-6 text-sm text-gray-500">Loading checkout...</div>
+    return (
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <section className="space-y-6">
+          <div className="h-24 animate-pulse rounded-[2rem] bg-gray-200" />
+          <div className="h-72 animate-pulse rounded-[2rem] bg-gray-200" />
+          <div className="h-96 animate-pulse rounded-[2rem] bg-gray-200" />
+          <div className="h-[28rem] animate-pulse rounded-[2rem] bg-gray-200" />
+        </section>
+        <aside className="h-fit space-y-6 rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="h-6 w-28 animate-pulse rounded-2xl bg-gray-200" />
+          <div className="space-y-3">
+            <div className="h-4 w-full animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-4 w-5/6 animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-4 w-4/5 animate-pulse rounded-2xl bg-gray-200" />
+            <div className="h-px w-full bg-gray-200" />
+            <div className="h-5 w-3/5 animate-pulse rounded-2xl bg-gray-200" />
+          </div>
+          <div className="h-12 w-full animate-pulse rounded-2xl bg-gray-200" />
+        </aside>
+      </div>
+    )
   }
 
   if (error || items.length === 0) {
@@ -223,7 +244,7 @@ export function CheckoutPageClient() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="space-y-6">
-        <Panel title="Order details" subtitle={`${items.length} item${items.length > 1 ? 's' : ''} selected for checkout.`} />
+        <Panel title="Order details" subtitle={`₹{items.length} item₹{items.length > 1 ? 's' : ''} selected for checkout.`} />
 
         <Panel title="Selected products">
           <div className="space-y-4">
@@ -236,7 +257,7 @@ export function CheckoutPageClient() {
                   <h3 className="truncate text-sm font-semibold text-gray-950">{item.title}</h3>
                   <p className="mt-1 text-sm text-gray-500">Seller: {item.sellerName}</p>
                   <p className="mt-1 text-sm text-gray-950">Qty: {item.quantity}</p>
-                  <p className="mt-1 text-sm font-semibold text-gray-950">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="mt-1 text-sm font-semibold text-gray-950">{formatINR(item.price * item.quantity)}</p>
                 </div>
               </div>
             ))}
@@ -263,7 +284,7 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="Pickup / delivery address" className="sm:col-span-2">
               <textarea
-                className={`${sharedInputClass} min-h-28 resize-none py-4`}
+                className={`₹{sharedInputClass} min-h-28 resize-none py-4`}
                 value={form.address}
                 onChange={(e) => setForm((c) => ({ ...c, address: e.target.value }))}
                 placeholder="Street / building / landmark"
@@ -380,10 +401,10 @@ export function CheckoutPageClient() {
         <div>
           <h2 className="text-xl font-semibold text-gray-950">Summary</h2>
           <div className="mt-4 space-y-3 text-sm text-gray-600">
-            <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-            <Row label="Delivery" value="$0.00" />
+            <Row label="Subtotal" value={formatINR(subtotal)} />
+            <Row label="Delivery" value={formatINR(0)} />
             <div className="h-px bg-gray-200" />
-            <Row label="Final total" value={`$${subtotal.toFixed(2)}`} strong />
+            <Row label="Final total" value={formatINR(subtotal)} strong />
           </div>
         </div>
 
@@ -397,7 +418,7 @@ export function CheckoutPageClient() {
           Place Order
         </button>
 
-        <Link href={source?.kind === 'cart' ? '/cart' : `/listings/${items[0]?.productId}`} className="block text-center text-sm font-semibold text-gray-500 hover:text-gray-950">
+        <Link href={source?.kind === 'cart' ? '/cart' : `/listings/₹{items[0]?.productId}`} className="block text-center text-sm font-semibold text-gray-500 hover:text-gray-950">
           Back
         </Link>
       </aside>
@@ -459,7 +480,7 @@ function Panel({
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <label className={`block space-y-2 ${className ?? ''}`}>
+    <label className={`block space-y-2 ₹{className ?? ''}`}>
       <span className="text-sm font-medium text-gray-900">{label}</span>
       {children}
     </label>
@@ -485,20 +506,20 @@ function PaymentCard({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-left transition ${active ? 'border-black bg-gray-50' : 'border-gray-200 hover:bg-gray-50'}`}
+      className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-left transition ₹{active ? 'border-black bg-gray-50' : 'border-gray-200 hover:bg-gray-50'}`}
     >
       <span className="flex items-center gap-3 text-sm font-medium text-gray-950">
         {icon}
         {label}
       </span>
-      <span className={`h-4 w-4 rounded-full border ${active ? 'border-black bg-black' : 'border-gray-300 bg-white'}`} />
+      <span className={`h-4 w-4 rounded-full border ₹{active ? 'border-black bg-black' : 'border-gray-300 bg-white'}`} />
     </button>
   )
 }
 
 function Row({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
   return (
-    <div className={`flex items-center justify-between ${strong ? 'text-base font-semibold text-gray-950' : ''}`}>
+    <div className={`flex items-center justify-between ₹{strong ? 'text-base font-semibold text-gray-950' : ''}`}>
       <span>{label}</span>
       <span>{value}</span>
     </div>

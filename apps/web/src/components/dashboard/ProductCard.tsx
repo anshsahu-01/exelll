@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Heart } from 'lucide-react'
 import { Product } from '@/types'
 import { toggleFavourite } from '@/lib/marketplace'
+import { formatINR } from '@/lib/format'
 
 export default function ProductCard({ product }: { product: Product }) {
   const { getToken } = useAuth()
@@ -67,7 +68,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       <Link href={`/listings/${product.id}`} className="block p-3">
         <h3 className="truncate text-sm font-semibold">{product.title}</h3>
-        <p className="mt-1 text-lg font-bold">₹{product.price}</p>
+        <p className="mt-1 text-lg font-bold">{formatINR(product.price)}</p>
         <p className="mt-1 text-xs text-gray-500">{product.category?.name}</p>
         <p className="mt-1 text-xs text-gray-400">by {product.seller?.name}</p>
       </Link>

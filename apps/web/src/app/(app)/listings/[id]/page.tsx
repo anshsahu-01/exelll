@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { PageBackButton } from '@/components/ui/PageBackButton'
 import { AddToCartButton } from '@/components/listings/AddToCartButton'
+import { formatINR } from '@/lib/format'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,7 +68,7 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
               </button>
             </div>
 
-            <div className="text-3xl font-bold text-gray-900">${listing.price}</div>
+            <div className="text-3xl font-bold text-gray-900">{formatINR(listing.price)}</div>
 
             <div className="flex flex-wrap gap-2 text-sm">
               <span className="rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-800">
