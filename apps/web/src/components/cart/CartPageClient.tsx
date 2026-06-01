@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { addToCart, getCart, removeCartItem, updateCartItem } from '@/lib/marketplace'
+import { getCart, removeCartItem, updateCartItem } from '@/lib/marketplace'
 
 type CartItem = Awaited<ReturnType<typeof getCart>>['items'][number]
 
@@ -116,7 +116,7 @@ export function CartPageClient() {
           <div className="h-px bg-gray-200" />
           <div className="flex items-center justify-between text-base font-semibold text-gray-950"><span>Final total</span><span>${subtotal.toFixed(2)}</span></div>
         </div>
-        <Link href="/checkout" className="mt-6 block rounded-2xl bg-black px-4 py-3 text-center text-sm font-semibold text-white">
+        <Link href="/checkout?mode=cart" className="mt-6 block rounded-2xl bg-black px-4 py-3 text-center text-sm font-semibold text-white">
           Proceed to Checkout
         </Link>
       </aside>

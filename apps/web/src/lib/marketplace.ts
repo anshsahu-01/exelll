@@ -43,6 +43,11 @@ export async function getMe(token?: string) {
   return res.data
 }
 
+export async function getProductById(id: string, token?: string) {
+  const res = await request<ApiResponse<Product>>(`/products/${id}`, { token })
+  return res.data
+}
+
 export async function getMyProducts(token?: string) {
   const res = await request<ApiResponse<MyProductsResponse>>('/products/me', { token })
   return res.data
@@ -288,4 +293,24 @@ export async function removeCartItem(productId: string, token?: string) {
     method: 'DELETE',
     token,
   })
+}
+
+export async function createOrder(
+  input: {
+    productId: string
+    paymentMethod: 'COD' | 'UPI'
+    mobileNumber: string
+    locationDetails: string
+    utrNumber?: string
+    paymentScreenshot?: string
+    paymentStatus?: 'payment_pending' | 'verification_pending' | 'confirmed' | 'cancelled'
+  },
+  token?: string
+) {
+  const res = await request<ApiResponse<unknown>>('/orders', {
+    method: 'POST',
+    body: input,
+    token,
+  })
+  return res.data
 }

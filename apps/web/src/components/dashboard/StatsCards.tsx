@@ -2,7 +2,15 @@ import React from 'react';
 import { LayoutDashboard, ShoppingBag, MessageSquare, DollarSign } from 'lucide-react';
 
 // Simple stats card component – can be enhanced later
-function StatCard({ icon: Icon, title, value }: { icon: typeof Icon; title: string; value: string | number }) {
+function StatCard({
+  icon: Icon,
+  title,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  value: string | number;
+}) {
   return (
     <div className="flex items-center p-4 bg-white rounded-lg shadow-sm">
       <Icon className="w-6 h-6 text-primary-600 mr-3" />
