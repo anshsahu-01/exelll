@@ -28,6 +28,9 @@ function formatCartItem(item: CartItemWithProduct) {
 }
 
 export async function getCart(userId: string) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[cart] prisma accessors", Object.keys(prisma).filter((key) => !key.startsWith("$")));
+  }
   const items = await prisma.cartItem.findMany({
     where: { userId },
     include: cartItemInclude,

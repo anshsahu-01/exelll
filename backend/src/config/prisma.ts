@@ -15,6 +15,10 @@ function createPrismaClient(): PrismaClient {
     );
   }
 
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[prisma] client models", Object.keys(client).filter((key) => !key.startsWith("$")));
+  }
+
   return client;
 }
 

@@ -2,9 +2,11 @@ import { getProductById, getProducts } from '@/lib/services'
 import { ProductGallery } from '@/components/listings/ProductGallery'
 import { SellerInfo } from '@/components/listings/SellerInfo'
 import { Heart, MapPin, Share2, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { PageBackButton } from '@/components/ui/PageBackButton'
+import { AddToCartButton } from '@/components/listings/AddToCartButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,9 +87,15 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
             <div className="my-2 h-px bg-gray-100" />
 
             <div className="flex flex-col gap-3">
-              <button className="w-full rounded-xl bg-black py-3 font-medium text-white transition-colors hover:bg-gray-800">
-                Buy Now
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                <AddToCartButton productId={listing.id} />
+                <Link
+                  href={`/checkout?productId=${listing.id}`}
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white py-3 font-medium text-black transition-colors hover:border-black"
+                >
+                  Buy Now
+                </Link>
+              </div>
               <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white py-3 font-medium text-black transition-colors hover:border-black">
                 <Heart className="h-5 w-5" />
                 Add to Favourites
@@ -119,4 +127,3 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
     </div>
   )
 }
-

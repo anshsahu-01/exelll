@@ -246,3 +246,46 @@ export async function createListing(
     xhr.send(formData)
   })
 }
+
+export type CartItem = {
+  id?: string
+  productId: string
+  quantity: number
+  createdAt?: string
+  product: Product
+}
+
+export type CartSummary = {
+  items: CartItem[]
+  total: number
+  count: number
+}
+
+export async function getCart(token?: string) {
+  const res = await request<ApiResponse<CartSummary>>('/cart', { token })
+  return res.data
+}
+
+export async function addToCart(productId: string, token?: string) {
+  const res = await request<ApiResponse<CartItem>>(`/cart/add/${productId}`, {
+    method: 'POST',
+    token,
+  })
+  return res.data
+}
+
+export async function updateCartItem(productId: string, quantity: number, token?: string) {
+  const res = await request<ApiResponse<CartItem | null>>(`/cart/update/${productId}`, {
+    method: 'PUT',
+    body: { quantity },
+    token,
+  })
+  return res.data
+}
+
+export async function removeCartItem(productId: string, token?: string) {
+  await request(`/cart/remove/${productId}`, {
+    method: 'DELETE',
+    token,
+  })
+}

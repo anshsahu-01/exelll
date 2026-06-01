@@ -1,10 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { Product } from "@/types";
-import * as productService from "@/services/product.service";
+import { apiRequest } from "@/services/api";
 import { useAuthStore } from "@/store/authStore";
-
-const CART_STORAGE_KEY = "just_sell_cart";
 
 export type CartItem = {
   productId: string;
@@ -23,19 +20,33 @@ type CartState = {
   hydrate: (userId?: string | null) => Promise<void>;
   addItem: (product: Product) => Promise<{ added: boolean }>;
   removeItem: (productId: string) => Promise<void>;
+  updateItem: (productId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
   verifyItems: () => Promise<void>;
   setOwnerUserId: (userId: string | null) => Promise<void>;
 };
 
-type PersistedCart = {
-  ownerUserId: string | null;
-  items: CartItem[];
+type CartApiItem = {
+  productId: string;
+  quantity: number;
+  product: Product;
 };
 
-async function persistItems(items: CartItem[], ownerUserId: string | null) {
-  const payload: PersistedCart = { ownerUserId, items };
-  await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(payload));
+async function getCartFromBackend() {
+  const res = await apiRequest<{ success: boolean; data: { items: CartApiItem[] } }>("/cart");
+  return res.data.items ?? [];
+}
+
+function mapItems(items: CartApiItem[]): CartItem[] {
+  return items.map((item) => ({
+    productId: item.productId,
+    title: item.product.title,
+    price: item.product.price,
+    image: item.product.images?.[0] ?? "",
+    sellerId: item.product.userId,
+    sellerName: item.product.seller.name,
+    quantity: item.quantity,
+  }));
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -45,28 +56,8 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   hydrate: async (userId = null) => {
     try {
-      const raw = await AsyncStorage.getItem(CART_STORAGE_KEY);
-      if (!raw) {
-        set({ items: [], ownerUserId: userId, isHydrated: true });
-        return;
-      }
-
-      const parsed = JSON.parse(raw) as PersistedCart | CartItem[];
-      const persisted = Array.isArray(parsed)
-        ? { ownerUserId: null, items: parsed }
-        : parsed;
-
-      if (persisted.ownerUserId !== userId) {
-        set({ items: [], ownerUserId: userId, isHydrated: true });
-        await persistItems([], userId);
-        return;
-      }
-
-      set({
-        items: persisted.items ?? [],
-        ownerUserId: userId,
-        isHydrated: true,
-      });
+      const items = mapItems(await getCartFromBackend());
+      set({ items, ownerUserId: userId, isHydrated: true });
     } catch {
       set({ items: [], ownerUserId: userId, isHydrated: true });
     }
@@ -74,81 +65,44 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: async (product) => {
     const ownerUserId = useAuthStore.getState().user?.id ?? null;
-    if (get().ownerUserId !== ownerUserId) {
-      set({ items: [], ownerUserId });
-      await persistItems([], ownerUserId);
-    }
-
     const existing = get().items.find((item) => item.productId === product.id);
     if (existing) {
       return { added: false };
     }
 
-    const nextItems = [
-      ...get().items,
-      {
-        productId: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.images?.[0] ?? "",
-        sellerId: product.userId,
-        sellerName: product.seller.name,
-        quantity: 1,
-      },
-    ];
-
-    set({ items: nextItems, ownerUserId });
-    await persistItems(nextItems, ownerUserId);
+    await apiRequest(`/cart/add/${product.id}`, { method: "POST" });
+    const items = mapItems(await getCartFromBackend());
+    set({ items, ownerUserId });
     return { added: true };
   },
 
   removeItem: async (productId) => {
-    const nextItems = get().items.filter((item) => item.productId !== productId);
-    set({ items: nextItems });
-    await persistItems(nextItems, get().ownerUserId);
+    await apiRequest(`/cart/remove/${productId}`, { method: "DELETE" });
+    const items = mapItems(await getCartFromBackend());
+    set({ items });
+  },
+
+  updateItem: async (productId, quantity) => {
+    await apiRequest(`/cart/update/${productId}`, {
+      method: "PUT",
+      body: { quantity },
+    });
+    const items = mapItems(await getCartFromBackend());
+    set({ items });
   },
 
   clearCart: async () => {
+    const items = get().items;
+    await Promise.all(items.map((item) => apiRequest(`/cart/remove/${item.productId}`, { method: "DELETE" })));
     set({ items: [], ownerUserId: get().ownerUserId });
-    await persistItems([], get().ownerUserId);
   },
 
   verifyItems: async () => {
-    const currentItems = get().items;
-    if (currentItems.length === 0) return;
-
-    const checkedItems = await Promise.all(
-      currentItems.map(async (item) => {
-        try {
-          const product = await productService.getProductById(item.productId);
-          if (product.isSold || product.status !== "ACTIVE") {
-            return null;
-          }
-
-          return {
-            ...item,
-            title: product.title,
-            price: product.price,
-            image: product.images?.[0] ?? item.image,
-            sellerId: product.userId,
-            sellerName: product.seller.name,
-          };
-        } catch {
-          return null;
-        }
-      })
-    );
-
-    const validItems = checkedItems.filter((item): item is CartItem => Boolean(item));
-    if (validItems.length !== currentItems.length) {
-      set({ items: validItems });
-      await persistItems(validItems, get().ownerUserId);
-    }
+    const items = mapItems(await getCartFromBackend());
+    set({ items });
   },
 
   setOwnerUserId: async (userId) => {
-    if (get().ownerUserId === userId) return;
-    set({ items: [], ownerUserId: userId });
-    await persistItems([], userId);
+    set({ ownerUserId: userId });
   },
 }));

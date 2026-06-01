@@ -65,7 +65,7 @@ export default function ProductCard({ product }: { product: Product }) {
         ) : null}
       </div>
 
-      <Link href={`/products/${product.id}`} className="block p-3">
+      <Link href={`/listings/${product.id}`} className="block p-3">
         <h3 className="truncate text-sm font-semibold">{product.title}</h3>
         <p className="mt-1 text-lg font-bold">₹{product.price}</p>
         <p className="mt-1 text-xs text-gray-500">{product.category?.name}</p>
