@@ -26,6 +26,12 @@ export const getMySales = asyncHandler(async (req: Request, res: Response) => {
   res.json({ success: true, data: sales });
 });
 
+export const getOrderById = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = getValidated<{ id: string }>(req, "params");
+  const order = await orderService.getOrderById(id, req.user!.userId);
+  res.json({ success: true, data: order });
+});
+
 export const updateOrderStatus = asyncHandler(async (req: Request, res: Response) => {
   const { id } = getValidated<{ id: string }>(req, "params");
   const order = await orderService.updateOrderStatus(

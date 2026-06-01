@@ -134,6 +134,23 @@ export async function getMySales(sellerId: string) {
   return orders.map(formatOrder);
 }
 
+export async function getOrderById(orderId: string, userId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: orderInclude,
+  });
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  if (order.buyerId !== userId && order.sellerId !== userId) {
+    throw new AppError("You are not authorized to view this order", 403);
+  }
+
+  return formatOrder(order);
+}
+
 export async function updateOrderStatus(
   orderId: string,
   actorId: string,

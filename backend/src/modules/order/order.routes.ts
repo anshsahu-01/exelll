@@ -21,6 +21,13 @@ router.get("/my-orders", authenticate, orderController.getMyOrders);
 
 router.get("/my-sales", authenticate, orderController.getMySales);
 
+router.get(
+  "/:id",
+  authenticate,
+  validate(orderIdParamSchema, "params"),
+  orderController.getOrderById
+);
+
 router.patch(
   "/:id/status",
   authenticate,

@@ -154,6 +154,8 @@ export interface Order {
   mobileNumber: string;
   deliveryAddress: string;
   locationDetails: string;
+  utrNumber?: string | null;
+  paymentScreenshot?: string | null;
   createdAt: string;
   product: Pick<Product, "id" | "title" | "images" | "price">;
   buyer: PublicUser;

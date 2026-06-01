@@ -57,6 +57,11 @@ export async function getMySales(token?: string) {
   return Array.isArray(res.data) ? res.data : []
 }
 
+export async function getOrderById(id: string, token?: string) {
+  const res = await request<ApiResponse<Order>>(`/orders/${id}`, { token })
+  return res.data
+}
+
 export async function getConversations(token?: string) {
   const res = await request<ApiResponse<ConversationListItem[]>>('/chats/conversations', {
     token,
@@ -101,6 +106,28 @@ export async function updateListingStatus(
   return res.data
 }
 
+export async function updateOrderStatus(
+  id: string,
+  status: 'confirmed' | 'cancelled' | 'shipped' | 'delivered',
+  token?: string
+) {
+  const res = await request<ApiResponse<Order>>(`/orders/${id}/status`, {
+    method: 'PATCH',
+    body: { status },
+    token,
+  })
+  return res.data
+}
+
+export async function createConversation(productId: string, token?: string) {
+  const res = await request<ApiResponse<{ id: string }>>('/chats/conversations', {
+    method: 'POST',
+    body: { productId },
+    token,
+  })
+  return res.data
+}
+
 export async function deleteListing(id: string, token?: string) {
   await request(`/products/${id}`, {
     method: 'DELETE',
@@ -134,4 +161,3 @@ export async function updateListing(
 
   return res.data
 }
-
