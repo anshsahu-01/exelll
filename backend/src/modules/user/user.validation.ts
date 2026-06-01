@@ -7,6 +7,7 @@ export const updateProfileSchema = z.object({
     .string()
     .regex(/^(\+91)?[6-9]\d{9}$/, "Invalid mobile number format")
     .optional(),
+  location: z.string().trim().max(200, "Location cannot exceed 200 characters").optional(),
   bio: z.string().max(200, "Bio cannot exceed 200 characters").optional(),
 });
 

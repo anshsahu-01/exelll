@@ -51,6 +51,7 @@ model User {
   createdAt    DateTime @default(now())
 
   mobileNumber String?
+  location     String?
   bio          String?
   isDeleted    Boolean  @default(false)
   deletedAt    DateTime?

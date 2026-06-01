@@ -1,10 +1,53 @@
 'use client'
 
 import Link from "next/link"
-import { UserButton } from "@clerk/nextjs"
+import Image from "next/image"
+import { useEffect, useMemo, useState } from "react"
+import { useAuth, useUser } from "@clerk/nextjs"
 import { Heart, ShoppingCart, Bell, Search } from "lucide-react"
+import { getMe } from "@/lib/marketplace"
 
 export function DashboardHeader() {
+  const { getToken } = useAuth()
+  const { user } = useUser()
+  const [backendProfileImage, setBackendProfileImage] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    const loadProfile = async () => {
+      try {
+        const token = await getToken()
+        const profile = await getMe(token ?? undefined)
+        if (active) {
+          setBackendProfileImage(profile.profileImage ?? null)
+        }
+      } catch {
+        if (active) {
+          setBackendProfileImage(null)
+        }
+      }
+    }
+
+    void loadProfile()
+
+    const handleProfileUpdated = () => {
+      void loadProfile()
+    }
+
+    window.addEventListener('profile-updated', handleProfileUpdated as EventListener)
+
+    return () => {
+      active = false
+      window.removeEventListener('profile-updated', handleProfileUpdated as EventListener)
+    }
+  }, [getToken])
+
+  const avatarSource = useMemo(
+    () => backendProfileImage || user?.imageUrl || null,
+    [backendProfileImage, user?.imageUrl]
+  )
+
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20 sticky top-0">
       <div className="flex-1 flex justify-end lg:justify-between items-center h-full">
@@ -43,7 +86,19 @@ export function DashboardHeader() {
             <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
           </button>
           <div className="h-8 w-px bg-gray-200" />
-          <UserButton afterSignOutUrl="/" />
+          <Link
+            href="/profile"
+            className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white transition hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+            aria-label="Open profile"
+          >
+            {avatarSource ? (
+              <Image src={avatarSource} alt="Profile avatar" width={40} height={40} className="h-full w-full object-cover" />
+            ) : (
+              <span className="inline-flex h-full w-full items-center justify-center bg-gray-100 text-sm font-semibold text-gray-500">
+                {user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? 'U'}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

@@ -1,35 +1,51 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState, type FormEvent } from 'react'
-import { useAuth, useUser } from '@clerk/nextjs'
+import { useAuth, useClerk, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { AlertCircle, Loader2, Trash2, X } from 'lucide-react'
+import { AlertCircle, Camera, Loader2, Trash2, X } from 'lucide-react'
 import { getMe } from '@/lib/marketplace'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type Notice = { type: 'success' | 'error'; message: string } | null
 
+type PendingEmail = {
+  id: string
+  email: string
+}
+
 export function ProfileEditClient() {
   const router = useRouter()
   const { getToken } = useAuth()
+  const { signOut } = useClerk()
   const { user: clerkUser, isLoaded } = useUser()
   const [form, setForm] = useState({
     name: '',
     email: '',
     collegeName: '',
     mobileNumber: '',
+    location: '',
     bio: '',
   })
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [initialEmail, setInitialEmail] = useState('')
   const [notice, setNotice] = useState<Notice>(null)
-  const [emailStep, setEmailStep] = useState<'idle' | 'verify'>('idle')
+  const [showOtpVerification, setShowOtpVerification] = useState(false)
+  const [verificationStep, setVerificationStep] = useState<'idle' | 'sending' | 'verifying'>('idle')
   const [verificationCode, setVerificationCode] = useState('')
-  const [pendingEmailAddress, setPendingEmailAddress] = useState<string | null>(null)
+  const [pendingEmail, setPendingEmail] = useState<PendingEmail | null>(null)
+  const [pendingOtpEmail, setPendingOtpEmail] = useState<PendingEmail | null>(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [runtimeError, setRuntimeError] = useState<string | null>(null)
+  const [clerkLoadingError, setClerkLoadingError] = useState<string | null>(null)
+  const [profilePreview, setProfilePreview] = useState<string | null>(null)
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
+  const [removeProfileImage, setRemoveProfileImage] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -41,8 +57,11 @@ export function ProfileEditClient() {
           email: user.email ?? '',
           collegeName: user.collegeName ?? '',
           mobileNumber: user.mobileNumber ?? '',
+          location: user.location ?? '',
           bio: user.bio ?? '',
         })
+        setInitialEmail(user.email ?? '')
+        setProfilePreview(user.profileImage ?? null)
       } finally {
         setLoading(false)
       }
@@ -54,10 +73,17 @@ export function ProfileEditClient() {
   const updateBackendProfile = async (overrides?: { email?: string }) => {
     const token = await getToken()
     const data = new FormData()
+    if (removeProfileImage) {
+      data.append('removeProfileImage', 'true')
+    }
+    if (profileImageFile) {
+      data.append('profileImage', profileImageFile)
+    }
     data.append('name', form.name)
     data.append('email', overrides?.email ?? form.email)
     data.append('collegeName', form.collegeName)
     data.append('mobileNumber', form.mobileNumber)
+    data.append('location', form.location)
     data.append('bio', form.bio)
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/users/me`, {
@@ -70,21 +96,22 @@ export function ProfileEditClient() {
     if (!response.ok) {
       throw new Error(result.message ?? 'Could not update profile')
     }
+    window.dispatchEvent(new Event('profile-updated'))
   }
 
   const handleEmailVerification = async () => {
-    if (!clerkUser || !pendingEmailAddress) return
+    if (!clerkUser || !pendingOtpEmail) return
     if (!verificationCode.trim()) {
       setNotice({ type: 'error', message: 'Enter the verification code sent to your email.' })
       return
     }
 
     setSaving(true)
+    setVerificationStep('verifying')
     setNotice(null)
     try {
-      const emailAddress = (clerkUser as any).emailAddresses?.find(
-        (item: any) => item.emailAddress === pendingEmailAddress
-      )
+      console.log('email verification started')
+      const emailAddress = (clerkUser as any).emailAddresses?.find((item: any) => item.id === pendingOtpEmail.id)
       if (!emailAddress) {
         throw new Error('Verification session expired. Please try again.')
       }
@@ -94,12 +121,16 @@ export function ProfileEditClient() {
         throw new Error('Email verification failed.')
       }
 
-      await updateBackendProfile({ email: pendingEmailAddress })
-      setForm((current) => ({ ...current, email: pendingEmailAddress }))
-      setEmailStep('idle')
-      setPendingEmailAddress(null)
+      await (clerkUser as any).update({ primaryEmailAddressId: pendingOtpEmail.id })
+      await (clerkUser as any).reload?.()
+      await updateBackendProfile({ email: pendingOtpEmail.email })
+      setForm((current) => ({ ...current, email: pendingOtpEmail.email }))
+      setShowOtpVerification(false)
+      setVerificationStep('idle')
+      setPendingEmail(null)
+      setPendingOtpEmail(null)
       setVerificationCode('')
-      setNotice({ type: 'success', message: 'Email verified and updated successfully.' })
+      setNotice({ type: 'success', message: 'Email updated successfully.' })
     } catch (error) {
       setNotice({
         type: 'error',
@@ -110,69 +141,176 @@ export function ProfileEditClient() {
       })
     } finally {
       setSaving(false)
+      setVerificationStep('idle')
+    }
+  }
+
+  const startEmailVerification = async (nextEmail: string) => {
+    console.log('STEP 1: entered emailChanged branch')
+    console.log({
+      currentEmail: clerkUser?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || '',
+      nextEmail,
+      emailChanged: (clerkUser?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || '') !== nextEmail,
+    })
+    console.log('STEP 2: Clerk state', {
+      isLoaded,
+      hasUser: !!clerkUser,
+    })
+
+    if (!isLoaded || !clerkUser) {
+      const message = 'Authentication still loading'
+      console.log('BLOCKED: Clerk not ready')
+      setClerkLoadingError(message)
+      setNotice({ type: 'error', message })
+      throw new Error(message)
+    }
+
+    console.log('STEP 3: passed Clerk state guard')
+    console.log('user object:', clerkUser)
+    console.log('createEmailAddress exists:', typeof (clerkUser as any)?.createEmailAddress)
+
+    const currentEmail =
+      clerkUser?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || ''
+    const nextNormalized = nextEmail?.trim().toLowerCase() || ''
+    const emailChanged = currentEmail !== nextNormalized
+
+    if (!emailChanged) {
+      console.log('BLOCKED: email did not change')
+      return false
+    }
+
+    const userEmailList = (clerkUser as any).emailAddresses ?? []
+    const existingOnAccount = userEmailList.find(
+      (item: any) => item.emailAddress?.toLowerCase?.() === nextEmail.toLowerCase()
+    )
+    if (existingOnAccount) {
+      throw new Error('This email is already associated with another account')
+    }
+
+    let emailAddress: any
+    try {
+      console.log('STEP 2: createEmailAddress start')
+      emailAddress = await (clerkUser as any).createEmailAddress({
+        emailAddress: nextEmail,
+      })
+      console.log('STEP 3: createEmailAddress success')
+    } catch (error) {
+      console.error('CREATE EMAIL FAILED:', error)
+      const message = error instanceof Error ? error.message : 'CREATE EMAIL FAILED'
+      if (/already/i.test(message)) {
+        throw new Error('This email is already associated with another account')
+      }
+      setRuntimeError(JSON.stringify(error, null, 2))
+      throw new Error(message)
+    }
+
+    console.log('STEP 4: prepareVerification start')
+    await emailAddress.prepareVerification({ strategy: 'email_code' })
+    console.log('STEP 5: OTP prepared')
+    setPendingEmail({ id: emailAddress.id, email: nextEmail })
+    setPendingOtpEmail({ id: emailAddress.id, email: nextEmail })
+    setShowOtpVerification(true)
+    setVerificationStep('sending')
+    setRuntimeError(null)
+    console.log('STEP 6: OTP UI opened')
+    setVerificationStep('idle')
+    setVerificationCode('')
+    setNotice({ type: 'success', message: 'We sent a verification code to your new email.' })
+    return true
+  }
+
+  const handleResendCode = async () => {
+    if (!pendingEmail || !clerkUser) return
+    setSaving(true)
+    setVerificationStep('sending')
+    setNotice(null)
+    try {
+      const emailAddress = (clerkUser as any).emailAddresses?.find((item: any) => item.id === pendingEmail.id)
+      if (!emailAddress) {
+        throw new Error('Verification session expired. Please try again.')
+      }
+      await emailAddress.prepareVerification({ strategy: 'email_code' })
+      console.log('OTP sent')
+      setNotice({ type: 'success', message: 'Verification code resent.' })
+    } catch (error) {
+      setNotice({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Could not resend verification code.',
+      })
+    } finally {
+      setSaving(false)
     }
   }
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    console.log('submit handler started')
     setNotice(null)
+    setRuntimeError(null)
+    setClerkLoadingError(null)
 
-    const nextEmail = form.email.trim()
+    if (!isLoaded || !clerkUser) {
+      const message = `Clerk not ready. isLoaded=${String(isLoaded)} userExists=${String(Boolean(clerkUser))}`
+      setNotice({ type: 'error', message })
+      setRuntimeError(message)
+      console.log('BLOCKED: Clerk not ready')
+      return
+    }
+
+    const currentEmail =
+      clerkUser?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || ''
+    const nextEmail =
+      form.email?.trim().toLowerCase() || ''
+    const emailChanged = currentEmail !== nextEmail
+    console.log({
+      currentEmail,
+      nextEmail,
+      emailChanged,
+    })
     if (nextEmail && !EMAIL_REGEX.test(nextEmail)) {
       setNotice({ type: 'error', message: 'Enter a valid email address.' })
       return
     }
 
-    if (emailStep === 'verify') {
+    if (showOtpVerification) {
       await handleEmailVerification()
       return
     }
 
+    if (emailChanged) {
+      console.log('EMAIL FLOW')
+      setSaving(true)
+      setVerificationStep('sending')
+      console.log('verify button clicked')
+      try {
+        await startEmailVerification(nextEmail)
+        return
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Could not update profile.'
+        setNotice({ type: 'error', message })
+        setRuntimeError(message)
+      } finally {
+        setSaving(false)
+      }
+      return
+    }
+
+    console.log('STANDARD PROFILE UPDATE FLOW')
     setSaving(true)
     try {
-      if (nextEmail && nextEmail !== (clerkUser?.primaryEmailAddress?.emailAddress ?? nextEmail)) {
-        if (!isLoaded || !clerkUser) {
-          throw new Error('Authentication is still loading. Please try again.')
-        }
-
-        const existing = (clerkUser as any).emailAddresses?.find(
-          (item: any) => item.emailAddress?.toLowerCase?.() === nextEmail.toLowerCase()
-        )
-        if (existing) {
-          throw new Error('This email is already associated with another account.')
-        }
-
-        let emailAddress: any
-        try {
-          emailAddress = await (clerkUser as any).createEmailAddress({ emailAddress: nextEmail })
-        } catch (error) {
-          const message = error instanceof Error ? error.message : ''
-          if (/already/i.test(message)) {
-            throw new Error('This email is already associated with another account.')
-          }
-          throw error
-        }
-
-        await emailAddress.prepareVerification({ strategy: 'email_code' })
-        setPendingEmailAddress(nextEmail)
-        setEmailStep('verify')
-        setNotice({
-          type: 'success',
-          message: 'We sent a verification code to the new email address.',
-        })
-        return
-      }
-
-      await updateBackendProfile()
+      await saveProfileWithoutOtp()
       setNotice({ type: 'success', message: 'Profile updated successfully.' })
     } catch (error) {
-      setNotice({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Could not update profile.',
-      })
+      const message = error instanceof Error ? error.message : 'Could not update profile.'
+      setNotice({ type: 'error', message })
+      setRuntimeError(message)
     } finally {
       setSaving(false)
     }
+  }
+
+  const saveProfileWithoutOtp = async () => {
+    await updateBackendProfile()
   }
 
   const handleDeleteAccount = async () => {
@@ -195,17 +333,22 @@ export function ProfileEditClient() {
         throw new Error(result.message ?? 'Could not delete account')
       }
       setNotice({ type: 'success', message: 'Account deleted successfully.' })
+      await signOut()
       router.replace('/sign-in')
     } catch (error) {
-      setNotice({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Could not delete account.',
-      })
+      const message = error instanceof Error ? error.message : 'Could not delete account.'
+      setNotice({ type: 'error', message })
+      setRuntimeError(message)
     } finally {
       setDeleting(false)
       setDeleteOpen(false)
     }
   }
+
+  const currentEmail =
+    clerkUser?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || ''
+  const nextEmailValue = form.email?.trim().toLowerCase() || ''
+  const emailChangedForRender = currentEmail !== nextEmailValue
 
   if (loading) {
     return (
@@ -217,6 +360,16 @@ export function ProfileEditClient() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      {clerkLoadingError ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {clerkLoadingError}
+        </div>
+      ) : null}
+      {runtimeError ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {runtimeError}
+        </div>
+      ) : null}
       {notice ? (
         <div
           className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm ${
@@ -237,11 +390,12 @@ export function ProfileEditClient() {
         </div>
 
         <div className="grid gap-4 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm">
-          {[
+          {[ 
             ['name', 'Name'],
             ['email', 'Email'],
             ['collegeName', 'College'],
-            ['mobileNumber', 'Location / Mobile'],
+            ['mobileNumber', 'Mobile Number'],
+            ['location', 'Location'],
           ].map(([key, label]) => (
             <label key={key} className="space-y-2">
               <span className="text-sm font-medium text-gray-700">{label}</span>
@@ -253,6 +407,50 @@ export function ProfileEditClient() {
             </label>
           ))}
           <label className="space-y-2">
+            <span className="text-sm font-medium text-gray-700">Profile Photo</span>
+            <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-white ring-1 ring-gray-200">
+                {profilePreview ? (
+                  <Image src={profilePreview} alt="Profile preview" fill className="object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
+                    {form.name?.trim()?.[0]?.toUpperCase() ?? '?'}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-1 flex-wrap items-center gap-3">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800">
+                  <Camera className="h-4 w-4" />
+                  Upload / Change
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0]
+                      if (!file) return
+                      const url = URL.createObjectURL(file)
+                      setProfilePreview(url)
+                      setProfileImageFile(file)
+                      setRemoveProfileImage(false)
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfilePreview(null)
+                    setProfileImageFile(null)
+                    setRemoveProfileImage(true)
+                  }}
+                  className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                >
+                  Remove image
+                </button>
+              </div>
+            </div>
+          </label>
+          <label className="space-y-2">
             <span className="text-sm font-medium text-gray-700">Bio</span>
             <textarea
               value={form.bio}
@@ -261,37 +459,54 @@ export function ProfileEditClient() {
               className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
             />
           </label>
-          {emailStep === 'verify' ? (
+          {showOtpVerification ? (
             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
               <p className="text-sm font-medium text-gray-900">Verify your new email</p>
               <p className="mt-1 text-sm text-gray-500">
-                Enter the 6-digit code sent to {pendingEmailAddress}.
+                Enter the code sent to your email.
               </p>
               <div className="mt-4 flex gap-3">
                 <input
                   value={verificationCode}
                   onChange={(event) => setVerificationCode(event.target.value)}
-                  placeholder="Enter verification code"
+                  placeholder="6-digit OTP"
                   className="h-12 flex-1 rounded-2xl border border-gray-200 bg-white px-4 text-sm outline-none transition focus:border-gray-300"
                 />
+              </div>
+              <div className="mt-3 flex gap-3">
                 <button
                   type="button"
                   onClick={handleEmailVerification}
-                  disabled={saving}
-                  className="inline-flex h-12 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  disabled={saving || verificationStep === 'verifying'}
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
                 >
-                  {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  {verificationStep === 'verifying' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Verify
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={saving || verificationStep === 'sending'}
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                >
+                  {verificationStep === 'sending' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Resend code
                 </button>
               </div>
             </div>
           ) : null}
           <button
+            type="submit"
             disabled={saving}
+            onClick={() => console.log('verify button clicked')}
             className="inline-flex h-12 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
           >
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Save changes
+            {saving && !showOtpVerification ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {saving && emailChangedForRender
+              ? 'Sending OTP...'
+              : showOtpVerification || emailChangedForRender
+                ? 'Verify & Update'
+                : 'Save Changes'}
           </button>
         </div>
       </form>

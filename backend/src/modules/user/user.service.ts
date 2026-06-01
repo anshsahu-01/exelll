@@ -30,6 +30,7 @@ export async function updateProfile(
   const profileImage = uploadedImageUrls?.[0] || user.profileImage;
   const bio = input.bio?.trim();
   const mobileNumber = input.mobileNumber?.trim();
+  const location = input.location?.trim();
   const name = input.name?.trim() || user.name;
   
   const isEmailChanged = email && email !== user.email;
@@ -38,6 +39,7 @@ export async function updateProfile(
     name,
     email: email || user.email,
     mobileNumber: mobileNumber ?? user.mobileNumber,
+    location: location ?? user.location,
     bio: bio ?? user.bio,
     profileImage,
     ...(isEmailChanged ? { isVerified: false } : {}),
@@ -140,6 +142,7 @@ export async function deleteAccount(userId: string, input: DeleteAccountInput) {
           profileImage: null,
           bio: null,
           mobileNumber: null,
+          location: null,
           isVerified: false,
           isDeleted: true,
           deletedAt: new Date(),

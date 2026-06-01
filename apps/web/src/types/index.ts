@@ -6,6 +6,7 @@ export interface User {
   email: string;
   profileImage: string | null;
   collegeName: string | null;
+  location?: string | null;
   isVerified: boolean;
   role: Role;
   createdAt: string;
