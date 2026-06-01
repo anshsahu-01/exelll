@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { getValidated } from "../../middleware/validate";
 import * as cartService from "./cart.service";
-import { CheckoutInput, UpdateCartItemInput, productIdParamSchema } from "./cart.validation";
+import { CheckoutInput, UpdateCartItemInput } from "./cart.validation";
 
 export const getCart = asyncHandler(async (req: Request, res: Response) => {
   const cart = await cartService.getCart(req.user!.userId);

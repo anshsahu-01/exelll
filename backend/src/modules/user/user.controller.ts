@@ -20,7 +20,6 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
       role: true,
       createdAt: true,
       mobileNumber: true,
-      location: true,
       bio: true,
       isDeleted: true,
       deletedAt: true,
