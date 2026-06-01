@@ -3,12 +3,13 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
-import { useAuth, useUser } from "@clerk/nextjs"
-import { Heart, ShoppingCart, Bell, Search } from "lucide-react"
+import { useAuth, useClerk, useUser } from "@clerk/nextjs"
+import { Heart, ShoppingCart, Bell, Search, LogOut } from "lucide-react"
 import { getMe } from "@/lib/marketplace"
 
 export function DashboardHeader() {
   const { getToken } = useAuth()
+  const { signOut } = useClerk()
   const { user } = useUser()
   const [backendProfileImage, setBackendProfileImage] = useState<string | null>(null)
 
@@ -47,6 +48,11 @@ export function DashboardHeader() {
     () => backendProfileImage || user?.imageUrl || null,
     [backendProfileImage, user?.imageUrl]
   )
+
+  const handleLogout = async () => {
+    await signOut()
+    window.location.replace('/sign-in')
+  }
 
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20 sticky top-0">
@@ -99,6 +105,15 @@ export function DashboardHeader() {
               </span>
             )}
           </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            aria-label="Logout"
+            title="Logout"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </header>

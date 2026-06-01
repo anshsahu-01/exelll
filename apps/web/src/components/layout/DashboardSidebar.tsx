@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -12,6 +13,7 @@ import {
   X,
   PlusCircle,
   User,
+  LogOut,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -25,7 +27,13 @@ const mainNavigation = [
 
 export function DashboardSidebar() {
   const pathname = usePathname()
+  const { signOut } = useClerk()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const handleLogout = async () => {
+    await signOut()
+    window.location.replace('/sign-in')
+  }
 
   return (
     <>
@@ -107,6 +115,17 @@ export function DashboardSidebar() {
             )
           })}
         </nav>
+
+        <div className="border-t border-gray-100 px-3 py-3">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="h-5 w-5 shrink-0 text-gray-400" />
+            Logout
+          </button>
+        </div>
       </aside>
     </>
   )
