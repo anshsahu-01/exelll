@@ -81,7 +81,7 @@ export function DashboardSidebar() {
         {/* Sell CTA */}
         <div className="px-4 pt-4 pb-2">
           <Link
-            href="/sell-item"
+            href="/sell"
             className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors"
           >
             <PlusCircle className="h-4 w-4" />

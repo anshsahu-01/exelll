@@ -7,7 +7,7 @@ export default function QuickActions() {
   return (
     <div className="flex gap-4 mb-6">
       <Link
-        href="/sell-item"
+        href="/sell"
         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
       >
         <PlusCircle className="w-5 h-5" />

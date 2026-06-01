@@ -63,6 +63,7 @@ model User {
   ordersAsBuyer         Order[]        @relation("OrderBuyer")
   ordersAsSeller        Order[]        @relation("OrderSeller")
   favourites            Favourite[]
+  cartItems             CartItem[]
 
   @@index([email])
   @@index([role])
@@ -111,11 +112,28 @@ model Product {
   conversations Conversation[]
   orders        Order[]
   favourites    Favourite[]
+  cartItems     CartItem[]
 
   @@index([userId])
   @@index([categoryId])
   @@index([status])
   @@index([createdAt])
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
 }
 
 model Conversation {

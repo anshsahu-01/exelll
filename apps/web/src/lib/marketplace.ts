@@ -187,3 +187,62 @@ export async function updateListing(
 
   return res.data
 }
+
+type CreateListingProgress = (progress: number) => void
+
+export async function createListing(
+  input: Omit<CreateProductInput, 'imageUris'> & { imageFiles: File[] },
+  token?: string,
+  onProgress?: CreateListingProgress
+) {
+  const formData = new FormData()
+  formData.append('title', input.title)
+  formData.append('description', input.description)
+  formData.append('price', input.price)
+  formData.append('condition', input.condition)
+  formData.append('categoryId', input.categoryId)
+
+  input.imageFiles.forEach((file) => {
+    formData.append('images', file, file.name)
+  })
+
+  if (!token) {
+    throw new Error('You must be signed in to create a listing.')
+  }
+
+  return await new Promise<Product>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${API_URL}/products`)
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable || !onProgress) return
+      onProgress(Math.round((event.loaded / event.total) * 100))
+    }
+
+    xhr.onload = () => {
+      let data: { success?: boolean; data?: Product; message?: string } = {}
+      try {
+        data = JSON.parse(xhr.responseText)
+      } catch {
+        reject(new Error('Unexpected response from server'))
+        return
+      }
+
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(new Error(data.message ?? 'Something went wrong'))
+        return
+      }
+
+      if (!data.data) {
+        reject(new Error('Listing was not created'))
+        return
+      }
+
+      resolve(data.data)
+    }
+
+    xhr.onerror = () => reject(new Error('Network error while creating listing'))
+    xhr.send(formData)
+  })
+}

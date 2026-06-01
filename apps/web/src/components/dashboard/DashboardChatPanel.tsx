@@ -60,7 +60,7 @@ export default function DashboardChatPanel({
               </div>
             </Link>
             <Link
-              href="/sell-item"
+              href="/sell"
               className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-left w-full"
             >
               <span className="text-lg">📦</span>

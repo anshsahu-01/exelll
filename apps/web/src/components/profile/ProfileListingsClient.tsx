@@ -63,7 +63,7 @@ export function ProfileListingsClient() {
   return (
     <div className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <Link href="/sell-item" className="text-sm font-medium text-gray-500 transition hover:text-gray-950">
+        <Link href="/sell" className="text-sm font-medium text-gray-500 transition hover:text-gray-950">
           Create new
         </Link>
       </div>
@@ -191,7 +191,7 @@ function ListingGroup({
             <p className="mt-3 line-clamp-2 text-sm text-gray-600">{product.description}</p>
             <div className="mt-4 flex gap-2">
               <Link
-                href={`/sell-item?edit=${product.id}`}
+                href="/sell"
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
               >
                 <Edit3 className="h-4 w-4" />
