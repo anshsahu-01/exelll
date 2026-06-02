@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Product } from "@/types";
 import { apiRequest } from "@/services/api";
 import { useAuthStore } from "@/store/authStore";
+import { getToken } from "@/utils/storage";
 
 export type CartItem = {
   productId: string;
@@ -33,6 +34,11 @@ type CartApiItem = {
 };
 
 async function getCartFromBackend() {
+  const token = await getToken();
+  if (!token) {
+    return [];
+  }
+
   const res = await apiRequest<{ success: boolean; data: { items: CartApiItem[] } }>("/cart");
   return res.data.items ?? [];
 }

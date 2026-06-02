@@ -23,6 +23,7 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const { method = "GET", body, token, isFormData = false } = options;
   const authToken = token !== undefined ? token : await getToken();
+  const url = `${API_URL}${path}`;
 
   const headers: Record<string, string> = {};
   if (!isFormData) {
@@ -32,7 +33,7 @@ export async function apiRequest<T>(
     headers.Authorization = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(url, {
     method,
     headers,
     body: isFormData

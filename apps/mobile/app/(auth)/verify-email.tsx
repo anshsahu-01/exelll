@@ -34,11 +34,6 @@ export default function VerifyEmailScreen() {
 
   const inputRef = useRef<TextInput>(null);
 
-  const logSignUpState = (label: string) => {
-    console.log("SIGN UP STATUS:", label, signUp?.status);
-    console.log("CREATED SESSION ID:", signUp?.createdSessionId);
-  };
-
   const syncLocalSession = async () => {
     await clerkUser?.reload();
 
@@ -85,7 +80,6 @@ export default function VerifyEmailScreen() {
       const result = await signUp.attemptEmailAddressVerification({
         code: val,
       });
-      logSignUpState("after signUp.attemptEmailAddressVerification");
 
       if (result.status === "complete" && result.createdSessionId) {
         await setActive({ session: result.createdSessionId });

@@ -59,7 +59,6 @@ function InitialLayout() {
                 useAuthStore.setState({ user, isHydrated: true });
               }
             } catch (err) {
-              console.error("Error fetching user profile:", err);
               if (isMounted) {
                 const { getStoredUser } = await import("@/utils/storage");
                 const storedUser = await getStoredUser<any>();
@@ -78,7 +77,6 @@ function InitialLayout() {
             throw new Error("No token available");
           }
         } catch (error) {
-          console.error("Error syncing session:", error);
           if (isMounted) {
             await signOut();
             disconnectSocket();
@@ -117,12 +115,17 @@ function InitialLayout() {
     if (isInitializing) return;
 
     const syncCartState = async () => {
+      if (!token || !authUserId) {
+        await hydrateCart(authUserId);
+        return;
+      }
+
       await hydrateCart(authUserId);
       await verifyCartItems();
     };
 
     syncCartState();
-  }, [authUserId, hydrateCart, isInitializing, verifyCartItems]);
+  }, [authUserId, hydrateCart, isInitializing, token, verifyCartItems]);
 
   useEffect(() => {
     if (isInitializing || !isRouterReady) return;

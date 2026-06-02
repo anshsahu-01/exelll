@@ -165,10 +165,6 @@ export default function CheckoutScreen() {
             paymentStatus: "verification_pending" as const,
           }
         : undefined;
-      console.log("CHECKOUT_STAGE", {
-        utrNumber: upiPayload?.utrNumber ?? null,
-        paymentScreenshot: upiPayload?.paymentScreenshot ?? null,
-      });
       await orderService.createOrder(
         checkoutData.productId,
         method,
