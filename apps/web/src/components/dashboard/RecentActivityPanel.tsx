@@ -1,12 +1,41 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { ConversationListItem, Order, Product } from '@/types'
 import { Bell, MessageSquare, ShoppingBag, CheckCircle2, Clock3, ArrowRight } from 'lucide-react'
+import { ConversationListItem, Order, Product } from '@/types'
 
 type Activity =
-  | { kind: 'order'; id: string; title: string; subtitle: string; href: string; time: string; icon: typeof ShoppingBag; tone: 'gray' | 'green' | 'amber'; group: 'orders' }
-  | { kind: 'conversation'; id: string; title: string; subtitle: string; href: string; time: string; icon: typeof MessageSquare; tone: 'gray' | 'green' | 'amber'; group: 'chats' }
-  | { kind: 'listing'; id: string; title: string; subtitle: string; href: string; time: string; icon: typeof ShoppingBag; tone: 'gray' | 'green' | 'amber'; group: 'listings' }
+  | {
+      kind: 'order'
+      id: string
+      title: string
+      subtitle: string
+      href: string
+      time: string
+      icon: typeof ShoppingBag
+      tone: 'gray' | 'green' | 'amber'
+      group: 'orders'
+    }
+  | {
+      kind: 'conversation'
+      id: string
+      title: string
+      subtitle: string
+      href: string
+      time: string
+      icon: typeof MessageSquare
+      tone: 'gray' | 'green' | 'amber'
+      group: 'chats'
+    }
+  | {
+      kind: 'listing'
+      id: string
+      title: string
+      subtitle: string
+      href: string
+      time: string
+      icon: typeof ShoppingBag
+      tone: 'gray' | 'green' | 'amber'
+      group: 'listings'
+    }
 
 function timeAgo(value: string | Date) {
   const diff = Date.now() - new Date(value).getTime()
@@ -83,12 +112,26 @@ export default function RecentActivityPanel({
   ]
 
   const sortedActivities = activities.slice(0, 8)
+  const mobileActivities = sortedActivities.slice(0, 3)
 
   return (
     <aside className="flex h-full flex-col overflow-hidden bg-white">
-      <div className="border-b border-gray-200 px-5 py-4">
-        <div className="flex items-center justify-between">
-          <div>
+      <div className="hidden border-b border-gray-200 px-4 py-4 sm:px-5 lg:block">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-gray-900">Recent Activity</h2>
+            <p className="mt-1 text-xs text-gray-500">Real activity from your marketplace account</p>
+          </div>
+          <Link href="/notifications" className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-950">
+            <Bell className="h-3.5 w-3.5" />
+            Notifications
+          </Link>
+        </div>
+      </div>
+
+      <div className="border-b border-gray-200 px-4 py-4 sm:px-5 lg:hidden">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <h2 className="text-base font-semibold text-gray-900">Recent Activity</h2>
             <p className="mt-1 text-xs text-gray-500">Real activity from your marketplace account</p>
           </div>
@@ -105,31 +148,60 @@ export default function RecentActivityPanel({
             <Clock3 className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-sm font-medium text-gray-700">No recent activity</p>
-          <p className="mt-1 text-xs text-gray-400">Your orders, messages, and listings will appear here once you start using the app.</p>
+          <p className="mt-1 text-xs text-gray-400">
+            Your orders, messages, and listings will appear here once you start using the app.
+          </p>
         </div>
       ) : (
-        <ul className="flex-1 divide-y divide-gray-100 overflow-y-auto">
-          {sortedActivities.map((activity) => {
-            const Icon = activity.icon
-            return (
-              <li key={`${activity.kind}-${activity.id}`}>
-                <Link href={activity.href} className="flex items-start gap-3 px-5 py-4 transition hover:bg-gray-50">
-                  <div className={`mt-0.5 flex h-10 w-10 items-center justify-center rounded-full ${activityToneClass(activity.tone)}`}>
+        <>
+          <div className="grid gap-3 border-b border-gray-100 px-3 py-4 sm:px-5 lg:hidden">
+            {mobileActivities.map((activity) => {
+              const Icon = activity.icon
+              return (
+                <Link
+                  key={`${activity.kind}-${activity.id}`}
+                  href={activity.href}
+                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-4 transition hover:bg-gray-100"
+                >
+                  <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${activityToneClass(activity.tone)}`}>
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="truncate text-sm font-semibold text-gray-950">{activity.title}</p>
+                      <p className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-950">{activity.title}</p>
                       <span className="shrink-0 text-[11px] text-gray-400">{activity.time}</span>
                     </div>
                     <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{activity.subtitle}</p>
                   </div>
                   <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-gray-300" />
                 </Link>
-              </li>
-            )
-          })}
-        </ul>
+              )
+            })}
+          </div>
+
+          <ul className="hidden flex-1 divide-y divide-gray-100 overflow-y-auto lg:block">
+            {sortedActivities.map((activity) => {
+              const Icon = activity.icon
+              return (
+                <li key={`${activity.kind}-${activity.id}`}>
+                  <Link href={activity.href} className="flex items-start gap-3 px-4 py-4 transition hover:bg-gray-50 sm:px-5">
+                    <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${activityToneClass(activity.tone)}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="truncate text-sm font-semibold text-gray-950">{activity.title}</p>
+                        <span className="shrink-0 text-[11px] text-gray-400">{activity.time}</span>
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{activity.subtitle}</p>
+                    </div>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-gray-300" />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </>
       )}
     </aside>
   )

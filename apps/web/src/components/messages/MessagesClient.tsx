@@ -139,11 +139,17 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
 
   const activeConversationSummary = activeConversation ?? null
 
+  const showThreadOnly = Boolean(activeId)
+
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden bg-[#fafafa]">
-      <div className="grid h-full grid-cols-1 lg:grid-cols-[30%_70%]">
-      <aside className={`${activeId ? 'hidden lg:flex' : 'flex'} min-h-0 flex-col border-r border-gray-200 bg-white`}>
-        <div className="border-b border-gray-100 p-4">
+    <div className="h-[calc(100dvh-4rem)] overflow-hidden bg-[#fafafa]">
+      <div
+        className={`grid h-full min-h-0 ${
+          showThreadOnly ? 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none' : 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none'
+        }`}
+      >
+      <aside className={`${showThreadOnly ? 'hidden lg:flex' : 'flex'} min-h-0 flex-col border-b border-gray-200 bg-white lg:border-b-0 lg:border-r`}>
+        <div className="sticky top-0 z-10 border-b border-gray-100 bg-white p-4">
           <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3">
             <Search className="h-4 w-4 text-gray-400" />
             <input
@@ -224,7 +230,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
         </div>
       </aside>
 
-      <main className="flex min-h-0 flex-col overflow-hidden bg-white">
+      <main className={`min-h-0 flex-col overflow-hidden bg-white ${showThreadOnly ? 'flex' : 'hidden lg:flex'}`}>
         {!activeConversationSummary ? (
           <div className="flex h-full items-center justify-center px-6 text-center">
             <div>
@@ -239,7 +245,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
           </div>
         ) : (
           <>
-            <div className="shrink-0 border-b border-gray-100 p-4">
+            <div className="sticky top-0 z-10 shrink-0 border-b border-gray-100 bg-white p-4">
               <div className="flex items-center gap-3">
                 <Avatar
                   name={activeConversationSummary.otherUser.name}
@@ -317,8 +323,8 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   placeholder="Write a message"
-                  rows={2}
-                  className="min-h-[56px] flex-1 resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+                  rows={1}
+                  className="min-h-[50px] flex-1 resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
                 />
                 <button
                   onClick={handleSend}

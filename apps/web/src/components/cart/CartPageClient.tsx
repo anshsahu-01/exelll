@@ -112,8 +112,8 @@ export function CartPageClient() {
       <section className="space-y-4">
         {items.map((item) => (
           <article key={item.productId} className="rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-sm">
-            <div className="flex gap-4">
-              <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-2xl bg-gray-100 sm:w-28">
                 {item.product.images?.[0] ? (
                   <Image src={item.product.images[0]} alt={item.product.title} fill className="object-cover" />
                 ) : null}
@@ -121,7 +121,7 @@ export function CartPageClient() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="truncate text-lg font-semibold text-gray-950">{item.product.title}</h2>
+                    <h2 className="break-words text-lg font-semibold text-gray-950">{item.product.title}</h2>
                     <p className="mt-1 text-sm text-gray-500">Seller: {item.product.seller.name}</p>
                     <p className="mt-1 text-sm font-semibold text-gray-900">{formatINR(item.product.price)}</p>
                   </div>
@@ -129,7 +129,7 @@ export function CartPageClient() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-4 flex flex-wrap items-center gap-3">
                   <button onClick={() => handleQty(item.productId, Math.max(1, item.quantity - 1))} className="rounded-full border border-gray-200 p-2 hover:bg-gray-50">
                     <Minus className="h-4 w-4" />
                   </button>
@@ -137,7 +137,7 @@ export function CartPageClient() {
                   <button onClick={() => handleQty(item.productId, item.quantity + 1)} className="rounded-full border border-gray-200 p-2 hover:bg-gray-50">
                     <Plus className="h-4 w-4" />
                   </button>
-                  <div className="ml-auto text-sm text-gray-500">
+                  <div className="ml-0 text-sm text-gray-500 sm:ml-auto">
                     Subtotal: <span className="font-semibold text-gray-950">{formatINR(Number(item.product.price) * item.quantity)}</span>
                   </div>
                 </div>

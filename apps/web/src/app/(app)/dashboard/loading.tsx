@@ -5,20 +5,20 @@ function Skeleton({ className }: { className: string }) {
 export default function DashboardLoading() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-gray-50">
-      <div className="shrink-0 border-b border-gray-200 bg-white px-6 py-4">
+      <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-4 sm:px-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-8 w-48 rounded-2xl" />
         </div>
         <Skeleton className="mt-2 h-4 w-72 rounded-2xl" />
       </div>
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <div className="min-h-0 flex-1 overflow-y-auto border-r border-gray-200 bg-gray-50 p-6">
-          <div className="mb-4 flex items-center justify-between">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+        <div className="min-h-0 flex-1 overflow-y-auto border-b border-gray-200 bg-gray-50 p-4 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <Skeleton className="h-5 w-40 rounded-2xl" />
             <Skeleton className="h-4 w-20 rounded-2xl" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="overflow-hidden rounded-[1.5rem] border border-gray-200 bg-white">
                 <Skeleton className="aspect-[4/3] w-full rounded-none" />
@@ -33,7 +33,7 @@ export default function DashboardLoading() {
           </div>
         </div>
 
-        <aside className="w-80 shrink-0 overflow-y-auto border-l border-gray-100 bg-white xl:w-96">
+        <aside className="w-full shrink-0 overflow-y-auto border-t border-gray-100 bg-white lg:w-80 lg:border-t-0 lg:border-l xl:w-96">
           <div className="border-b border-gray-200 px-5 py-4">
             <Skeleton className="h-5 w-36 rounded-2xl" />
             <Skeleton className="mt-2 h-4 w-56 rounded-2xl" />
