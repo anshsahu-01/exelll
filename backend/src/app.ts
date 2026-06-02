@@ -8,11 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002"
-  ],
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -20,6 +16,7 @@ app.use(
 );
 
 app.use(express.json({ limit: "10mb" }));
+
 app.use(
   clerkMiddleware({
     clockSkewInMs: 60000,
@@ -27,6 +24,7 @@ app.use(
 );
 
 app.use("/api", routes);
+
 app.use(errorHandler);
 
 export default app;
