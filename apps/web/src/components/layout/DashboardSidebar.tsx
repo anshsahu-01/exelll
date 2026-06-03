@@ -68,7 +68,7 @@ export function DashboardSidebar() {
         <div className="flex items-center justify-center border-b border-gray-100 px-5 py-4">
           <Link href="/dashboard" className="flex items-center">
             <Image
-              src="/logo.png"
+              src="/exelllogo.png"
               alt="Just Sell"
               width={180}
               height={60}
