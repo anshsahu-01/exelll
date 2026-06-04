@@ -3,8 +3,8 @@ import { LegalPageShell, Section } from '@/components/legal/LegalPageShell'
 export default function AboutPage() {
   return (
     <LegalPageShell
-      title="About Just Sell"
-      intro="Just Sell is a student-focused trusted marketplace designed to make buying and selling within campus and community circles safer, simpler, and more transparent."
+      title="About Exell"
+      intro="Exell is a student-focused trusted marketplace designed to make buying and selling within campus and community circles safer, simpler, and more transparent."
     >
       <Section heading="What We Do">
         <p>
@@ -15,7 +15,7 @@ export default function AboutPage() {
 
       <Section heading="Why It Exists">
         <p>
-          Just Sell was built to support real student and community trading needs: trusted local
+          Exell was built to support real student and community trading needs: trusted local
           discovery, practical communication, and a smoother path from listing to sale without
           unnecessary complexity.
         </p>

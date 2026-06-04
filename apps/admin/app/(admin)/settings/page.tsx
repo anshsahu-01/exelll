@@ -40,7 +40,7 @@ export default function SettingsPage() {
         <section className="rounded-lg border bg-white p-4" style={{ borderColor: "#EEEEEE" }}>
           <h3 className="text-sm font-semibold" style={{ color: "#111111" }}>App Metadata</h3>
           <div className="mt-3 space-y-2 text-sm">
-            <p style={{ color: "#666666" }}>Panel: Just Sell Admin</p>
+            <p style={{ color: "#666666" }}>Panel: Exell Admin</p>
             <p style={{ color: "#666666" }}>Theme: Clean SaaS</p>
             <p style={{ color: "#666666" }}>Updated: 2026-05-27</p>
           </div>

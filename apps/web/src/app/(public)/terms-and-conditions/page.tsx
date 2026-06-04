@@ -4,11 +4,11 @@ export default function TermsAndConditionsPage() {
   return (
     <LegalPageShell
       title="Terms & Conditions"
-      intro="These Terms govern your use of Just Sell. By accessing the platform, you agree to use it responsibly and in accordance with marketplace rules and applicable law."
+      intro="These Terms govern your use of Exell. By accessing the platform, you agree to use it responsibly and in accordance with marketplace rules and applicable law."
     >
       <Section heading="Marketplace Role">
         <p>
-          Just Sell acts as a marketplace facilitator. We provide the platform, tools, and
+          Exell acts as a marketplace facilitator. We provide the platform, tools, and
           communication channels that connect buyers and sellers, but we do not take ownership of
           user-listed items unless expressly stated.
         </p>
@@ -51,7 +51,7 @@ export default function TermsAndConditionsPage() {
         <p>
           We may assist with dispute coordination, but final resolution may depend on the facts of
           the transaction and the conduct of the parties involved. To the fullest extent permitted
-          by law, Just Sell is not liable for indirect, incidental, or consequential damages arising
+          by law, Exell is not liable for indirect, incidental, or consequential damages arising
           from user-to-user transactions, except where liability cannot be limited by applicable law.
         </p>
       </Section>

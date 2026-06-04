@@ -69,7 +69,7 @@ export function SettingsClient() {
 
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-gray-950">Settings</h1>
-        <p className="mt-2 text-sm text-gray-500">Manage account, privacy, and support for your Just Sell profile.</p>
+        <p className="mt-2 text-sm text-gray-500">Manage account, privacy, and support for your Exell profile.</p>
       </div>
 
       <div className="grid gap-6">
@@ -159,7 +159,7 @@ export function SettingsClient() {
         <Section title="App Preferences" icon={MoonStar}>
           <div className="rounded-2xl border border-gray-200 bg-white p-4">
             <p className="text-sm font-semibold text-gray-950">Theme preference</p>
-            <p className="mt-1 text-sm text-gray-500">Just Sell web is currently locked to the established light theme, matching the existing product language.</p>
+            <p className="mt-1 text-sm text-gray-500">Exell web is currently locked to the established light theme, matching the existing product language.</p>
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white p-4">
             <p className="text-sm font-semibold text-gray-950">Interface preferences</p>
@@ -169,9 +169,9 @@ export function SettingsClient() {
 
         <Section title="Support" icon={HelpCircle}>
           <ActionRow href="/messages" title="Help / FAQ" description="Browse support conversations and common help flows." />
-          <ActionRow href="mailto:support@justsell.local" title="Report issue" description="Send a support request to the team." external />
-          <ActionRow href="mailto:support@justsell.local" title="Contact support" description="Reach the Just Sell support inbox." external />
-          <ActionRow href="/dashboard" title="About Just Sell" description="Return to the marketplace dashboard and explore the product." />
+          <ActionRow href="mailto:support@exell.local" title="Report issue" description="Send a support request to the team." external />
+          <ActionRow href="mailto:support@exell.local" title="Contact support" description="Reach the Exell support inbox." external />
+          <ActionRow href="/dashboard" title="About Exell" description="Return to the marketplace dashboard and explore the product." />
         </Section>
       </div>
 

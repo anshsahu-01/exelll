@@ -69,7 +69,7 @@ export function DashboardSidebar() {
           <Link href="/dashboard" className="flex items-center">
             <Image
               src="/exelllogo.png"
-              alt="Just Sell"
+              alt="Exell"
               width={180}
               height={60}
               priority

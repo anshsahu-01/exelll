@@ -4,7 +4,7 @@ export default function PrivacyPolicyPage() {
   return (
     <LegalPageShell
       title="Privacy Policy"
-      intro="This Privacy Policy explains how Just Sell collects, uses, shares, and protects information when you use our marketplace, messaging, and order verification features."
+      intro="This Privacy Policy explains how Exell collects, uses, shares, and protects information when you use our marketplace, messaging, and order verification features."
     >
       <Section heading="Information We Collect">
         <p>
@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
 
       <Section heading="Data Sharing and Third-Party Services">
         <p>
-          Just Sell uses third-party authentication services, including Clerk, to secure sign-in
+          Exell uses third-party authentication services, including Clerk, to secure sign-in
           and account management. We may also use infrastructure and storage providers that help us
           deliver the service. These providers are only permitted to process information on our
           behalf for legitimate platform purposes.
