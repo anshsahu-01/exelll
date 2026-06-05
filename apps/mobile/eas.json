@@ -8,21 +8,21 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://just-sell.onrender.com/api",
+        "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://just-sell.onrender.com/api",
+        "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://just-sell.onrender.com/api",
+        "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
       }
     }
