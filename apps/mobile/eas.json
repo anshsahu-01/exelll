@@ -9,21 +9,21 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuZXhlbGxsLm1lJA"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuZXhlbGxsLm1lJA"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_API_URL": "https://exell-155p.onrender.com/api",
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_YW1wbGUtY2FyZGluYWwtODMuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuZXhlbGxsLm1lJA"
       }
     }
   },
