@@ -88,7 +88,7 @@ export function OrdersClient({
   const handleMessage = async (productId: string) => {
     const token = await getToken()
     const conversation = await createConversation(productId, token ?? undefined)
-    router.push(`/messages/₹{conversation.id}`)
+    router.push(`/messages/${conversation.id}`)
   }
 
   const handleStatusUpdate = async (current: Order, nextStatus: 'confirmed' | 'cancelled' | 'shipped' | 'delivered') => {
@@ -192,7 +192,7 @@ export function OrdersClient({
                 <p className="text-sm text-gray-500">Order details</p>
                 <h1 className="mt-1 text-2xl font-semibold text-gray-950">{order.product.title}</h1>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <span className={`rounded-full border px-3 py-1 text-xs font-medium ₹{statusStyles[order.orderStatus]}`}>
+                  <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[order.orderStatus]}`}>
                     {statusLabelMap[order.orderStatus]}
                   </span>
                   <span className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600">
@@ -252,14 +252,14 @@ export function OrdersClient({
                 {orderTimeline.map((status, index) => (
                   <div key={status} className="flex items-start gap-4">
                     <div
-                      className={`mt-1 h-4 w-4 rounded-full border-2 ₹{
+                      className={`mt-1 h-4 w-4 rounded-full border-2 ${
                         index <= timelineIndex
                           ? 'border-black bg-black'
                           : 'border-gray-300 bg-white'
                       }`}
                     />
                     <div className="pb-4">
-                      <p className={`text-sm font-medium ₹{index <= timelineIndex ? 'text-gray-950' : 'text-gray-400'}`}>
+                      <p className={`text-sm font-medium ${index <= timelineIndex ? 'text-gray-950' : 'text-gray-400'}`}>
                         {statusLabelMap[status]}
                       </p>
                       <p className="text-sm text-gray-500">
@@ -311,7 +311,7 @@ export function OrdersClient({
                 </div>
               </div>
               <Link
-                href={`/listings/₹{order.product.id}`}
+                href={`/listings/${order.product.id}`}
                 className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-black"
               >
                 View listing
@@ -396,7 +396,7 @@ export function OrdersClient({
 
                   <div className="flex flex-wrap gap-3 lg:justify-end">
                     <Link
-                      href={`/profile/orders/₹{current.id}`}
+                      href={`/profile/orders/${current.id}`}
                       className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
                     >
                       View order details
