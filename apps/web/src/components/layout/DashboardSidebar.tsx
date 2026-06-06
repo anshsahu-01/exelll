@@ -82,7 +82,8 @@ export function DashboardSidebar() {
         <div className="px-4 pt-4 pb-2">
           <Link
             href="/sell"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
           >
             <PlusCircle className="h-4 w-4" />
             Sell an Item
