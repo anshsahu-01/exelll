@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'rea
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { CloudUpload, Loader2, PlusCircle, X } from 'lucide-react'
-import { createListing } from '@/lib/marketplace'
+import { createListing, getProductById, updateListing } from '@/lib/marketplace'
 import type { Category } from '@/types'
 
 const CONDITIONS = ['New', 'Like New', 'Good', 'Fair'] as const
@@ -35,7 +35,8 @@ const initialState: FormState = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
-export function SellItemForm() {
+export function SellItemForm({ productId }: { productId?: string }) {
+  const isEditMode = !!productId
   const router = useRouter()
   const { getToken } = useAuth()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -46,8 +47,38 @@ export function SellItemForm() {
   const [dragActive, setDragActive] = useState(false)
   const [form, setForm] = useState<FormState>(initialState)
   const [images, setImages] = useState<File[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([])
   const [errors, setErrors] = useState<Errors>({})
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!productId) return
+    let mounted = true
+    void (async () => {
+      try {
+        const token = await getToken()
+        const product = await getProductById(productId, token ?? undefined)
+        if (mounted && product) {
+          setForm({
+            title: product.title,
+            description: product.description,
+            price: product.price.toString(),
+            categoryId: product.category.id,
+            condition: product.condition,
+            location: product.location ?? '',
+            contactPreference: product.contactPreference ?? '',
+            additionalNotes: product.additionalNotes ?? '',
+          })
+          setExistingImages(product.images || [])
+        }
+      } catch (e) {
+        console.error('Failed to load product', e)
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [productId, getToken])
 
   useEffect(() => {
     let mounted = true
@@ -102,7 +133,7 @@ export function SellItemForm() {
     if (!form.categoryId) nextErrors.categoryId = 'Choose a category.'
     if (!form.condition) nextErrors.condition = 'Choose a condition.'
     if (!form.location.trim()) nextErrors.location = 'Location is required.'
-    if (images.length === 0) nextErrors.images = 'Add at least one image.'
+    if (images.length === 0 && existingImages.length === 0) nextErrors.images = 'Add at least one image.'
 
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
@@ -118,20 +149,20 @@ export function SellItemForm() {
 
     try {
       const token = await getToken()
-      const product = await createListing(
-        {
-          title: form.title.trim(),
-          description: form.description.trim(),
-          price: form.price.trim(),
-          condition: form.condition,
-          categoryId: form.categoryId,
-          imageFiles: images,
-        },
-        token ?? undefined,
-        setProgress
-      )
+      const payload = {
+        title: form.title.trim(),
+        description: form.description.trim(),
+        price: form.price.trim(),
+        condition: form.condition,
+        categoryId: form.categoryId,
+        imageFiles: images,
+      }
+      
+      const product = isEditMode
+        ? await updateListing(productId, { ...payload, existingImages }, token ?? undefined, setProgress)
+        : await createListing(payload, token ?? undefined, setProgress)
 
-      setSubmitMessage('Listing published successfully.')
+      setSubmitMessage(isEditMode ? 'Listing updated successfully.' : 'Listing published successfully.')
       router.replace(`/listings/${product.id}`)
       router.refresh()
     } catch (error) {
@@ -146,8 +177,8 @@ export function SellItemForm() {
       <section className="rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-950">Sell an item</h2>
-            <p className="mt-1 text-sm text-gray-500">Create a shared listing that appears everywhere instantly.</p>
+            <h2 className="text-2xl font-semibold text-gray-950">{isEditMode ? 'Edit listing' : 'Sell an item'}</h2>
+            <p className="mt-1 text-sm text-gray-500">{isEditMode ? 'Update your listing details.' : 'Create a shared listing that appears everywhere instantly.'}</p>
           </div>
 
         </div>
@@ -181,6 +212,18 @@ export function SellItemForm() {
           </button>
           {errors.images ? <p className="mt-3 text-sm text-red-600">{errors.images}</p> : null}
           <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3">
+            {existingImages.map((url, index) => (
+              <div key={url} className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
+                <img src={url} alt={`Existing ${index}`} className="h-36 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setExistingImages((current) => current.filter((_, i) => i !== index))}
+                  className="absolute right-2 top-2 rounded-full bg-white/95 p-1.5 text-gray-700 shadow-sm opacity-100 transition group-hover:bg-black group-hover:text-white"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
             {previews.map((item, index) => (
               <div key={`${item.file.name}-${index}`} className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
                 <img src={item.url} alt={item.file.name} className="h-36 w-full object-cover" />
@@ -254,7 +297,7 @@ export function SellItemForm() {
 
         <button type="submit" disabled={submitting} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400">
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4" />}
-          Publish listing
+          {isEditMode ? 'Save changes' : 'Publish listing'}
         </button>
 
         <p className="text-xs leading-5 text-gray-500">

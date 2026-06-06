@@ -213,7 +213,7 @@ function ListingGroup({
             <p className="mt-3 line-clamp-2 text-sm text-gray-600">{product.description}</p>
             <div className="mt-4 flex gap-2">
               <Link
-                href="/sell"
+                href={`/sell/${product.id}`}
                 className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
               >
                 <Edit3 className="h-4 w-4" />
