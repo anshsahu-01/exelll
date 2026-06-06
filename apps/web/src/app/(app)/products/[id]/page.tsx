@@ -17,7 +17,6 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
       <PageBackButton href="/listings" label="Listings" />
       <h1 className="mt-4 text-2xl font-bold">Product Detail</h1>
       <p className="mt-2 text-gray-500">Product ID: {id}</p>
-      <p className="mt-4 text-gray-400">Full product detail page will be implemented in Module 3.</p>
     </div>
   )
 }

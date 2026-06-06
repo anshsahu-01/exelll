@@ -104,7 +104,10 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
             </div>
           </div>
 
-          <SellerInfo seller={listing.seller} />
+          <SellerInfo
+            seller={listing.seller}
+            productId={listing.id}
+          />
 
           <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
