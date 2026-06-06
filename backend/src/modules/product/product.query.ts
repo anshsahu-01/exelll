@@ -9,11 +9,35 @@ export function buildProductWhere(
   };
 
   if (query.search) {
-    where.title = {
-      contains: query.search,
-      mode: "insensitive",
-    };
-  }
+  where.OR = [
+    {
+      title: {
+        contains: query.search,
+        mode: "insensitive",
+      },
+    },
+    {
+      description: {
+        contains: query.search,
+        mode: "insensitive",
+      },
+    },
+    {
+      category: {
+        name: {
+          contains: query.search,
+          mode: "insensitive",
+        },
+      },
+    },
+    {
+      condition: {
+        contains: query.search,
+        mode: "insensitive",
+      },
+    },
+  ];
+}
 
   if (query.categoryId) {
     where.categoryId = query.categoryId;
