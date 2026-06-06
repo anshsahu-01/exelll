@@ -19,7 +19,7 @@ export async function updateProfile(
   }
 
   const email = input.email?.trim().toLowerCase();
-  
+
   if (email && email !== user.email) {
     const existingEmail = await prisma.user.findUnique({ where: { email } });
     if (existingEmail) {
@@ -30,15 +30,17 @@ export async function updateProfile(
   const profileImage = uploadedImageUrls?.[0] || user.profileImage;
   const bio = input.bio?.trim();
   const mobileNumber = input.mobileNumber?.trim();
+  const collegeName = input.collegeName?.trim();
   const location = input.location?.trim();
   const name = input.name?.trim() || user.name;
-  
+
   const isEmailChanged = email && email !== user.email;
 
   const updateData = {
     name,
     email: email || user.email,
     mobileNumber: mobileNumber ?? user.mobileNumber,
+    collegeName: collegeName ?? user.collegeName,
     location: location ?? user.location,
     bio: bio ?? user.bio,
     profileImage,
@@ -155,6 +157,6 @@ export async function deleteAccount(userId: string, input: DeleteAccountInput) {
   }
 
   console.log(`[AUDIT] User account securely anonymized and deleted: ${userId}`);
-  
+
   return { success: true, message: "Account securely deleted" };
 }

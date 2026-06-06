@@ -5,8 +5,20 @@ export const updateProfileSchema = z.object({
   email: z.string().email("Invalid email address").optional(),
   mobileNumber: z
     .string()
-    .regex(/^(\+91)?[6-9]\d{9}$/, "Invalid mobile number format")
+    .trim()
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (value) => !value || /^(\+91)?[6-9]\d{9}$/.test(value),
+      "Invalid mobile number format"
+    ),
+
+  collegeName: z
+    .string()
+    .trim()
+    .max(100, "College name cannot exceed 100 characters")
     .optional(),
+
   location: z.string().trim().max(200, "Location cannot exceed 200 characters").optional(),
   bio: z.string().max(200, "Bio cannot exceed 200 characters").optional(),
 });
