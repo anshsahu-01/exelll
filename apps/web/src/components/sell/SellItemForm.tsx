@@ -65,9 +65,9 @@ export function SellItemForm({ productId }: { productId?: string }) {
             price: product.price.toString(),
             categoryId: product.category.id,
             condition: product.condition,
-            location: product.location ?? '',
-            contactPreference: product.contactPreference ?? '',
-            additionalNotes: product.additionalNotes ?? '',
+            location: '',
+            contactPreference: '',
+            additionalNotes: '',
           })
           setExistingImages(product.images || [])
         }
