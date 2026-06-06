@@ -35,13 +35,15 @@ export default async function DashboardPage() {
           </Suspense>
         </div>
 
-        <div className="w-full shrink-0 overflow-y-auto border-t border-gray-100 bg-white lg:w-80 lg:border-t-0 lg:border-l xl:w-96">
-          <RecentActivityPanel
-            conversations={conversations}
-            products={products}
-            orders={orders}
-            sales={sales}
-          />
+        <div className="hidden lg:block lg:w-80 xl:w-96">
+          <div className="h-full overflow-y-auto border-l border-gray-100 bg-white">
+            <RecentActivityPanel
+              conversations={conversations}
+              products={products}
+              orders={orders}
+              sales={sales}
+            />
+          </div>
         </div>
       </div>
     </div>
