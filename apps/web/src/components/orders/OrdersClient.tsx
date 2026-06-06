@@ -205,7 +205,7 @@ export function OrdersClient({
               <button
                 type="button"
                 onClick={() => handleMessage(order.productId)}
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
               >
                 <MessageSquare className="h-4 w-4" />
                 Message
@@ -234,7 +234,7 @@ export function OrdersClient({
                   type="button"
                   onClick={() => void handleStatusUpdate(order, 'cancelled')}
                   disabled={savingStatusId === order.id}
-                  className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:bg-red-100"
+                  className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:bg-red-100"
                 >
                   {savingStatusId === order.id ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   Cancel order
@@ -404,7 +404,7 @@ export function OrdersClient({
                     <button
                       type="button"
                       onClick={() => void handleMessage(current.productId)}
-                      className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+                      className="cursor-pointer inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
                     >
                       <MessageSquare className="h-4 w-4" />
                       Message {isBuyerView ? 'seller' : 'buyer'}
