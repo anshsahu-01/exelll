@@ -109,13 +109,13 @@ export function FavouritesClient() {
                     type="button"
                     onClick={() => void handleRemove(item.productId)}
                     disabled={removingId === item.productId}
-                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                    className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100"
                   >
                     {removingId === item.productId ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                     Remove
                   </button>
                   <Link
-                    href={`/products/₹{item.productId}`}
+                    href={`/listings/${item.productId}`}
                     className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
                   >
                     Open listing
