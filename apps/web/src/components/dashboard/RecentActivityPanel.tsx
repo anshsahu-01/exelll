@@ -65,7 +65,7 @@ export default function RecentActivityPanel({
   sales: Order[]
 }) {
   const activities: Activity[] = [
-    ...products.slice(0, 3).map((product) => ({
+    ...products.slice(0, 6).map((product) => ({
       kind: 'listing' as const,
       id: product.id,
       title: `Recently listed "${product.title}"`,
