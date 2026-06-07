@@ -1,9 +1,10 @@
 import Link from 'next/link'
 
 const links = [
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
-  { label: 'Refund Policy', href: '/refund-policy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Safety Guidelines', href: '/safety' },
+  { label: 'Prohibited Items', href: '/prohibited' },
   { label: 'Contact Us', href: '/contact-us' },
   { label: 'About Exell', href: '/about' },
   { label: 'Help Center', href: '/help' },

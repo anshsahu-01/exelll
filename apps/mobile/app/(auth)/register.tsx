@@ -20,6 +20,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [collegeName, setCollegeName] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +29,11 @@ export default function RegisterScreen() {
 
     if (!name.trim() || !email.trim() || password.length < 6) {
       setError("Fill all fields. Password must be 6+ characters.");
+      return;
+    }
+
+    if (!termsAccepted) {
+      setError("You must accept the Terms of Service and Privacy Policy.");
       return;
     }
 
@@ -46,6 +52,9 @@ export default function RegisterScreen() {
         lastName,
         unsafeMetadata: {
           collegeName: collegeName.trim() || undefined,
+          termsAccepted: true,
+          termsAcceptedAt: new Date().toISOString(),
+          policyVersion: "1.0",
         },
       });
 
@@ -105,6 +114,18 @@ export default function RegisterScreen() {
               secureTextEntry
               placeholder="Min 8 characters"
             />
+
+            <View className="mb-4 mt-2 flex-row items-center">
+              <View 
+                className={`mr-3 h-5 w-5 items-center justify-center rounded border ${termsAccepted ? 'bg-primary border-primary' : 'border-line'}`}
+                onTouchEnd={() => setTermsAccepted(!termsAccepted)}
+              >
+                {termsAccepted && <Text className="text-white text-xs font-bold">✓</Text>}
+              </View>
+              <Text className="text-[13px] text-muted flex-1">
+                I agree to the <Text className="text-primary font-medium" onPress={() => router.push('/(public)/terms' as any)}>Terms of Service</Text> and <Text className="text-primary font-medium" onPress={() => router.push('/(public)/privacy' as any)}>Privacy Policy</Text>
+              </Text>
+            </View>
 
             {error ? <Text className="mb-3 text-[13px] text-danger">{error}</Text> : null}
             <Button title="Sign up" onPress={handleRegister} loading={loading} className="rounded-2xl" />

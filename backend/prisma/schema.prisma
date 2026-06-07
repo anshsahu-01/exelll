@@ -56,6 +56,10 @@ model User {
   isDeleted    Boolean   @default(false)
   deletedAt    DateTime?
 
+  termsAccepted   Boolean   @default(false)
+  termsAcceptedAt DateTime?
+  policyVersion   String?
+
   products              Product[]
   conversationsAsBuyer  Conversation[] @relation("ConversationBuyer")
   conversationsAsSeller Conversation[] @relation("ConversationSeller")

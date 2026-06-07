@@ -328,12 +328,6 @@ export function CheckoutPageClient() {
               label="Cash on Delivery"
               onClick={() => setPaymentMethod('COD')}
             />
-            <PaymentCard
-              icon={<CreditCard className="h-5 w-5" />}
-              active={paymentMethod === 'UPI'}
-              label="Online Payment"
-              onClick={() => setPaymentMethod('UPI')}
-            />
           </div>
 
           {paymentMethod === 'UPI' ? (

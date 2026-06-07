@@ -173,6 +173,13 @@ export function SettingsClient() {
           <ActionRow href="mailto:support@exell.local" title="Contact support" description="Reach the Exell support inbox." external />
           <ActionRow href="/dashboard" title="About Exell" description="Return to the marketplace dashboard and explore the product." />
         </Section>
+
+        <Section title="Legal" icon={Shield}>
+          <ActionRow href="/terms" title="Terms of Service" description="Our full terms governing use of the Exell marketplace." />
+          <ActionRow href="/privacy" title="Privacy Policy" description="How we collect, use, and protect your data." />
+          <ActionRow href="/safety" title="Safety Guidelines" description="Tips for safe meetups and transactions." />
+          <ActionRow href="/prohibited" title="Prohibited Items" description="Items that are banned from being listed on Exell." />
+        </Section>
       </div>
 
       {deleteOpen ? (

@@ -10,10 +10,10 @@ export default function SafetyScreen() {
         <View className="mb-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
           <Text className="mb-2 text-lg font-bold text-ink">Core Disclaimers</Text>
           <Text className="text-sm font-medium text-ink">• Exell only connects buyers and sellers.</Text>
-          <Text className="text-sm font-medium text-ink">• Exell does not facilitate, process, hold, guarantee, or mediate payments.</Text>
-          <Text className="text-sm font-medium text-ink">• Exell is not responsible for meetings, transactions, disputes, fraud, losses, theft, injuries, or damages between users.</Text>
-          <Text className="text-sm font-medium text-ink">• Users interact and transact entirely at their own risk.</Text>
+          <Text className="text-sm font-medium text-ink">• Exell is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</Text>
+          <Text className="text-sm font-medium text-ink">• Users interact at their own risk.</Text>
           <Text className="text-sm font-medium text-ink">• Exell does not guarantee the identity of buyers or sellers.</Text>
+          <Text className="text-sm font-medium text-ink">• Exell can remove listings and ban accounts.</Text>
         </View>
 
         <Text className="mb-2 mt-4 text-lg font-bold text-ink">Meeting Up</Text>

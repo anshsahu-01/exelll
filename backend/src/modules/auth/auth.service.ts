@@ -51,6 +51,9 @@ export async function register(input: RegisterInput) {
       password: hashedPassword,
       profileImage: input.profileImage,
       collegeName: input.collegeName,
+      termsAccepted: true as boolean,
+      termsAcceptedAt: new Date(),
+      policyVersion: "1.0",
     },
     select: publicUserSelect,
   });

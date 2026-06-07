@@ -13,10 +13,10 @@ export default function TermsPage() {
           <h2 className="mb-4 text-xl font-bold text-gray-900">2. Important Disclaimers</h2>
           <ul className="list-inside list-disc space-y-2 font-medium text-gray-800">
             <li>Exell only connects buyers and sellers.</li>
-            <li>Exell does not facilitate, process, hold, guarantee, or mediate payments.</li>
-            <li>Exell is not responsible for meetings, transactions, disputes, fraud, losses, theft, injuries, or damages between users.</li>
-            <li>Users interact and transact entirely at their own risk.</li>
+            <li>Exell is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</li>
+            <li>Users interact at their own risk.</li>
             <li>Exell does not guarantee the identity of buyers or sellers.</li>
+            <li>Exell can remove listings and ban accounts.</li>
           </ul>
         </div>
 

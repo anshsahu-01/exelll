@@ -9,6 +9,7 @@ export const registerSchema = z.object({
     .max(100),
   profileImage: z.string().trim().optional(),
   collegeName: z.string().trim().max(200).optional(),
+  termsAccepted: z.literal(true, "You must accept the Terms of Service and Privacy Policy"),
 });
 
 export const loginSchema = z.object({
