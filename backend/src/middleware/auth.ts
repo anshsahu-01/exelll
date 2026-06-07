@@ -63,6 +63,10 @@ export async function authenticate(
         const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "Clerk User";
         const profileImage = clerkUser.imageUrl || null;
         const collegeName = (clerkUser.unsafeMetadata?.collegeName as string) || null;
+        const termsAccepted = clerkUser.unsafeMetadata?.termsAccepted !== undefined ? (clerkUser.unsafeMetadata.termsAccepted as boolean) : true;
+        const termsAcceptedAtStr = clerkUser.unsafeMetadata?.termsAcceptedAt as string | undefined;
+        const termsAcceptedAt = termsAcceptedAtStr ? new Date(termsAcceptedAtStr) : new Date(clerkUser.createdAt);
+        const policyVersion = (clerkUser.unsafeMetadata?.policyVersion as string) || "1.0";
 
         if (email) {
           // Check if user exists by email (legacy user)
@@ -78,7 +82,15 @@ export async function authenticate(
             // Link clerkId to existing legacy user safely without changing password
             user = await prisma.user.update({
               where: { id: user.id },
-              data: { clerkId, profileImage, isVerified: true, collegeName: user.collegeName || collegeName },
+              data: { 
+                clerkId, 
+                profileImage, 
+                isVerified: true, 
+                collegeName: user.collegeName || collegeName,
+                termsAccepted: user.termsAccepted || termsAccepted,
+                termsAcceptedAt: user.termsAcceptedAt || termsAcceptedAt,
+                policyVersion: user.policyVersion || policyVersion
+              },
             });
           }
         }
@@ -92,6 +104,9 @@ export async function authenticate(
               name,
               profileImage,
               collegeName,
+              termsAccepted,
+              termsAcceptedAt,
+              policyVersion,
               isVerified: true,
               password: null,
             },
@@ -149,6 +164,10 @@ export async function authenticateOptional(
         const name = `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "Clerk User";
         const profileImage = clerkUser.imageUrl || null;
         const collegeName = (clerkUser.unsafeMetadata?.collegeName as string) || null;
+        const termsAccepted = clerkUser.unsafeMetadata?.termsAccepted !== undefined ? (clerkUser.unsafeMetadata.termsAccepted as boolean) : true;
+        const termsAcceptedAtStr = clerkUser.unsafeMetadata?.termsAcceptedAt as string | undefined;
+        const termsAcceptedAt = termsAcceptedAtStr ? new Date(termsAcceptedAtStr) : new Date(clerkUser.createdAt);
+        const policyVersion = (clerkUser.unsafeMetadata?.policyVersion as string) || "1.0";
 
         if (email) {
           user = await prisma.user.findUnique({ where: { email } });
@@ -159,7 +178,15 @@ export async function authenticateOptional(
             }
             user = await prisma.user.update({
               where: { id: user.id },
-              data: { clerkId, profileImage, isVerified: true, collegeName: user.collegeName || collegeName },
+              data: { 
+                clerkId, 
+                profileImage, 
+                isVerified: true, 
+                collegeName: user.collegeName || collegeName,
+                termsAccepted: user.termsAccepted || termsAccepted,
+                termsAcceptedAt: user.termsAcceptedAt || termsAcceptedAt,
+                policyVersion: user.policyVersion || policyVersion
+              },
             });
           }
         }
@@ -172,6 +199,9 @@ export async function authenticateOptional(
               name,
               profileImage,
               collegeName,
+              termsAccepted,
+              termsAcceptedAt,
+              policyVersion,
               isVerified: true,
               password: null,
             },
