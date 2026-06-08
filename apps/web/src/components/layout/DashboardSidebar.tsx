@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useTheme } from 'next-themes'
 import { usePathname } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
 import {
@@ -34,6 +35,8 @@ export function DashboardSidebar() {
     await signOut()
     window.location.replace('/sign-in')
   }
+
+  const {resolvedTheme} = useTheme()
 
   return (
     <>
@@ -68,7 +71,11 @@ export function DashboardSidebar() {
         <div className="flex items-center justify-center border-b border-border-default px-5 py-4">
           <Link href="/dashboard" className="flex items-center">
             <Image
-              src="/logo.png"
+              src={
+              resolvedTheme === 'dark'
+                  ? '/logo_dark.png'
+                  : '/logo_light.png'
+              }
               alt="Exell"
               width={152}
               height={57}
