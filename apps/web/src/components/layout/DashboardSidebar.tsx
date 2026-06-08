@@ -16,7 +16,7 @@ import {
   User,
   LogOut,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const mainNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -31,12 +31,18 @@ export function DashboardSidebar() {
   const { signOut } = useClerk()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  const { resolvedTheme } = useTheme()
+
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const handleLogout = async () => {
     await signOut()
     window.location.replace('/sign-in')
   }
-
-  const {resolvedTheme} = useTheme()
 
   return (
     <>
@@ -70,18 +76,20 @@ export function DashboardSidebar() {
       >
         <div className="flex items-center justify-center border-b border-border-default px-5 py-4">
           <Link href="/dashboard" className="flex items-center">
-            <Image
-              src={
-              resolvedTheme === 'dark'
-                  ? '/logo_dark.png'
-                  : '/logo_light.png'
-              }
-              alt="Exell"
-              width={152}
-              height={57}
-              priority
-              className="object-contain"
-            />
+            {mounted && (
+              <Image
+                src={
+                  resolvedTheme === 'dark'
+                    ? '/logo_dark.png'
+                    : '/logo_light.png'
+                }
+                alt="Exell"
+                width={152}
+                height={57}
+                priority
+                className="object-contain"
+              />
+            )}
           </Link>
         </div>
 
@@ -102,7 +110,9 @@ export function DashboardSidebar() {
           {mainNavigation.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(item.href + '/')
+
             const Icon = item.icon
+
             return (
               <Link
                 key={item.name}
@@ -110,13 +120,17 @@ export function DashboardSidebar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`
                   flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors
-                  ${isActive
-                    ? 'bg-surface-hover text-primary'
-                    : 'text-secondary hover:bg-surface-hover hover:text-primary'}
+                  ${
+                    isActive
+                      ? 'bg-surface-hover text-primary'
+                      : 'text-secondary hover:bg-surface-hover hover:text-primary'
+                  }
                 `}
               >
                 <Icon
-                  className={`h-5 w-5 shrink-0 ${isActive ? 'text-primary' : 'text-secondary'}`}
+                  className={`h-5 w-5 shrink-0 ${
+                    isActive ? 'text-primary' : 'text-secondary'
+                  }`}
                 />
                 {item.name}
               </Link>
