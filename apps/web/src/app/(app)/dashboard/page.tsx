@@ -16,15 +16,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-gray-200 bg-white px-4 py-4 sm:px-6 lg:px-6">
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-gray-500">Welcome back - here&apos;s what&apos;s happening</p>
+      <div className="shrink-0 border-b border-border-default bg-surface px-4 py-4 sm:px-6 lg:px-6">
+        <h1 className="text-xl font-semibold text-primary sm:text-2xl">Dashboard</h1>
+        <p className="mt-0.5 text-sm text-secondary">Welcome back - here&apos;s what&apos;s happening</p>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-        <div className="min-h-0 flex-1 overflow-y-auto border-b border-gray-200 bg-gray-50 p-4 sm:p-6 lg:border-b-0 lg:border-r">
+        <div className="min-h-0 flex-1 overflow-y-auto border-b border-border-default bg-surface-hover p-4 sm:p-6 lg:border-b-0 lg:border-r">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-gray-700">Recent Listings</h2>
+            <h2 className="text-base font-semibold text-secondary">Recent Listings</h2>
             <a href="/listings" className="text-xs font-medium text-blue-600 hover:underline">
               Browse all →
             </a>
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="hidden lg:block lg:w-80 xl:w-96">
-          <div className="h-full overflow-y-auto border-l border-gray-100 bg-white">
+          <div className="h-full overflow-y-auto border-l border-border-default bg-surface">
             <RecentActivityPanel
               conversations={conversations}
               products={products}

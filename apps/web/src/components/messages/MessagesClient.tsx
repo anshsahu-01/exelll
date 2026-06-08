@@ -33,7 +33,7 @@ function Avatar({ name, image }: { name: string; image: string | null }) {
   return image ? (
     <Image src={image} alt={name} width={44} height={44} className="h-11 w-11 rounded-full object-cover" />
   ) : (
-    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-hover text-sm font-semibold text-secondary">
       {name.charAt(0).toUpperCase()}
     </div>
   )
@@ -142,21 +142,21 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
   const showThreadOnly = Boolean(activeId)
 
   return (
-    <div className="h-[calc(100dvh-4rem)] overflow-hidden bg-[#fafafa]">
+    <div className="h-[calc(100dvh-4rem)] overflow-hidden bg-background">
       <div
         className={`grid h-full min-h-0 ${
           showThreadOnly ? 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none' : 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none'
         }`}
       >
-      <aside className={`${showThreadOnly ? 'hidden lg:flex' : 'flex'} min-h-0 flex-col border-b border-gray-200 bg-white lg:border-b-0 lg:border-r`}>
-        <div className="sticky top-0 z-10 border-b border-gray-100 bg-white p-4">
-          <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3">
-            <Search className="h-4 w-4 text-gray-400" />
+      <aside className={`${showThreadOnly ? 'hidden lg:flex' : 'flex'} min-h-0 flex-col border-b border-border-default bg-surface lg:border-b-0 lg:border-r`}>
+        <div className="sticky top-0 z-10 border-b border-border-default bg-surface p-4">
+          <div className="flex items-center gap-3 rounded-2xl border border-border-default bg-surface-hover px-3">
+            <Search className="h-4 w-4 text-secondary" />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search conversations"
-              className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+              className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-secondary"
             />
           </div>
         </div>
@@ -165,20 +165,20 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
             <div className="space-y-4 p-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex items-start gap-3">
-                  <div className="h-11 w-11 animate-pulse rounded-full bg-gray-200" />
+                  <div className="h-11 w-11 animate-pulse rounded-full bg-border-default" />
                   <div className="min-w-0 flex-1 space-y-2">
-                    <div className="h-4 w-2/3 animate-pulse rounded-2xl bg-gray-200" />
-                    <div className="h-3 w-full animate-pulse rounded-2xl bg-gray-200" />
-                    <div className="h-3 w-3/4 animate-pulse rounded-2xl bg-gray-200" />
+                    <div className="h-4 w-2/3 animate-pulse rounded-2xl bg-border-default" />
+                    <div className="h-3 w-full animate-pulse rounded-2xl bg-border-default" />
+                    <div className="h-3 w-3/4 animate-pulse rounded-2xl bg-border-default" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredConversations.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-              <MessageSquare className="mb-3 h-10 w-10 text-gray-300" />
-              <p className="text-sm font-medium text-gray-700">No conversations yet</p>
-              <p className="mt-1 text-sm text-gray-500">Start one from a listing page.</p>
+              <MessageSquare className="mb-3 h-10 w-10 text-border-default" />
+              <p className="text-sm font-medium text-secondary">No conversations yet</p>
+              <p className="mt-1 text-sm text-secondary">Start one from a listing page.</p>
             </div>
           ) : (
             filteredConversations.map((conversation) => {
@@ -188,14 +188,14 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   key={conversation.id}
                   type="button"
                   onClick={() => void openConversation(conversation.id)}
-                  className={`flex w-full items-start gap-3 border-b border-gray-100 px-4 py-4 text-left transition hover:bg-gray-50 ${
-                    active ? 'bg-gray-50' : ''
+                  className={`flex w-full items-start gap-3 border-b border-border-default px-4 py-4 text-left transition hover:bg-surface-hover ${
+                    active ? 'bg-surface-hover' : ''
                   }`}
                 >
                   <div className="relative shrink-0">
                     <Avatar name={conversation.otherUser.name} image={conversation.otherUser.profileImage} />
                     {conversation.productImage ? (
-                      <span className="absolute -right-1 -bottom-1 overflow-hidden rounded-lg border border-white shadow-sm">
+                      <span className="absolute -right-1 -bottom-1 overflow-hidden rounded-lg border border-surface shadow-sm">
                         <Image
                           src={conversation.productImage}
                           alt={conversation.productTitle}
@@ -208,15 +208,15 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="truncate text-sm font-semibold text-gray-900">
+                      <p className="truncate text-sm font-semibold text-primary">
                         {conversation.otherUser.name}
                       </p>
-                      <span className="shrink-0 text-xs text-gray-400">
+                      <span className="shrink-0 text-xs text-secondary">
                         {formatAgo(conversation.lastMessageAt)}
                       </span>
                     </div>
-                    <p className="truncate text-xs text-gray-500">{conversation.productTitle}</p>
-                    <p className="mt-1 truncate text-sm text-gray-600">
+                    <p className="truncate text-xs text-secondary">{conversation.productTitle}</p>
+                    <p className="mt-1 truncate text-sm text-secondary">
                       {conversation.lastMessage ? conversation.lastMessage.content : 'No messages yet'}
                     </p>
                   </div>
@@ -230,37 +230,37 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
         </div>
       </aside>
 
-      <main className={`min-h-0 flex-col overflow-hidden bg-white ${showThreadOnly ? 'flex' : 'hidden lg:flex'}`}>
+      <main className={`min-h-0 flex-col overflow-hidden bg-surface ${showThreadOnly ? 'flex' : 'hidden lg:flex'}`}>
         {!activeConversationSummary ? (
           <div className="flex h-full items-center justify-center px-6 text-center">
             <div>
-              <MessageSquare className="mx-auto mb-3 h-10 w-10 text-gray-300" />
-              <h1 className="text-lg font-semibold text-gray-900">
+              <MessageSquare className="mx-auto mb-3 h-10 w-10 text-border-default" />
+              <h1 className="text-lg font-semibold text-primary">
                 {activeId ? 'Conversation not found' : 'Select a conversation'}
               </h1>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-secondary">
                 Open a thread to view the live chat and reply.
               </p>
             </div>
           </div>
         ) : (
           <>
-            <div className="sticky top-0 z-10 shrink-0 border-b border-gray-100 bg-white p-4">
+            <div className="sticky top-0 z-10 shrink-0 border-b border-border-default bg-surface p-4">
               <div className="flex items-center gap-3">
                 <Avatar
                   name={activeConversationSummary.otherUser.name}
                   image={activeConversationSummary.otherUser.profileImage}
                 />
                 <div className="min-w-0 flex-1">
-                  <h1 className="truncate text-base font-semibold text-gray-900">
+                  <h1 className="truncate text-base font-semibold text-primary">
                     {activeConversationSummary.otherUser.name}
                   </h1>
-                  <p className="truncate text-sm text-gray-500">
+                  <p className="truncate text-sm text-secondary">
                     {activeConversationSummary.otherUser.collegeName ?? 'Marketplace conversation'}
                   </p>
                 </div>
               </div>
-              <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-3">
+              <div className="mt-4 rounded-2xl border border-border-default bg-surface-hover p-3">
                 <div className="flex items-center gap-3">
                   {activeConversationSummary.productImage ? (
                     <Image
@@ -271,18 +271,18 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                       className="h-16 w-16 rounded-xl object-cover"
                     />
                   ) : (
-                    <div className="h-16 w-16 rounded-xl bg-gray-200" />
+                    <div className="h-16 w-16 rounded-xl bg-border-default" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-gray-900">
+                    <p className="truncate text-sm font-semibold text-primary">
                       {activeConversationSummary.productTitle}
                     </p>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-secondary">
                       {activeConversationSummary.isSold ? 'Sold' : 'Active listing'}
                     </p>
                     <Link
                       href={`/listings/${activeConversationSummary.productId}`}
-                      className="mt-2 inline-flex text-sm font-semibold text-gray-900 underline underline-offset-4"
+                      className="mt-2 inline-flex text-sm font-semibold text-primary underline underline-offset-4"
                     >
                       View listing
                     </Link>
@@ -291,21 +291,21 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto bg-[#fafafa] p-4">
+            <div className="min-h-0 flex-1 overflow-y-auto bg-background p-4">
               {loadingThread ? (
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                      <div className="h-16 w-[70%] animate-pulse rounded-3xl bg-gray-200" />
+                      <div className="h-16 w-[70%] animate-pulse rounded-3xl bg-border-default" />
                     </div>
                   ))}
                 </div>
               ) : activeConversationSummary.messages.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                   <div>
-                    <MessageSquare className="mx-auto mb-3 h-10 w-10 text-gray-300" />
-                    <p className="text-sm font-medium text-gray-700">No messages yet</p>
-                    <p className="mt-1 text-sm text-gray-500">Send the first message below.</p>
+                    <MessageSquare className="mx-auto mb-3 h-10 w-10 text-border-default" />
+                    <p className="text-sm font-medium text-secondary">No messages yet</p>
+                    <p className="mt-1 text-sm text-secondary">Send the first message below.</p>
                   </div>
                 </div>
               ) : (
@@ -317,19 +317,19 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
               )}
             </div>
 
-            <div className="shrink-0 border-t border-gray-100 p-4">
+            <div className="shrink-0 border-t border-border-default p-4">
               <div className="flex items-end gap-3">
                 <textarea
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
                   placeholder="Write a message"
                   rows={1}
-                  className="min-h-[50px] flex-1 resize-none rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+                  className="min-h-[50px] flex-1 resize-none rounded-2xl border border-border-default bg-surface-hover px-4 py-3 text-sm outline-none transition focus:border-border-default focus:bg-surface"
                 />
                 <button
                   onClick={handleSend}
                   disabled={sending || !message.trim()}
-                  className="inline-flex h-12 items-center gap-2 rounded-full bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-hover disabled:text-secondary"
                 >
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   Send
@@ -341,7 +341,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
       </main>
       </div>
       {error ? (
-        <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black px-4 py-2 text-sm text-white shadow-lg">
+        <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-primary px-4 py-2 text-sm text-background shadow-lg">
           {error}
         </div>
       ) : null}
@@ -355,11 +355,11 @@ function MessageBubble({ item }: { item: ChatMessage }) {
     <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-[80%] rounded-3xl px-4 py-3 text-sm shadow-sm ${
-          mine ? 'rounded-br-md bg-black text-white' : 'rounded-bl-md bg-white text-gray-900'
+          mine ? 'rounded-br-md bg-primary text-background' : 'rounded-bl-md bg-surface text-primary'
         }`}
       >
         <p>{item.content}</p>
-        <div className={`mt-2 text-xs ${mine ? 'text-white/70' : 'text-gray-400'}`}>
+        <div className={`mt-2 text-xs ${mine ? 'text-background/70' : 'text-secondary'}`}>
           {formatTime(item.createdAt)}
         </div>
       </div>

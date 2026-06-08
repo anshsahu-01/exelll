@@ -7,7 +7,7 @@ import { useAuth, useClerk, useUser } from "@clerk/nextjs"
 import { Heart, Bell, Search, LogOut } from "lucide-react"
 import { getMe } from "@/lib/marketplace"
 import { CartBadge } from "@/components/layout/CartBadge"
-
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 export function DashboardHeader() {
   const { getToken } = useAuth()
   const { signOut } = useClerk()
@@ -56,24 +56,25 @@ export function DashboardHeader() {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20 sticky top-0">
+    <header className="bg-surface border-b border-border-default h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-20 sticky top-0 transition-colors">
       <div className="flex-1 flex justify-end lg:justify-between items-center h-full">
         <div className="hidden lg:flex w-full max-w-md">
-          <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+          <div className="relative w-full text-secondary focus-within:text-primary transition-colors">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <Search className="h-5 w-5" />
             </div>
             <input
               type="text"
-              className="block w-full h-10 pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black sm:text-sm transition-colors"
+              className="block w-full h-10 pl-10 pr-3 py-2 border border-border-default rounded-md leading-5 bg-surface-hover placeholder-secondary text-primary focus:outline-none focus:placeholder-secondary focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-colors"
               placeholder="Search across marketplace..."
             />
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 ml-auto">
+          <ThemeToggle />
           <Link
             href="/profile/favourites"
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-default text-secondary transition hover:border-border-default hover:bg-surface-hover hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             aria-label="Open favourites"
           >
             <Heart className="h-5 w-5" />
@@ -81,21 +82,21 @@ export function DashboardHeader() {
           <CartBadge />
           <Link
             href="/notifications"
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-default text-secondary transition hover:border-border-default hover:bg-surface-hover hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             aria-label="Open notifications"
           >
             <Bell className="h-5 w-5" />
           </Link>
-          <div className="h-8 w-px bg-gray-200" />
+          <div className="h-8 w-px bg-border-default" />
           <Link
             href="/profile"
-            className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white transition hover:border-gray-300 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+            className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-border-default bg-surface transition hover:border-border-default hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/10"
             aria-label="Open profile"
           >
             {avatarSource ? (
               <Image src={avatarSource} alt="Profile avatar" width={40} height={40} className="h-full w-full object-cover" />
             ) : (
-              <span className="inline-flex h-full w-full items-center justify-center bg-gray-100 text-sm font-semibold text-gray-500">
+              <span className="inline-flex h-full w-full items-center justify-center bg-surface-hover text-sm font-semibold text-secondary">
                 {user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? 'U'}
               </span>
             )}
@@ -103,7 +104,7 @@ export function DashboardHeader() {
           <button
             type="button"
             onClick={handleLogout}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-default text-secondary transition hover:border-border-default hover:bg-surface-hover hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             aria-label="Logout"
             title="Logout"
           >

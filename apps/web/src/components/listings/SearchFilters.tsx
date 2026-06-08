@@ -77,20 +77,20 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
       {/* Search + Sort row */}
       <div className="flex gap-3 items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search listings..."
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+            className="w-full pl-9 pr-4 py-2.5 border border-border-default rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
           />
         </div>
 
         <select
           value={sort}
           onChange={(e) => handleSort(e.target.value)}
-          className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black"
+          className="px-3 py-2.5 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -102,7 +102,7 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
           className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition ${
             showFilters
               ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
           }`}
         >
           <SlidersHorizontal className="h-4 w-4" />
@@ -122,17 +122,17 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
 
       {/* Expanded filter panel */}
       {showFilters && (
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-wrap gap-6">
+        <div className="bg-surface border border-border-default rounded-xl p-4 shadow-sm flex flex-wrap gap-6">
           {/* Category */}
           <div className="flex-1 min-w-[180px]">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category</p>
+            <p className="text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Category</p>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handleCategory('')}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                   !categoryId
                     ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                    : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
                 }`}
               >
                 All
@@ -144,7 +144,7 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                     categoryId === cat.id
                       ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                      : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
                   }`}
                 >
                   {cat.name}
@@ -155,7 +155,7 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
 
           {/* Condition */}
           <div className="flex-1 min-w-[180px]">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Condition</p>
+            <p className="text-xs font-semibold text-secondary uppercase tracking-wide mb-2">Condition</p>
             <div className="flex flex-wrap gap-2">
               {CONDITIONS.map((c) => (
                 <button
@@ -164,7 +164,7 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                     condition === c
                       ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                      : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
                   }`}
                 >
                   {c.replace('_', ' ')}

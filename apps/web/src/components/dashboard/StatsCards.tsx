@@ -12,11 +12,11 @@ function StatCard({
   value: string | number;
 }) {
   return (
-    <div className="flex items-center p-4 bg-white rounded-lg shadow-sm">
+    <div className="flex items-center p-4 bg-surface rounded-lg shadow-sm">
       <Icon className="w-6 h-6 text-primary-600 mr-3" />
       <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-lg font-semibold text-gray-900">{value}</p>
+        <p className="text-sm text-secondary">{title}</p>
+        <p className="text-lg font-semibold text-primary">{value}</p>
       </div>
     </div>
   );

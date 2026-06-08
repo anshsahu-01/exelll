@@ -5,8 +5,8 @@ export default function ListingsLoading() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Campus Marketplace</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-primary">Campus Marketplace</h1>
+          <p className="mt-1 text-sm text-secondary">
             Discover items for sale from students around you
           </p>
         </div>

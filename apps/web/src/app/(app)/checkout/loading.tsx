@@ -11,7 +11,7 @@ export default function CheckoutLoading() {
         <Skeleton className="h-96 rounded-[2rem]" />
         <Skeleton className="h-[28rem] rounded-[2rem]" />
       </section>
-      <aside className="h-fit space-y-6 rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+      <aside className="h-fit space-y-6 rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
         <Skeleton className="h-6 w-28 rounded-2xl" />
         <div className="space-y-3">
           <Skeleton className="h-4 w-full rounded-2xl" />

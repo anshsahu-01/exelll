@@ -9,7 +9,7 @@ export default function CartPage() {
       <div className="mb-4">
         <PageBackButton href="/dashboard" label="Dashboard" />
       </div>
-      <h1 className="mb-6 text-3xl font-semibold text-gray-950">Your Cart</h1>
+      <h1 className="mb-6 text-3xl font-semibold text-primary">Your Cart</h1>
       <CartPageClient />
     </div>
   )

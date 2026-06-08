@@ -8,7 +8,7 @@ export default function SettingsLoading() {
       <Skeleton className="mb-6 h-8 w-40" />
       <div className="space-y-6">
         {Array.from({ length: 5 }).map((_, i) => (
-          <section key={i} className="rounded-[2rem] border border-gray-200 bg-white p-6">
+          <section key={i} className="rounded-[2rem] border border-border-default bg-surface p-6">
             <Skeleton className="h-5 w-32" />
             <div className="mt-5 space-y-3">
               <Skeleton className="h-14 w-full rounded-2xl" />

@@ -9,7 +9,7 @@ export default function CheckoutPage() {
       <div className="mb-4">
         <PageBackButton href="/cart" label="Cart" />
       </div>
-      <h1 className="mb-6 text-3xl font-semibold text-gray-950">Checkout</h1>
+      <h1 className="mb-6 text-3xl font-semibold text-primary">Checkout</h1>
       <CheckoutPageClient />
     </div>
   )

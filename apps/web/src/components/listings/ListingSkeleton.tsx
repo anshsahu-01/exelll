@@ -1,6 +1,6 @@
 export function ListingSkeleton() {
   return (
-    <div className="flex flex-col bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm animate-pulse">
+    <div className="flex flex-col bg-surface rounded-xl border border-border-default overflow-hidden shadow-sm animate-pulse">
       <div className="aspect-[4/3] w-full bg-gray-200" />
       
       <div className="p-4 flex flex-col flex-1 gap-3">

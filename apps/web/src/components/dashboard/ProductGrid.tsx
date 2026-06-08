@@ -13,7 +13,7 @@ export default function ProductGrid({
 }) {
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+      <div className="flex flex-col items-center justify-center py-16 text-secondary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-12 w-12 mb-3"

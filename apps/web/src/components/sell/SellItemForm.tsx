@@ -174,11 +174,11 @@ export function SellItemForm({ productId }: { productId?: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-      <section className="rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+      <section className="rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-950">{isEditMode ? 'Edit listing' : 'Sell an item'}</h2>
-            <p className="mt-1 text-sm text-gray-500">{isEditMode ? 'Update your listing details.' : 'Create a shared listing that appears everywhere instantly.'}</p>
+            <h2 className="text-2xl font-semibold text-primary">{isEditMode ? 'Edit listing' : 'Sell an item'}</h2>
+            <p className="mt-1 text-sm text-secondary">{isEditMode ? 'Update your listing details.' : 'Create a shared listing that appears everywhere instantly.'}</p>
           </div>
 
         </div>
@@ -191,7 +191,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
             setDragActive(false)
             if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files)
           }}
-          className={`rounded-[1.5rem] border-2 border-dashed p-5 transition ${dragActive ? 'border-black bg-gray-50' : 'border-gray-200 bg-white'}`}
+          className={`rounded-[1.5rem] border-2 border-dashed p-5 transition ${dragActive ? 'border-black bg-surface-hover' : 'border-border-default bg-surface'}`}
         >
           <input
             ref={fileInputRef}
@@ -206,31 +206,31 @@ export function SellItemForm({ productId }: { productId?: string }) {
             onClick={() => fileInputRef.current?.click()}
             className="flex w-full flex-col items-center justify-center gap-2 rounded-[1.25rem] px-4 py-10 text-center"
           >
-            <CloudUpload className="h-8 w-8 text-gray-900" />
-            <span className="text-sm font-semibold text-gray-950">Drag and drop images here</span>
-            <span className="text-sm text-gray-500">or click to browse. Up to 5 photos.</span>
+            <CloudUpload className="h-8 w-8 text-primary" />
+            <span className="text-sm font-semibold text-primary">Drag and drop images here</span>
+            <span className="text-sm text-secondary">or click to browse. Up to 5 photos.</span>
           </button>
           {errors.images ? <p className="mt-3 text-sm text-red-600">{errors.images}</p> : null}
           <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3">
             {existingImages.map((url, index) => (
-              <div key={url} className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
+              <div key={url} className="group relative overflow-hidden rounded-2xl border border-border-default bg-surface-hover">
                 <img src={url} alt={`Existing ${index}`} className="h-36 w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => setExistingImages((current) => current.filter((_, i) => i !== index))}
-                  className="absolute right-2 top-2 rounded-full bg-white/95 p-1.5 text-gray-700 shadow-sm opacity-100 transition group-hover:bg-black group-hover:text-white"
+                  className="absolute right-2 top-2 rounded-full bg-surface/95 p-1.5 text-secondary shadow-sm opacity-100 transition group-hover:bg-black group-hover:text-white"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
             ))}
             {previews.map((item, index) => (
-              <div key={`${item.file.name}-${index}`} className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
+              <div key={`${item.file.name}-${index}`} className="group relative overflow-hidden rounded-2xl border border-border-default bg-surface-hover">
                 <img src={item.url} alt={item.file.name} className="h-36 w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => setImages((current) => current.filter((_, currentIndex) => currentIndex !== index))}
-                  className="absolute right-2 top-2 rounded-full bg-white/95 p-1.5 text-gray-700 shadow-sm opacity-100 transition group-hover:bg-black group-hover:text-white"
+                  className="absolute right-2 top-2 rounded-full bg-surface/95 p-1.5 text-secondary shadow-sm opacity-100 transition group-hover:bg-black group-hover:text-white"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -240,8 +240,8 @@ export function SellItemForm({ productId }: { productId?: string }) {
         </div>
 
         {submitting ? (
-          <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
-            <div className="mb-2 flex items-center justify-between text-sm text-gray-600">
+          <div className="mt-4 rounded-2xl border border-border-default bg-surface-hover p-4">
+            <div className="mb-2 flex items-center justify-between text-sm text-secondary">
               <span>Uploading listing</span>
               <span>{progress}%</span>
             </div>
@@ -252,24 +252,24 @@ export function SellItemForm({ productId }: { productId?: string }) {
         ) : null}
       </section>
 
-      <aside className="space-y-6 rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+      <aside className="space-y-6 rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
         <Field label="Product title" error={errors.title}>
-          <input className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.title} onChange={(e) => updateField('title', e.target.value)} placeholder="MacBook Air M1" />
+          <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.title} onChange={(e) => updateField('title', e.target.value)} placeholder="MacBook Air M1" />
         </Field>
         <Field label="Description" error={errors.description}>
-          <textarea className="min-h-28 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.description} onChange={(e) => updateField('description', e.target.value)} placeholder="Condition, usage, accessories, anything the buyer should know." />
+          <textarea className="min-h-28 w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.description} onChange={(e) => updateField('description', e.target.value)} placeholder="Condition, usage, accessories, anything the buyer should know." />
         </Field>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Price" error={errors.price}>
-            <input type="number" min="1" className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.price} onChange={(e) => updateField('price', e.target.value)} placeholder="0" />
+            <input type="number" min="1" className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.price} onChange={(e) => updateField('price', e.target.value)} placeholder="0" />
           </Field>
           <Field label="Location" error={errors.location}>
-            <input className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.location} onChange={(e) => updateField('location', e.target.value)} placeholder="Campus, city" />
+            <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.location} onChange={(e) => updateField('location', e.target.value)} placeholder="Campus, city" />
           </Field>
         </div>
 
         <Field label="Category" error={errors.categoryId}>
-          <select className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.categoryId} onChange={(e) => updateField('categoryId', e.target.value)}>
+          <select className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.categoryId} onChange={(e) => updateField('categoryId', e.target.value)}>
             <option value="">{loadingCategories ? 'Loading categories...' : 'Select category'}</option>
             {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
           </select>
@@ -278,7 +278,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
         <Field label="Condition" error={errors.condition}>
           <div className="grid grid-cols-2 gap-2">
             {CONDITIONS.map((condition) => (
-              <button key={condition} type="button" onClick={() => updateField('condition', condition)} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${form.condition === condition ? 'border-black bg-black text-white' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
+              <button key={condition} type="button" onClick={() => updateField('condition', condition)} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${form.condition === condition ? 'border-black bg-primary text-background' : 'border-border-default text-secondary hover:bg-surface-hover'}`}>
                 {condition}
               </button>
             ))}
@@ -286,11 +286,11 @@ export function SellItemForm({ productId }: { productId?: string }) {
         </Field>
 
         <Field label="Contact preference">
-          <input className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.contactPreference} onChange={(e) => updateField('contactPreference', e.target.value)} placeholder="Chat, call, WhatsApp" />
+          <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.contactPreference} onChange={(e) => updateField('contactPreference', e.target.value)} placeholder="Chat, call, WhatsApp" />
         </Field>
 
         <Field label="Additional notes">
-          <textarea className="min-h-24 w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm outline-none transition focus:border-black" value={form.additionalNotes} onChange={(e) => updateField('additionalNotes', e.target.value)} placeholder="Optional details for buyers." />
+          <textarea className="min-h-24 w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.additionalNotes} onChange={(e) => updateField('additionalNotes', e.target.value)} placeholder="Optional details for buyers." />
         </Field>
 
         {submitMessage ? <p className={`text-sm ${submitMessage.includes('successfully') ? 'text-emerald-700' : 'text-red-600'}`}>{submitMessage}</p> : null}
@@ -300,7 +300,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
           {isEditMode ? 'Save changes' : 'Publish listing'}
         </button>
 
-        <p className="text-xs leading-5 text-gray-500">
+        <p className="text-xs leading-5 text-secondary">
           This uses the shared `Product` schema, so the listing will appear across web, mobile, dashboard, and profile views without any separate web-only storage.
         </p>
       </aside>
@@ -320,7 +320,7 @@ function Field({
   return (
     <label className="block space-y-2">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-medium text-gray-900">{label}</span>
+        <span className="text-sm font-medium text-primary">{label}</span>
         {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
       </div>
       {children}

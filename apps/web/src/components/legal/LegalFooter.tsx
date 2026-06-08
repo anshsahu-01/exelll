@@ -19,7 +19,7 @@ export function LegalFooter() {
           <Link
             key={page.href}
             href={page.href}
-            className="rounded-lg border p-4 hover:bg-gray-50 transition"
+            className="rounded-lg border p-4 hover:bg-surface-hover transition"
           >
             {page.label}
           </Link>
@@ -28,13 +28,13 @@ export function LegalFooter() {
 
         <Link
           href="/"
-          className="rounded-lg border p-4 hover:bg-gray-50 transition"
+          className="rounded-lg border p-4 hover:bg-surface-hover transition"
         >
           Home Page
         </Link>
       </div>
 
-      <p className="mt-6 text-sm text-gray-500">
+      <p className="mt-6 text-sm text-secondary">
         Last Updated: June 2026
       </p>
     </div>

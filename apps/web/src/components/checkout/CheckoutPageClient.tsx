@@ -218,7 +218,7 @@ export function CheckoutPageClient() {
           <div className="h-96 animate-pulse rounded-[2rem] bg-gray-200" />
           <div className="h-[28rem] animate-pulse rounded-[2rem] bg-gray-200" />
         </section>
-        <aside className="h-fit space-y-6 rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+        <aside className="h-fit space-y-6 rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
           <div className="h-6 w-28 animate-pulse rounded-2xl bg-gray-200" />
           <div className="space-y-3">
             <div className="h-4 w-full animate-pulse rounded-2xl bg-gray-200" />
@@ -235,7 +235,7 @@ export function CheckoutPageClient() {
 
   if (error || items.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-gray-200 bg-white p-6 text-sm text-gray-500">
+      <div className="rounded-[2rem] border border-border-default bg-surface p-6 text-sm text-secondary">
         {error || 'No product selected for checkout.'}
       </div>
     )
@@ -252,15 +252,15 @@ export function CheckoutPageClient() {
         <Panel title="Selected products">
           <div className="space-y-4">
             {items.map((item) => (
-              <div key={item.productId} className="flex gap-4 rounded-2xl border border-gray-200 p-4">
-                <div className="relative h-20 w-20 overflow-hidden rounded-xl bg-gray-100">
+              <div key={item.productId} className="flex gap-4 rounded-2xl border border-border-default p-4">
+                <div className="relative h-20 w-20 overflow-hidden rounded-xl bg-surface-hover">
                   {item.image ? <Image src={item.image} alt={item.title} fill className="object-cover" /> : null}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate text-sm font-semibold text-gray-950">{item.title}</h3>
-                  <p className="mt-1 text-sm text-gray-500">Seller: {item.sellerName}</p>
-                  <p className="mt-1 text-sm text-gray-950">Qty: {item.quantity}</p>
-                  <p className="mt-1 text-sm font-semibold text-gray-950">{formatINR(item.price * item.quantity)}</p>
+                  <h3 className="truncate text-sm font-semibold text-primary">{item.title}</h3>
+                  <p className="mt-1 text-sm text-secondary">Seller: {item.sellerName}</p>
+                  <p className="mt-1 text-sm text-primary">Qty: {item.quantity}</p>
+                  <p className="mt-1 text-sm font-semibold text-primary">{formatINR(item.price * item.quantity)}</p>
                 </div>
               </div>
             ))}
@@ -331,15 +331,15 @@ export function CheckoutPageClient() {
           </div>
 
           {paymentMethod === 'UPI' ? (
-            <div className="mt-5 rounded-[1.5rem] border border-gray-200 bg-gray-50 p-4">
+            <div className="mt-5 rounded-[1.5rem] border border-border-default bg-surface-hover p-4">
               <div className="grid gap-5 lg:grid-cols-[auto_1fr] lg:items-start">
-                <div className="rounded-2xl bg-white p-4 shadow-sm">
+                <div className="rounded-2xl bg-surface p-4 shadow-sm">
                   <Image src="/upi-qr.jpeg" alt="UPI QR code" width={240} height={240} className="h-56 w-56 rounded-xl object-contain" />
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-500">Scan to pay</p>
-                    <p className="mt-1 text-lg font-semibold text-gray-950">9109185454-2@axl</p>
+                    <p className="text-sm text-secondary">Scan to pay</p>
+                    <p className="mt-1 text-lg font-semibold text-primary">9109185454-2@axl</p>
                   </div>
                   <Field label="UTR / transaction reference number">
                     <input
@@ -350,19 +350,19 @@ export function CheckoutPageClient() {
                     />
                   </Field>
                   <Field label="Payment screenshot">
-                    <div className="rounded-[1.25rem] border border-gray-200 bg-white p-4">
-                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-5 text-center text-sm text-gray-500 transition hover:border-gray-400 hover:bg-white">
+                    <div className="rounded-[1.25rem] border border-border-default bg-surface p-4">
+                      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-border-default bg-surface-hover p-5 text-center text-sm text-secondary transition hover:border-gray-400 hover:bg-surface">
                         {uploadingProof ? (
-                          <Loader2 className="h-6 w-6 animate-spin text-gray-900" />
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
                         ) : form.screenshotDataUrl ? (
                           <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                         ) : (
-                          <Upload className="h-6 w-6 text-gray-900" />
+                          <Upload className="h-6 w-6 text-primary" />
                         )}
-                        <span className="mt-2 font-medium text-gray-950">
+                        <span className="mt-2 font-medium text-primary">
                           {uploadingProof ? 'Uploading...' : form.screenshotDataUrl ? 'Screenshot uploaded' : 'Tap to upload screenshot'}
                         </span>
-                        <span className="mt-1 text-xs text-gray-500">{screenshotName || 'PNG, JPG, or JPEG'}</span>
+                        <span className="mt-1 text-xs text-secondary">{screenshotName || 'PNG, JPG, or JPEG'}</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -371,12 +371,12 @@ export function CheckoutPageClient() {
                         />
                       </label>
                       {form.screenshotDataUrl ? (
-                        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3">
-                          <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-gray-100">
+                        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-border-default bg-surface p-3">
+                          <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-surface-hover">
                             <Image src={form.screenshotDataUrl} alt="Payment screenshot preview" fill className="object-cover" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-gray-950">{screenshotName ?? 'Payment screenshot'}</p>
+                            <p className="truncate text-sm font-semibold text-primary">{screenshotName ?? 'Payment screenshot'}</p>
                             <p className="text-xs text-emerald-600">Upload complete</p>
                           </div>
                           <button
@@ -385,7 +385,7 @@ export function CheckoutPageClient() {
                               setForm((current) => ({ ...current, screenshotDataUrl: '' }))
                               setScreenshotName(null)
                             }}
-                            className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-950"
+                            className="rounded-full p-2 text-secondary transition hover:bg-surface-hover hover:text-primary"
                             aria-label="Remove screenshot"
                           >
                             <X className="h-4 w-4" />
@@ -402,10 +402,10 @@ export function CheckoutPageClient() {
         </Panel>
       </section>
 
-      <aside className="h-fit space-y-6 rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
+      <aside className="h-fit space-y-6 rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
         <div>
-          <h2 className="text-xl font-semibold text-gray-950">Summary</h2>
-          <div className="mt-4 space-y-3 text-sm text-gray-600">
+          <h2 className="text-xl font-semibold text-primary">Summary</h2>
+          <div className="mt-4 space-y-3 text-sm text-secondary">
             <Row label="Subtotal" value={formatINR(subtotal)} />
             <Row label="Delivery" value={formatINR(0)} />
             <div className="h-px bg-gray-200" />
@@ -425,7 +425,7 @@ export function CheckoutPageClient() {
 
         <Link
           href={source?.kind === 'cart' ? '/cart' : `/listings/${items[0]?.productId}`}
-          className="block text-center text-sm font-semibold text-gray-500 hover:text-gray-950"
+          className="block text-center text-sm font-semibold text-secondary hover:text-primary"
         >
           Back
         </Link>
@@ -478,9 +478,9 @@ function Panel({
   children?: React.ReactNode
 }) {
   return (
-    <div className="rounded-[2rem] border border-gray-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-950">{title}</h2>
-      {subtitle ? <p className="mt-2 text-sm text-gray-500">{subtitle}</p> : null}
+    <div className="rounded-[2rem] border border-border-default bg-surface p-5 shadow-sm">
+      <h2 className="text-xl font-semibold text-primary">{title}</h2>
+      {subtitle ? <p className="mt-2 text-sm text-secondary">{subtitle}</p> : null}
       {children ? <div className="mt-4">{children}</div> : null}
     </div>
   )
@@ -497,14 +497,14 @@ function Field({
 }) {
   return (
     <label className={`block space-y-2 ${className ?? ''}`}>
-      <span className="text-sm font-medium text-gray-900">{label}</span>
+      <span className="text-sm font-medium text-primary">{label}</span>
       {children}
     </label>
   )
 }
 
 const sharedInputClass =
-  'checkout-input w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-950 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-2 focus:ring-black/5'
+  'checkout-input w-full rounded-2xl border border-border-default bg-surface px-4 py-3.5 text-sm text-primary outline-none transition placeholder:text-secondary focus:border-primary focus:ring-2 focus:ring-primary/5'
 
 function PaymentCard({
   icon,
@@ -522,16 +522,16 @@ function PaymentCard({
       type="button"
       onClick={onClick}
       className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-left transition ${
-        active ? 'border-black bg-gray-50' : 'border-gray-200 hover:bg-gray-50'
+        active ? 'border-black bg-surface-hover' : 'border-border-default hover:bg-surface-hover'
       }`}
     >
-      <span className="flex items-center gap-3 text-sm font-medium text-gray-950">
+      <span className="flex items-center gap-3 text-sm font-medium text-primary">
         {icon}
         {label}
       </span>
       <span
         className={`h-4 w-4 rounded-full border ${
-          active ? 'border-black bg-black' : 'border-gray-300 bg-white'
+          active ? 'border-black bg-black' : 'border-border-default bg-surface'
         }`}
       />
     </button>
@@ -540,7 +540,7 @@ function PaymentCard({
 
 function Row({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
   return (
-    <div className={`flex items-center justify-between ${strong ? 'text-base font-semibold text-gray-950' : ''}`}>
+    <div className={`flex items-center justify-between ${strong ? 'text-base font-semibold text-primary' : ''}`}>
       <span>{label}</span>
       <span>{value}</span>
     </div>

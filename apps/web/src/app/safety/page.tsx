@@ -5,9 +5,9 @@ export default function SafetyPage() {
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="mb-8 text-3xl font-bold">Safety Guidelines</h1>
       
-      <div className="prose prose-blue max-w-none text-gray-600">
+      <div className="prose prose-blue max-w-none text-secondary">
         <div className="my-8 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-6">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">Core Disclaimers</h2>
+          <h2 className="mb-4 text-xl font-bold text-black">Core Disclaimers</h2>
           <ul className="list-inside list-disc space-y-2 font-medium text-gray-800">
             <li>Exell only connects buyers and sellers.</li>
             <li>Exell is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</li>
@@ -17,7 +17,7 @@ export default function SafetyPage() {
           </ul>
         </div>
 
-        <h2 className="mt-8 text-xl font-bold text-gray-900">Meeting Up</h2>
+        <h2 className="mt-8 text-xl font-bold text-primary">Meeting Up</h2>
         <ul className="list-inside list-disc space-y-2">
           <li>Always meet in well-lit, public places, preferably during daylight hours.</li>
           <li>Consider meeting on campus or at a designated safe exchange zone (like a police station).</li>
@@ -25,7 +25,7 @@ export default function SafetyPage() {
           <li>Never go to a stranger&apos;s dorm room or house alone.</li>
         </ul>
 
-        <h2 className="mt-8 text-xl font-bold text-gray-900">Payments</h2>
+        <h2 className="mt-8 text-xl font-bold text-primary">Payments</h2>
         <ul className="list-inside list-disc space-y-2">
           <li>Exell does not process payments. All payments are handled directly between users.</li>
           <li>Inspect the item thoroughly before handing over money.</li>

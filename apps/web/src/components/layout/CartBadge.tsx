@@ -38,7 +38,7 @@ export function CartBadge() {
   return (
     <Link
       href="/cart"
-      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10"
+      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-default text-secondary transition hover:border-border-default hover:bg-surface-hover hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
       aria-label="Open cart"
     >
       <ShoppingCart className="h-5 w-5" />

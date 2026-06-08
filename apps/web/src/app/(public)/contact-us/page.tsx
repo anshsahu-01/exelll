@@ -11,7 +11,7 @@ export default function ContactUsPage() {
           Email us at{' '}
           <a
             href="mailto:relatablecoder01@gmail.com"
-            className="font-medium text-gray-900 underline underline-offset-4"
+            className="font-medium text-primary underline underline-offset-4"
           >
             relatablecoder01@gmail.com
           </a>

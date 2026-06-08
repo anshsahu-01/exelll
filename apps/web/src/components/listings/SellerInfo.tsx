@@ -32,29 +32,29 @@ export function SellerInfo({ seller, productId }: SellerInfoProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 flex flex-col gap-4">
-      <h3 className="font-medium text-gray-900">About the seller</h3>
+    <div className="bg-surface rounded-xl border border-border-default p-6 flex flex-col gap-4">
+      <h3 className="font-medium text-primary">About the seller</h3>
 
       <div className="flex items-center gap-4">
         {seller.profileImage ? (
           <img
             src={seller.profileImage}
             alt={seller.name}
-            className="w-16 h-16 rounded-full border border-gray-100 object-cover"
+            className="w-16 h-16 rounded-full border border-border-default object-cover"
           />
         ) : (
-          <div className="w-16 h-16 rounded-full border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400">
+          <div className="w-16 h-16 rounded-full border border-border-default bg-surface-hover flex items-center justify-center text-secondary">
             <UserIcon className="w-8 h-8" />
           </div>
         )}
 
         <div>
-          <h4 className="font-semibold text-lg text-gray-900">
+          <h4 className="font-semibold text-lg text-primary">
             {seller.name}
           </h4>
 
           {seller.collegeName && (
-            <div className="text-sm text-gray-600 mt-0.5">
+            <div className="text-sm text-secondary mt-0.5">
               {seller.collegeName}
             </div>
           )}
@@ -70,7 +70,7 @@ export function SellerInfo({ seller, productId }: SellerInfoProps) {
 
       <button
         onClick={handleContactSeller}
-        className="cursor-pointer mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        className="cursor-pointer mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-border-default rounded-lg text-sm font-medium text-secondary hover:bg-surface-hover transition-colors"
       >
         <MessageCircle className="w-4 h-4" />
         Contact Seller

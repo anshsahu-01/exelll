@@ -49,9 +49,9 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link 
       href={`/listings/${listing.id}`}
-      className="group flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 relative"
+      className="group flex flex-col bg-surface rounded-xl border border-border-default overflow-hidden hover:shadow-md transition-all duration-300 relative"
     >
-      <div className="aspect-[4/3] w-full relative bg-gray-100 overflow-hidden flex items-center justify-center">
+      <div className="aspect-[4/3] w-full relative bg-surface-hover overflow-hidden flex items-center justify-center">
         <img 
           src={imageUrl || fallbackImage} 
           alt={listing.title}
@@ -60,10 +60,10 @@ export function ListingCard({ listing }: ListingCardProps) {
         <button 
           onClick={handleFavoriteClick}
           disabled={isToggling}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white text-gray-600 hover:text-red-500 transition-colors z-10 shadow-sm"
+          className="absolute top-3 right-3 p-2 rounded-full bg-surface/80 backdrop-blur-sm hover:bg-surface text-secondary hover:text-red-500 transition-colors z-10 shadow-sm"
         >
           <Heart 
-            className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} 
+            className={`w-4 h-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-secondary'}`} 
           />
         </button>
         <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md">
@@ -73,13 +73,13 @@ export function ListingCard({ listing }: ListingCardProps) {
       
       <div className="p-4 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-2 mb-1">
-          <h3 className="font-semibold text-gray-900 line-clamp-1">{listing.title}</h3>
-          <span className="font-bold text-gray-900">{formatINR(listing.price)}</span>
+          <h3 className="font-semibold text-primary line-clamp-1">{listing.title}</h3>
+          <span className="font-bold text-primary">{formatINR(listing.price)}</span>
         </div>
         
-        <p className="text-sm text-gray-500 mb-4 line-clamp-1">{listing.category?.name || 'Uncategorized'}</p>
+        <p className="text-sm text-secondary mb-4 line-clamp-1">{listing.category?.name || 'Uncategorized'}</p>
         
-        <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+        <div className="mt-auto pt-3 border-t border-border-default flex items-center justify-between">
           <div className="flex items-center gap-2">
             {listing.seller.profileImage ? (
               <img 
@@ -88,13 +88,13 @@ export function ListingCard({ listing }: ListingCardProps) {
                 className="w-5 h-5 rounded-full object-cover"
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center text-[10px] text-gray-500">
+              <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center text-[10px] text-secondary">
                 {listing.seller.name.charAt(0)}
               </div>
             )}
-            <span className="text-xs font-medium text-gray-700">{listing.seller.name}</span>
+            <span className="text-xs font-medium text-secondary">{listing.seller.name}</span>
           </div>
-          <span className="text-xs text-gray-400">{timeAgo}</span>
+          <span className="text-xs text-secondary">{timeAgo}</span>
         </div>
       </div>
     </Link>

@@ -54,7 +54,7 @@ export function CartPageClient() {
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
         <section className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <article key={i} className="rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-sm">
+            <article key={i} className="rounded-[1.75rem] border border-border-default bg-surface p-4 shadow-sm">
               <div className="flex gap-4">
                 <div className="h-28 w-28 shrink-0 animate-pulse rounded-2xl bg-gray-200" />
                 <div className="min-w-0 flex-1 space-y-3">
@@ -77,7 +77,7 @@ export function CartPageClient() {
             </article>
           ))}
         </section>
-        <aside className="h-fit rounded-[1.75rem] border border-gray-200 bg-white p-5 shadow-sm">
+        <aside className="h-fit rounded-[1.75rem] border border-border-default bg-surface p-5 shadow-sm">
           <div className="h-6 w-28 animate-pulse rounded-2xl bg-gray-200" />
           <div className="mt-4 space-y-3">
             <div className="h-4 w-full animate-pulse rounded-2xl bg-gray-200" />
@@ -94,12 +94,12 @@ export function CartPageClient() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center rounded-[2rem] border border-gray-200 bg-white px-6 py-20 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-          <ShoppingCart className="h-6 w-6 text-gray-500" />
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center rounded-[2rem] border border-border-default bg-surface px-6 py-20 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-surface-hover">
+          <ShoppingCart className="h-6 w-6 text-secondary" />
         </div>
-        <h1 className="text-2xl font-semibold text-gray-950">Your cart is empty</h1>
-        <p className="mt-2 text-sm text-gray-500">Browse listings and add something you like.</p>
+        <h1 className="text-2xl font-semibold text-primary">Your cart is empty</h1>
+        <p className="mt-2 text-sm text-secondary">Browse listings and add something you like.</p>
         <Link href="/listings" className="mt-6 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white">
           Browse Listings
         </Link>
@@ -111,9 +111,9 @@ export function CartPageClient() {
     <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
       <section className="space-y-4">
         {items.map((item) => (
-          <article key={item.productId} className="rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-sm">
+          <article key={item.productId} className="rounded-[1.75rem] border border-border-default bg-surface p-4 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-2xl bg-gray-100 sm:w-28">
+              <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-2xl bg-surface-hover sm:w-28">
                 {item.product.images?.[0] ? (
                   <Image src={item.product.images[0]} alt={item.product.title} fill className="object-cover" />
                 ) : null}
@@ -121,24 +121,24 @@ export function CartPageClient() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h2 className="break-words text-lg font-semibold text-gray-950">{item.product.title}</h2>
-                    <p className="mt-1 text-sm text-gray-500">Seller: {item.product.seller.name}</p>
-                    <p className="mt-1 text-sm font-semibold text-gray-900">{formatINR(item.product.price)}</p>
+                    <h2 className="break-words text-lg font-semibold text-primary">{item.product.title}</h2>
+                    <p className="mt-1 text-sm text-secondary">Seller: {item.product.seller.name}</p>
+                    <p className="mt-1 text-sm font-semibold text-primary">{formatINR(item.product.price)}</p>
                   </div>
-                  <button onClick={() => handleRemove(item.productId)} className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-950">
+                  <button onClick={() => handleRemove(item.productId)} className="rounded-full p-2 text-secondary hover:bg-surface-hover hover:text-primary">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <button onClick={() => handleQty(item.productId, Math.max(1, item.quantity - 1))} className="rounded-full border border-gray-200 p-2 hover:bg-gray-50">
+                  <button onClick={() => handleQty(item.productId, Math.max(1, item.quantity - 1))} className="rounded-full border border-border-default p-2 hover:bg-surface-hover">
                     <Minus className="h-4 w-4" />
                   </button>
                   <span className="min-w-10 text-center text-sm font-medium">{item.quantity}</span>
-                  <button onClick={() => handleQty(item.productId, item.quantity + 1)} className="rounded-full border border-gray-200 p-2 hover:bg-gray-50">
+                  <button onClick={() => handleQty(item.productId, item.quantity + 1)} className="rounded-full border border-border-default p-2 hover:bg-surface-hover">
                     <Plus className="h-4 w-4" />
                   </button>
-                  <div className="ml-0 text-sm text-gray-500 sm:ml-auto">
-                    Subtotal: <span className="font-semibold text-gray-950">{formatINR(Number(item.product.price) * item.quantity)}</span>
+                  <div className="ml-0 text-sm text-secondary sm:ml-auto">
+                    Subtotal: <span className="font-semibold text-primary">{formatINR(Number(item.product.price) * item.quantity)}</span>
                   </div>
                 </div>
               </div>
@@ -147,14 +147,14 @@ export function CartPageClient() {
         ))}
       </section>
 
-      <aside className="h-fit rounded-[1.75rem] border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-950">Summary</h2>
-        <div className="mt-4 space-y-3 text-sm text-gray-600">
+      <aside className="h-fit rounded-[1.75rem] border border-border-default bg-surface p-5 shadow-sm">
+        <h2 className="text-xl font-semibold text-primary">Summary</h2>
+        <div className="mt-4 space-y-3 text-sm text-secondary">
           <div className="flex items-center justify-between"><span>Total items</span><span>{items.reduce((sum, item) => sum + item.quantity, 0)}</span></div>
           <div className="flex items-center justify-between"><span>Subtotal</span><span>{formatINR(subtotal)}</span></div>
           <div className="flex items-center justify-between"><span>Delivery</span><span>{formatINR(0)}</span></div>
           <div className="h-px bg-gray-200" />
-          <div className="flex items-center justify-between text-base font-semibold text-gray-950"><span>Final total</span><span>{formatINR(subtotal)}</span></div>
+          <div className="flex items-center justify-between text-base font-semibold text-primary"><span>Final total</span><span>{formatINR(subtotal)}</span></div>
         </div>
         <Link href="/checkout?mode=cart" className="mt-6 block rounded-2xl bg-black px-4 py-3 text-center text-sm font-semibold text-white">
           Proceed to Checkout

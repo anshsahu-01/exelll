@@ -11,12 +11,12 @@ export default function NotificationsPage() {
         <PageBackButton href="/dashboard" label="Dashboard" />
       </div>
 
-      <div className="rounded-[2rem] border border-gray-200 bg-white px-6 py-16 text-center shadow-sm">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-          <Bell className="h-6 w-6 text-gray-500" />
+      <div className="rounded-[2rem] border border-border-default bg-surface px-6 py-16 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-surface-hover">
+          <Bell className="h-6 w-6 text-secondary" />
         </div>
-        <h1 className="text-2xl font-semibold text-gray-950">No new notifications</h1>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-gray-500">
+        <h1 className="text-2xl font-semibold text-primary">No new notifications</h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-secondary">
           Notification updates will appear here once this feature is enabled.
         </p>
         <Link

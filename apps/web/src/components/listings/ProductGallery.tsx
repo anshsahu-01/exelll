@@ -12,8 +12,8 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square w-full bg-gray-100 rounded-2xl flex items-center justify-center">
-        <span className="text-gray-400 text-sm">No image available</span>
+      <div className="aspect-square w-full bg-surface-hover rounded-2xl flex items-center justify-center">
+        <span className="text-secondary text-sm">No image available</span>
       </div>
     )
   }
@@ -21,7 +21,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Main Image */}
-      <div className="aspect-square w-full relative bg-gray-100 rounded-2xl overflow-hidden border border-gray-200">
+      <div className="aspect-square w-full relative bg-surface-hover rounded-2xl overflow-hidden border border-border-default">
         <img
           src={images[activeIndex]}
           alt={`${title} - view ${activeIndex + 1}`}
@@ -37,7 +37,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
               key={idx}
               onClick={() => setActiveIndex(idx)}
               className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                activeIndex === idx ? 'border-black' : 'border-transparent hover:border-gray-300'
+                activeIndex === idx ? 'border-black' : 'border-transparent hover:border-border-default'
               }`}
             >
               <img

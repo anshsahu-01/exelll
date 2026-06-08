@@ -65,12 +65,12 @@ export default function Filters({ categories }: { categories: Category[] }) {
         placeholder="Search products..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="border p-2 rounded flex-1"
+        className="border border-border-default bg-surface text-primary p-2 rounded flex-1 placeholder-secondary focus:outline-none focus:ring-1 focus:ring-primary"
       />
       <select 
         value={categoryId} 
         onChange={handleCategoryChange}
-        className="border p-2 rounded"
+        className="border border-border-default bg-surface text-primary p-2 rounded focus:outline-none focus:ring-1 focus:ring-primary"
       >
         <option value="">All Categories</option>
         {categories.map(c => (

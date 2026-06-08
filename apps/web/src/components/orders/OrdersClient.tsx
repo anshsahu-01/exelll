@@ -113,7 +113,7 @@ export function OrdersClient({
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between rounded-[2rem] border border-gray-200 bg-white p-6">
+        <div className="flex items-center justify-between rounded-[2rem] border border-border-default bg-surface p-6">
           <div className="space-y-3">
             <div className="h-7 w-40 animate-pulse rounded-2xl bg-gray-200" />
             <div className="h-4 w-64 animate-pulse rounded-2xl bg-gray-200" />
@@ -123,7 +123,7 @@ export function OrdersClient({
 
         <div className="space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-[2rem] border border-gray-200 bg-white p-4 sm:p-5">
+            <div key={i} className="rounded-[2rem] border border-border-default bg-surface p-4 sm:p-5">
               <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_auto] lg:items-center">
                 <div className="flex gap-4">
                   <div className="h-24 w-24 animate-pulse rounded-2xl bg-gray-200" />
@@ -161,7 +161,7 @@ export function OrdersClient({
       if (!order) {
       return (
         <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="rounded-[2rem] border border-gray-200 bg-white p-6 text-sm text-gray-500">
+          <div className="rounded-[2rem] border border-border-default bg-surface p-6 text-sm text-secondary">
             Order not found.
           </div>
         </div>
@@ -172,7 +172,7 @@ export function OrdersClient({
 
     return (
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
+        <div className="rounded-[2rem] border border-border-default bg-surface p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex gap-4">
               {order.product.images[0] ? (
@@ -184,18 +184,18 @@ export function OrdersClient({
                   className="h-28 w-28 rounded-2xl object-cover"
                 />
               ) : (
-                <div className="flex h-28 w-28 items-center justify-center rounded-2xl bg-gray-100 text-xs text-gray-400">
+                <div className="flex h-28 w-28 items-center justify-center rounded-2xl bg-surface-hover text-xs text-secondary">
                   No image
                 </div>
               )}
               <div>
-                <p className="text-sm text-gray-500">Order details</p>
-                <h1 className="mt-1 text-2xl font-semibold text-gray-950">{order.product.title}</h1>
+                <p className="text-sm text-secondary">Order details</p>
+                <h1 className="mt-1 text-2xl font-semibold text-primary">{order.product.title}</h1>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <span className={`rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[order.orderStatus]}`}>
                     {statusLabelMap[order.orderStatus]}
                   </span>
-                  <span className="rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gray-600">
+                  <span className="rounded-full border border-border-default px-3 py-1 text-xs font-medium text-secondary">
                     ₹{order.amount.toLocaleString()}
                   </span>
                 </div>
@@ -205,7 +205,7 @@ export function OrdersClient({
               <button
                 type="button"
                 onClick={() => handleMessage(order.productId)}
-                className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-border-default px-4 py-2 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
               >
                 <MessageSquare className="h-4 w-4" />
                 Message
@@ -246,8 +246,8 @@ export function OrdersClient({
 
         <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
           <div className="space-y-6">
-            <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
-              <h2 className="text-lg font-semibold text-gray-950">Timeline</h2>
+            <div className="rounded-[2rem] border border-border-default bg-surface p-6">
+              <h2 className="text-lg font-semibold text-primary">Timeline</h2>
               <div className="mt-5 space-y-4">
                 {orderTimeline.map((status, index) => (
                   <div key={status} className="flex items-start gap-4">
@@ -255,14 +255,14 @@ export function OrdersClient({
                       className={`mt-1 h-4 w-4 rounded-full border-2 ${
                         index <= timelineIndex
                           ? 'border-black bg-black'
-                          : 'border-gray-300 bg-white'
+                          : 'border-border-default bg-surface'
                       }`}
                     />
                     <div className="pb-4">
-                      <p className={`text-sm font-medium ${index <= timelineIndex ? 'text-gray-950' : 'text-gray-400'}`}>
+                      <p className={`text-sm font-medium ${index <= timelineIndex ? 'text-primary' : 'text-secondary'}`}>
                         {statusLabelMap[status]}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-secondary">
                         {index === 0 ? 'Order placed' : index === 1 ? 'Seller confirmed the order' : index === 2 ? 'Order shipped' : 'Order delivered'}
                       </p>
                     </div>
@@ -271,8 +271,8 @@ export function OrdersClient({
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
-              <h2 className="text-lg font-semibold text-gray-950">Order metadata</h2>
+            <div className="rounded-[2rem] border border-border-default bg-surface p-6">
+              <h2 className="text-lg font-semibold text-primary">Order metadata</h2>
               <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                 <Meta label="Payment method" value={order.paymentMethod} />
                 <Meta label="Payment status" value={order.paymentStatus} />
@@ -285,16 +285,16 @@ export function OrdersClient({
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
-              <h2 className="text-lg font-semibold text-gray-950">People</h2>
+            <div className="rounded-[2rem] border border-border-default bg-surface p-6">
+              <h2 className="text-lg font-semibold text-primary">People</h2>
               <div className="mt-4 space-y-4">
                 <PersonCard label="Buyer" name={order.buyer.name} image={order.buyer.profileImage} college={order.buyer.collegeName} />
                 <PersonCard label="Seller" name={order.seller.name} image={order.seller.profileImage} college={order.seller.collegeName} />
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
-              <h2 className="text-lg font-semibold text-gray-950">Product</h2>
+            <div className="rounded-[2rem] border border-border-default bg-surface p-6">
+              <h2 className="text-lg font-semibold text-primary">Product</h2>
               <div className="mt-4 flex items-center gap-4">
                 {order.product.images[0] ? (
                   <Image
@@ -306,8 +306,8 @@ export function OrdersClient({
                   />
                 ) : null}
                 <div>
-                  <p className="text-sm font-medium text-gray-950">{order.product.title}</p>
-                  <p className="mt-1 text-sm text-gray-500">₹{order.product.price.toLocaleString()}</p>
+                  <p className="text-sm font-medium text-primary">{order.product.title}</p>
+                  <p className="mt-1 text-sm text-secondary">₹{order.product.price.toLocaleString()}</p>
                 </div>
               </div>
               <Link
@@ -328,12 +328,12 @@ export function OrdersClient({
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between rounded-[2rem] border border-gray-200 bg-white p-6">
+      <div className="flex items-center justify-between rounded-[2rem] border border-border-default bg-surface p-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-950">
+          <h1 className="text-2xl font-semibold text-primary">
             {mode === 'buyer' ? 'Orders' : 'Sales'}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-secondary">
             {mode === 'buyer'
               ? 'Track purchases and message sellers.'
               : 'Manage incoming sales and keep buyers updated.'}
@@ -342,7 +342,7 @@ export function OrdersClient({
         <button
           type="button"
           onClick={() => void load()}
-          className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+          className="inline-flex items-center gap-2 rounded-full border border-border-default bg-surface px-4 py-2 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
         >
           <RefreshCcw className="h-4 w-4" />
           Refresh
@@ -350,7 +350,7 @@ export function OrdersClient({
       </div>
 
       {visibleOrders.length === 0 ? (
-        <div className="rounded-[2rem] border border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+        <div className="rounded-[2rem] border border-border-default bg-surface p-10 text-center text-sm text-secondary">
           {mode === 'buyer' ? 'No orders yet.' : 'No sales yet.'}
         </div>
       ) : (
@@ -358,7 +358,7 @@ export function OrdersClient({
           {visibleOrders.map((current) => {
             const isBuyerView = mode === 'buyer'
             return (
-              <div key={current.id} className="rounded-[2rem] border border-gray-200 bg-white p-4 sm:p-5">
+              <div key={current.id} className="rounded-[2rem] border border-border-default bg-surface p-4 sm:p-5">
                 <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_auto] lg:items-center">
                   <div className="flex gap-4">
                     {current.product.images[0] ? (
@@ -370,13 +370,13 @@ export function OrdersClient({
                         className="h-24 w-24 rounded-2xl object-cover"
                       />
                     ) : (
-                      <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gray-100 text-xs text-gray-400">
+                      <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-surface-hover text-xs text-secondary">
                         No image
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="text-lg font-semibold text-gray-950">{current.product.title}</p>
-                      <div className="mt-2 grid gap-2 text-sm text-gray-500 sm:grid-cols-2">
+                      <p className="text-lg font-semibold text-primary">{current.product.title}</p>
+                      <div className="mt-2 grid gap-2 text-sm text-secondary sm:grid-cols-2">
                         {isBuyerView ? (
                           <>
                             <span>Seller: {current.seller.name}</span>
@@ -397,7 +397,7 @@ export function OrdersClient({
                   <div className="flex flex-wrap gap-3 lg:justify-end">
                     <Link
                       href={`/profile/orders/${current.id}`}
-                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                      className="inline-flex items-center gap-2 rounded-full border border-border-default px-4 py-2 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
                     >
                       View order details
                     </Link>
@@ -443,8 +443,8 @@ export function OrdersClient({
 function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-sm text-gray-500">{label}</dt>
-      <dd className="mt-1 text-sm font-medium text-gray-950">{value}</dd>
+      <dt className="text-sm text-secondary">{label}</dt>
+      <dd className="mt-1 text-sm font-medium text-primary">{value}</dd>
     </div>
   )
 }
@@ -461,18 +461,18 @@ function PersonCard({
   college: string | null
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-border-default bg-surface-hover p-3">
       {image ? (
         <Image src={image} alt={name} width={48} height={48} className="h-12 w-12 rounded-full object-cover" />
       ) : (
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-sm font-semibold text-gray-400">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface text-sm font-semibold text-secondary">
           {name[0]?.toUpperCase() ?? '?'}
         </div>
       )}
       <div>
-        <p className="text-xs uppercase tracking-wide text-gray-400">{label}</p>
-        <p className="text-sm font-semibold text-gray-950">{name}</p>
-        <p className="text-xs text-gray-500">{college || '—'}</p>
+        <p className="text-xs uppercase tracking-wide text-secondary">{label}</p>
+        <p className="text-sm font-semibold text-primary">{name}</p>
+        <p className="text-xs text-secondary">{college || '—'}</p>
       </div>
     </div>
   )
@@ -489,7 +489,7 @@ function ActionChip({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
+      className="inline-flex items-center rounded-full border border-border-default px-3 py-1.5 text-xs font-semibold text-secondary transition hover:bg-surface-hover"
     >
       {label}
     </button>

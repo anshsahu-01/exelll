@@ -7,7 +7,7 @@ export default function CartLoading() {
     <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
       <section className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <article key={i} className="rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-sm">
+          <article key={i} className="rounded-[1.75rem] border border-border-default bg-surface p-4 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row">
               <Skeleton className="h-28 w-full shrink-0 rounded-2xl sm:w-28" />
               <div className="min-w-0 flex-1 space-y-3">
@@ -31,7 +31,7 @@ export default function CartLoading() {
         ))}
       </section>
 
-      <aside className="h-fit rounded-[1.75rem] border border-gray-200 bg-white p-5 shadow-sm">
+      <aside className="h-fit rounded-[1.75rem] border border-border-default bg-surface p-5 shadow-sm">
         <Skeleton className="h-6 w-28 rounded-2xl" />
         <div className="mt-4 space-y-3">
           <Skeleton className="h-4 w-full rounded-2xl" />

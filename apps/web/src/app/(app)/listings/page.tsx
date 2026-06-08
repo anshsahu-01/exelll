@@ -74,9 +74,9 @@ export default async function ListingsPage({ searchParams }: PageProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Marketplace</h1>
+        <h1 className="text-2xl font-bold text-primary">Marketplace</h1>
 
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-secondary">
           {error
             ? 'Something went wrong'
             : pagination?.total
@@ -106,7 +106,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
               {pagination.page > 1 && (
                 <Link
                   href={buildPageUrl(pagination.page - 1)}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  className="px-4 py-2 border rounded-lg hover:bg-surface-hover"
                 >
                   ⮜
                 </Link>
@@ -121,8 +121,8 @@ export default async function ListingsPage({ searchParams }: PageProps) {
                   href={buildPageUrl(page)}
                   className={`px-4 py-2 rounded-lg border-gray-500 ${
                     page === pagination.page
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white hover:bg-gray-100'
+                      ? 'bg-primary text-background border-black'
+                      : 'bg-surface hover:bg-surface-hover'
                   }`}
                 >
                   {page}
@@ -132,7 +132,7 @@ export default async function ListingsPage({ searchParams }: PageProps) {
               {pagination.page < pagination.totalPages && (
                 <Link
                   href={buildPageUrl(pagination.page + 1)}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                  className="px-4 py-2 border rounded-lg hover:bg-surface-hover"
                 >
                   ⮞
                 </Link>

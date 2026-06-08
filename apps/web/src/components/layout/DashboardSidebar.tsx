@@ -41,7 +41,7 @@ export function DashboardSidebar() {
       <div className="lg:hidden fixed top-3 left-3 z-50">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-border-default bg-surface text-secondary shadow-sm"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -59,13 +59,13 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-40 flex w-[86vw] max-w-[18rem] flex-col border-r border-gray-200 bg-white
+          fixed inset-y-0 left-0 z-40 flex w-[86vw] max-w-[18rem] flex-col border-r border-border-default bg-surface
           transition-transform duration-300 ease-in-out
           lg:static lg:w-64 lg:max-w-none lg:translate-x-0 lg:flex
           ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className="flex items-center justify-center border-b border-gray-100 px-5 py-4">
+        <div className="flex items-center justify-center border-b border-border-default px-5 py-4">
           <Link href="/dashboard" className="flex items-center">
             <Image
               src="/logo.png"
@@ -83,7 +83,7 @@ export function DashboardSidebar() {
           <Link
             href="/sell"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-background transition-colors hover:bg-secondary"
           >
             <PlusCircle className="h-4 w-4" />
             Sell an Item
@@ -104,12 +104,12 @@ export function DashboardSidebar() {
                 className={`
                   flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors
                   ${isActive
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}
+                    ? 'bg-surface-hover text-primary'
+                    : 'text-secondary hover:bg-surface-hover hover:text-primary'}
                 `}
               >
                 <Icon
-                  className={`h-5 w-5 shrink-0 ${isActive ? 'text-gray-900' : 'text-gray-400'}`}
+                  className={`h-5 w-5 shrink-0 ${isActive ? 'text-primary' : 'text-secondary'}`}
                 />
                 {item.name}
               </Link>
@@ -117,13 +117,13 @@ export function DashboardSidebar() {
           })}
         </nav>
 
-        <div className="border-t border-gray-100 px-3 py-3">
+        <div className="border-t border-border-default px-3 py-3">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-gray-500 transition-colors hover:bg-red-50 hover:text-red-700"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-secondary transition-colors hover:bg-surface-hover hover:text-accent"
           >
-            <LogOut className="h-5 w-5 shrink-0 text-gray-400" />
+            <LogOut className="h-5 w-5 shrink-0 text-secondary" />
             Logout
           </button>
         </div>

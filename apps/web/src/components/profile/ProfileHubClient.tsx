@@ -43,14 +43,14 @@ function StatCard({
   value: number
 }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 transition duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="rounded-2xl border border-border-default bg-surface p-4 transition duration-300 hover:-translate-y-0.5 hover:shadow-lg">
       <div className="flex items-center justify-between gap-3">
-        <div className="rounded-xl bg-gray-100 p-2 text-gray-900">
+        <div className="rounded-xl bg-surface-hover p-2 text-primary">
           <Icon className="h-4 w-4" />
         </div>
         <div className="text-right">
-          <div className="text-2xl font-semibold tracking-tight text-gray-950">{value}</div>
-          <div className="mt-1 text-xs font-medium text-gray-500">{label}</div>
+          <div className="text-2xl font-semibold tracking-tight text-primary">{value}</div>
+          <div className="mt-1 text-xs font-medium text-secondary">{label}</div>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@ function ActionCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-gray-200 bg-white p-4 transition duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg"
+      className="group rounded-2xl border border-border-default bg-surface p-4 transition duration-300 hover:-translate-y-1 hover:border-border-default hover:shadow-lg"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
@@ -79,11 +79,11 @@ function ActionCard({
             <Icon className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-950">{title}</h3>
-            <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+            <h3 className="text-sm font-semibold text-primary">{title}</h3>
+            <p className="mt-1 text-sm text-secondary">{subtitle}</p>
           </div>
         </div>
-        <ArrowRight className="mt-0.5 h-4 w-4 text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-gray-950" />
+        <ArrowRight className="mt-0.5 h-4 w-4 text-secondary transition group-hover:translate-x-0.5 group-hover:text-primary" />
       </div>
     </Link>
   )
@@ -140,7 +140,7 @@ export function ProfileHubClient() {
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl space-y-8 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="rounded-[2rem] border border-gray-200 bg-white p-6 sm:p-8">
+        <section className="rounded-[2rem] border border-border-default bg-surface p-6 sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
               <div className="h-24 w-24 animate-pulse rounded-full bg-gray-200" />
@@ -173,14 +173,14 @@ export function ProfileHubClient() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-6 sm:px-6 lg:px-8">
-      <section className="rounded-[2rem] border border-gray-200 bg-white p-6 sm:p-8">
+      <section className="rounded-[2rem] border border-border-default bg-surface p-6 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100 ring-8 ring-gray-50">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-surface-hover ring-8 ring-gray-50">
               {user?.profileImage ? (
                 <Image src={user.profileImage} alt={user.name} fill className="object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-gray-700">
+                <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-secondary">
                   {initials || '?'}
                 </div>
               )}
@@ -188,18 +188,18 @@ export function ProfileHubClient() {
 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-3xl font-semibold tracking-tight text-gray-950">
+                <h1 className="text-3xl font-semibold tracking-tight text-primary">
                   {user?.name ?? 'Profile'}
                 </h1>
                 {user?.isVerified ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-border-default bg-surface-hover px-3 py-1 text-xs font-semibold text-secondary">
                     <BadgeCheck className="h-3.5 w-3.5 text-black" />
                     Verified User
                   </span>
                 ) : null}
               </div>
-              <p className="mt-2 text-sm text-gray-600">{user?.collegeName ?? 'College not set'}</p>
-              <p className="mt-1 text-sm text-gray-500">{joinedDate ? `Joined ${joinedDate}` : ''}</p>
+              <p className="mt-2 text-sm text-secondary">{user?.collegeName ?? 'College not set'}</p>
+              <p className="mt-1 text-sm text-secondary">{joinedDate ? `Joined ${joinedDate}` : ''}</p>
             </div>
           </div>
 

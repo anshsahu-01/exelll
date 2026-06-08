@@ -6,8 +6,8 @@ export default function MessagesLoading() {
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden bg-[#fafafa]">
       <div className="grid h-full grid-cols-1 lg:grid-cols-[30%_70%]">
-        <aside className="flex min-h-0 flex-col border-r border-gray-200 bg-white">
-          <div className="border-b border-gray-100 p-4">
+        <aside className="flex min-h-0 flex-col border-r border-border-default bg-surface">
+          <div className="border-b border-border-default p-4">
             <Skeleton className="h-14 rounded-2xl" />
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-4">
@@ -24,8 +24,8 @@ export default function MessagesLoading() {
           </div>
         </aside>
 
-        <main className="flex min-h-0 flex-col overflow-hidden bg-white">
-          <div className="shrink-0 border-b border-gray-100 p-4">
+        <main className="flex min-h-0 flex-col overflow-hidden bg-surface">
+          <div className="shrink-0 border-b border-border-default p-4">
             <div className="flex items-center gap-3">
               <Skeleton className="h-11 w-11 rounded-full" />
               <div className="min-w-0 flex-1 space-y-2">
@@ -46,7 +46,7 @@ export default function MessagesLoading() {
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-gray-100 p-4">
+          <div className="shrink-0 border-t border-border-default p-4">
             <div className="flex items-end gap-3">
               <Skeleton className="h-14 flex-1 rounded-2xl" />
               <Skeleton className="h-12 w-24 rounded-full" />

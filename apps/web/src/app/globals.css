@@ -1,1 +1,53 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: var(--bg-background);
+  --color-surface: var(--bg-surface);
+  --color-surface-hover: var(--bg-surface-hover);
+  
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-accent: var(--accent);
+  
+  --color-border-default: var(--border-default);
+  --color-border-secondary: var(--border-secondary);
+}
+
+:root {
+  --bg-background: #FFFFFF;
+  --bg-surface: #FAFAFA;
+  --bg-surface-hover: #F9F9F9;
+  
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --accent: #FF4C3B;
+  
+  --border-default: #EAEAEA;
+  --border-secondary: #F1F1F1;
+}
+
+.dark {
+  --bg-background: #0F0F0F;
+  --bg-surface: #171717;
+  --bg-surface-hover: #1D1D1D;
+  
+  --text-primary: #F5F5F5;
+  --text-secondary: #A1A1A1;
+  --accent: #FF4C3B;
+  
+  --border-default: #2A2A2A;
+  --border-secondary: #232323;
+}
+
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+}
+
+body {
+  background-color: var(--bg-background);
+  color: var(--text-primary);
+}

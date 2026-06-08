@@ -363,7 +363,7 @@ export function ProfileEditClient() {
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-secondary" />
       </div>
     )
   }
@@ -395,11 +395,11 @@ export function ProfileEditClient() {
 
       <form onSubmit={submit} className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Edit Profile</h1>
-          <p className="mt-1 text-sm text-gray-500">Keep your public marketplace profile current.</p>
+          <h1 className="text-2xl font-semibold text-primary">Edit Profile</h1>
+          <p className="mt-1 text-sm text-secondary">Keep your public marketplace profile current.</p>
         </div>
 
-        <div className="grid gap-4 rounded-[2rem] border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="grid gap-4 rounded-[2rem] border border-border-default bg-surface p-6 shadow-sm">
           {[ 
             ['name', 'Name'],
             ['email', 'Email'],
@@ -408,22 +408,22 @@ export function ProfileEditClient() {
             ['location', 'Location'],
           ].map(([key, label]) => (
             <label key={key} className="space-y-2">
-              <span className="text-sm font-medium text-gray-700">{label}</span>
+              <span className="text-sm font-medium text-secondary">{label}</span>
               <input
                 value={form[key as keyof typeof form]}
                 onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+                className="h-12 w-full rounded-2xl border border-border-default bg-surface-hover px-4 text-sm outline-none transition focus:border-border-default focus:bg-surface"
               />
             </label>
           ))}
           <label className="space-y-2">
-            <span className="text-sm font-medium text-gray-700">Profile Photo</span>
-            <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
-              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-white ring-1 ring-gray-200">
+            <span className="text-sm font-medium text-secondary">Profile Photo</span>
+            <div className="flex items-center gap-4 rounded-2xl border border-border-default bg-surface-hover p-4">
+              <div className="relative h-16 w-16 overflow-hidden rounded-full bg-surface ring-1 ring-gray-200">
                 {profilePreview ? (
                   <Image src={profilePreview} alt="Profile preview" fill className="object-cover" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-gray-500">
+                  <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-secondary">
                     {form.name?.trim()?.[0]?.toUpperCase() ?? '?'}
                   </div>
                 )}
@@ -453,7 +453,7 @@ export function ProfileEditClient() {
                     setProfileImageFile(null)
                     setRemoveProfileImage(true)
                   }}
-                  className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                  className="rounded-full border border-border-default bg-surface px-4 py-2 text-sm font-medium text-secondary transition hover:bg-surface-hover"
                 >
                   Remove image
                 </button>
@@ -461,18 +461,18 @@ export function ProfileEditClient() {
             </div>
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-medium text-gray-700">Bio</span>
+            <span className="text-sm font-medium text-secondary">Bio</span>
             <textarea
               value={form.bio}
               onChange={(event) => setForm((current) => ({ ...current, bio: event.target.value }))}
               rows={5}
-              className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+              className="w-full rounded-2xl border border-border-default bg-surface-hover px-4 py-3 text-sm outline-none transition focus:border-border-default focus:bg-surface"
             />
           </label>
           {showOtpVerification ? (
-            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-              <p className="text-sm font-medium text-gray-900">Verify your new email</p>
-              <p className="mt-1 text-sm text-gray-500">
+            <div className="rounded-2xl border border-border-default bg-surface-hover p-4">
+              <p className="text-sm font-medium text-primary">Verify your new email</p>
+              <p className="mt-1 text-sm text-secondary">
                 Enter the code sent to your email.
               </p>
               <div className="mt-4 flex gap-3">
@@ -480,7 +480,7 @@ export function ProfileEditClient() {
                   value={verificationCode}
                   onChange={(event) => setVerificationCode(event.target.value)}
                   placeholder="6-digit OTP"
-                  className="h-12 flex-1 rounded-2xl border border-gray-200 bg-white px-4 text-sm outline-none transition focus:border-gray-300"
+                  className="h-12 flex-1 rounded-2xl border border-border-default bg-surface px-4 text-sm outline-none transition focus:border-border-default"
                 />
               </div>
               <div className="mt-3 flex gap-3">
@@ -497,7 +497,7 @@ export function ProfileEditClient() {
                   type="button"
                   onClick={handleResendCode}
                   disabled={saving || verificationStep === 'sending'}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100"
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-border-default bg-surface px-5 text-sm font-semibold text-secondary transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:bg-surface-hover"
                 >
                   {verificationStep === 'sending' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Resend code
@@ -521,11 +521,11 @@ export function ProfileEditClient() {
         </div>
       </form>
 
-      <section className="rounded-[2rem] border border-red-200 bg-white p-6">
+      <section className="rounded-[2rem] border border-red-200 bg-surface p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Delete account</h2>
-            <p className="mt-1 text-sm text-gray-500">Permanently remove your profile and marketplace data.</p>
+            <h2 className="text-lg font-semibold text-primary">Delete account</h2>
+            <p className="mt-1 text-sm text-secondary">Permanently remove your profile and marketplace data.</p>
           </div>
           <button
             type="button"
@@ -540,29 +540,29 @@ export function ProfileEditClient() {
 
       {deleteOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-[2rem] bg-surface p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-xl font-semibold text-gray-950">Delete account?</h3>
-                <p className="mt-2 text-sm leading-6 text-gray-600">
+                <h3 className="text-xl font-semibold text-primary">Delete account?</h3>
+                <p className="mt-2 text-sm leading-6 text-secondary">
                   Deleting your account permanently removes your profile, listings, chats, and marketplace activity. This action cannot be undone.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setDeleteOpen(false)}
-                className="rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                className="rounded-full p-2 text-secondary transition hover:bg-surface-hover hover:text-secondary"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <label className="mt-5 block space-y-2">
-              <span className="text-sm font-medium text-gray-700">Type DELETE to confirm</span>
+              <span className="text-sm font-medium text-secondary">Type DELETE to confirm</span>
               <input
                 value={deleteConfirmText}
                 onChange={(event) => setDeleteConfirmText(event.target.value)}
-                className="h-12 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition focus:border-gray-300 focus:bg-white"
+                className="h-12 w-full rounded-2xl border border-border-default bg-surface-hover px-4 text-sm outline-none transition focus:border-border-default focus:bg-surface"
               />
             </label>
 
@@ -570,7 +570,7 @@ export function ProfileEditClient() {
               <button
                 type="button"
                 onClick={() => setDeleteOpen(false)}
-                className="flex-1 rounded-full border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="flex-1 rounded-full border border-border-default px-4 py-3 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
               >
                 Cancel
               </button>

@@ -10,16 +10,16 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon: Icon, title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center bg-white border border-dashed border-gray-300 rounded-xl min-h-[300px]">
-      <div className="flex items-center justify-center w-12 h-12 mb-4 bg-gray-100 rounded-full">
-        <Icon className="w-6 h-6 text-gray-400" />
+    <div className="flex flex-col items-center justify-center p-8 text-center bg-surface border border-dashed border-border-default rounded-xl min-h-[300px]">
+      <div className="flex items-center justify-center w-12 h-12 mb-4 bg-surface-hover rounded-full">
+        <Icon className="w-6 h-6 text-secondary" />
       </div>
-      <h3 className="mb-1 text-lg font-medium text-gray-900">{title}</h3>
-      <p className="mb-4 text-sm text-gray-500 max-w-sm">{description}</p>
+      <h3 className="mb-1 text-lg font-medium text-primary">{title}</h3>
+      <p className="mb-4 text-sm text-secondary max-w-sm">{description}</p>
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-background bg-primary rounded-lg hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
         >
           {actionLabel}
         </button>

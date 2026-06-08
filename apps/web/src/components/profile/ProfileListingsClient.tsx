@@ -59,12 +59,12 @@ export function ProfileListingsClient() {
           <div className="h-5 w-24 animate-pulse rounded-2xl bg-gray-200" />
           <div className="h-5 w-28 animate-pulse rounded-2xl bg-gray-200" />
         </div>
-        <div className="rounded-[2rem] border border-gray-200 bg-white p-6">
+        <div className="rounded-[2rem] border border-border-default bg-surface p-6">
           <div className="h-8 w-48 animate-pulse rounded-2xl bg-gray-200" />
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white">
+            <div key={i} className="overflow-hidden rounded-[1.75rem] border border-border-default bg-surface">
               <div className="h-56 animate-pulse bg-gray-200" />
               <div className="p-5 space-y-3">
                 <div className="h-5 w-4/5 animate-pulse rounded-2xl bg-gray-200" />
@@ -85,7 +85,7 @@ export function ProfileListingsClient() {
   return (
     <div className="space-y-8 px-4 py-6 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
-        <Link href="/sell" className="text-sm font-medium text-gray-500 transition hover:text-gray-950">
+        <Link href="/sell" className="text-sm font-medium text-secondary transition hover:text-primary">
           Create new
         </Link>
       </div>
@@ -105,44 +105,44 @@ export function ProfileListingsClient() {
 
       <section>
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">My Listings</h1>
+          <h1 className="text-2xl font-semibold text-primary">My Listings</h1>
         </div>
         <ListingGroup title="Active" items={active} onDelete={setDeleteTarget} />
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">Sold</h2>
+        <h2 className="mb-4 text-xl font-semibold text-primary">Sold</h2>
         <ListingGroup title="Sold" items={sold} onDelete={setDeleteTarget} sold />
       </section>
 
       {deleteTarget ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-lg rounded-[2rem] bg-surface p-6 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-xl font-semibold text-gray-950">Delete listing?</h3>
-                <p className="mt-2 text-sm leading-6 text-gray-600">
+                <h3 className="text-xl font-semibold text-primary">Delete listing?</h3>
+                <p className="mt-2 text-sm leading-6 text-secondary">
                   This listing will be permanently removed from the marketplace.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                className="rounded-full p-2 text-secondary transition hover:bg-surface-hover hover:text-secondary"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="mt-5 flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 p-3">
-              <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-gray-100">
+            <div className="mt-5 flex items-center gap-3 rounded-2xl border border-border-default bg-surface-hover p-3">
+              <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-surface-hover">
                 {deleteTarget.images[0] ? (
                   <Image src={deleteTarget.images[0]} alt={deleteTarget.title} fill className="object-cover" />
                 ) : null}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-gray-950">{deleteTarget.title}</p>
-                <p className="truncate text-sm text-gray-500">{deleteTarget.category.name}</p>
+                <p className="truncate text-sm font-semibold text-primary">{deleteTarget.title}</p>
+                <p className="truncate text-sm text-secondary">{deleteTarget.category.name}</p>
               </div>
             </div>
 
@@ -150,7 +150,7 @@ export function ProfileListingsClient() {
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="flex-1 rounded-full border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="flex-1 rounded-full border border-border-default px-4 py-3 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
               >
                 Cancel
               </button>
@@ -184,7 +184,7 @@ function ListingGroup({
 }) {
   if (items.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-gray-200 bg-white p-6 text-sm text-gray-500">
+      <div className="rounded-[2rem] border border-border-default bg-surface p-6 text-sm text-secondary">
         No {title.toLowerCase()} listings yet.
       </div>
     )
@@ -193,24 +193,24 @@ function ListingGroup({
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {items.map((product) => (
-        <article key={product.id} className="overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sm">
-          <div className="relative h-56 bg-gray-100">
+        <article key={product.id} className="overflow-hidden rounded-[1.75rem] border border-border-default bg-surface shadow-sm">
+          <div className="relative h-56 bg-surface-hover">
             {product.images[0] ? (
               <Image src={product.images[0]} alt={product.title} fill className="object-cover" />
             ) : null}
-            <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-gray-900 shadow-sm">
+            <span className="absolute left-4 top-4 rounded-full bg-surface/95 px-3 py-1 text-xs font-semibold text-primary shadow-sm">
               {sold ? 'Sold' : product.status}
             </span>
           </div>
           <div className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">{product.title}</h3>
-                <p className="mt-1 text-sm text-gray-500">{product.category.name}</p>
+                <h3 className="text-lg font-semibold text-primary">{product.title}</h3>
+                <p className="mt-1 text-sm text-secondary">{product.category.name}</p>
               </div>
               {product.seller.isVerified ? <BadgeCheck className="h-5 w-5 text-emerald-600" /> : null}
             </div>
-            <p className="mt-3 line-clamp-2 text-sm text-gray-600">{product.description}</p>
+            <p className="mt-3 line-clamp-2 text-sm text-secondary">{product.description}</p>
             <div className="mt-4 flex gap-2">
               <Link
                 href={`/sell/${product.id}`}
@@ -221,7 +221,7 @@ function ListingGroup({
               </Link>
               <button
                 onClick={() => onDelete(product)}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border-default px-4 py-2.5 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
               >
                 <Trash2 className="h-4 w-4" />
                 Delete
