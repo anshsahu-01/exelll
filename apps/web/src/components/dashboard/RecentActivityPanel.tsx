@@ -58,11 +58,13 @@ export default function RecentActivityPanel({
   products,
   orders,
   sales,
+  compact = false,
 }: {
   conversations: ConversationListItem[]
   products: Product[]
   orders: Order[]
   sales: Order[]
+  compact?: boolean
 }) {
   const activities: Activity[] = [
     ...products.slice(0, 6).map((product) => ({
@@ -115,32 +117,46 @@ export default function RecentActivityPanel({
   const mobileActivities = sortedActivities.slice(0, 3)
 
   return (
-    <aside className="flex h-full flex-col overflow-hidden bg-surface">
-      <div className="hidden border-b border-border-default px-4 py-4 sm:px-5 lg:block">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold text-primary">Recent Activity</h2>
-            <p className="mt-1 text-xs text-secondary">Real activity from your marketplace account</p>
+    <aside className={`flex h-full flex-col overflow-hidden bg-surface${compact ? '' : ''}`}>
+      {!compact && (
+        <>
+          <div className="hidden border-b border-border-default px-4 py-4 sm:px-5 lg:block">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-primary">Recent Activity</h2>
+                <p className="mt-1 text-xs text-secondary">Real activity from your marketplace account</p>
+              </div>
+              <Link href="/notifications" className="inline-flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary">
+                <Bell className="h-3.5 w-3.5" />
+                Notifications
+              </Link>
+            </div>
           </div>
-          <Link href="/notifications" className="inline-flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary">
-            <Bell className="h-3.5 w-3.5" />
-            Notifications
-          </Link>
-        </div>
-      </div>
 
-      <div className="border-b border-border-default px-4 py-4 sm:px-5 lg:hidden">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold text-primary">Recent Activity</h2>
-            <p className="mt-1 text-xs text-secondary">Real activity from your marketplace account</p>
+          <div className="border-b border-border-default px-4 py-4 sm:px-5 lg:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-primary">Recent Activity</h2>
+                <p className="mt-1 text-xs text-secondary">Real activity from your marketplace account</p>
+              </div>
+              <Link href="/notifications" className="inline-flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary">
+                <Bell className="h-3.5 w-3.5" />
+                Notifications
+              </Link>
+            </div>
           </div>
+        </>
+      )}
+
+      {compact && (
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-semibold text-primary">Recent Activity</h2>
           <Link href="/notifications" className="inline-flex items-center gap-1 text-xs font-medium text-secondary hover:text-primary">
             <Bell className="h-3.5 w-3.5" />
             Notifications
           </Link>
         </div>
-      </div>
+      )}
 
       {sortedActivities.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
@@ -154,32 +170,34 @@ export default function RecentActivityPanel({
         </div>
       ) : (
         <>
-          <div className="grid gap-3 border-b border-border-default px-3 py-4 sm:px-5 lg:hidden">
-            {mobileActivities.map((activity) => {
-              const Icon = activity.icon
-              return (
-                <Link
-                  key={`${activity.kind}-${activity.id}`}
-                  href={activity.href}
-                  className="flex min-w-0 items-start gap-3 rounded-2xl border border-border-default bg-surface-hover px-3 py-4 transition hover:bg-surface-hover"
-                >
-                  <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${activityToneClass(activity.tone)}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="min-w-0 flex-1 truncate text-sm font-semibold text-primary">{activity.title}</p>
-                      <span className="shrink-0 text-[11px] text-secondary">{activity.time}</span>
+          {!compact && (
+            <div className="grid gap-3 border-b border-border-default px-3 py-4 sm:px-5 lg:hidden">
+              {mobileActivities.map((activity) => {
+                const Icon = activity.icon
+                return (
+                  <Link
+                    key={`${activity.kind}-${activity.id}`}
+                    href={activity.href}
+                    className="flex min-w-0 items-start gap-3 rounded-2xl border border-border-default bg-surface-hover px-3 py-4 transition hover:bg-surface-hover"
+                  >
+                    <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${activityToneClass(activity.tone)}`}>
+                      <Icon className="h-4 w-4" />
                     </div>
-                    <p className="mt-1 line-clamp-2 text-xs leading-5 text-secondary">{activity.subtitle}</p>
-                  </div>
-                  <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-gray-300" />
-                </Link>
-              )
-            })}
-          </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-primary">{activity.title}</p>
+                        <span className="shrink-0 text-[11px] text-secondary">{activity.time}</span>
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-secondary">{activity.subtitle}</p>
+                    </div>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-secondary" />
+                  </Link>
+                )
+              })}
+            </div>
+          )}
 
-          <ul className="hidden flex-1 divide-y divide-gray-100 overflow-y-auto lg:block">
+          <ul className={`${compact ? 'block' : 'hidden lg:block'} flex-1 divide-y divide-border-default overflow-y-auto`}>
             {sortedActivities.map((activity) => {
               const Icon = activity.icon
               return (
@@ -195,7 +213,7 @@ export default function RecentActivityPanel({
                       </div>
                       <p className="mt-1 line-clamp-2 text-xs leading-5 text-secondary">{activity.subtitle}</p>
                     </div>
-                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-gray-300" />
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-secondary" />
                   </Link>
                 </li>
               )

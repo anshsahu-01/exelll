@@ -5,42 +5,99 @@ function SkeletonBlock({ className }: { className: string }) {
 export function DashboardSkeleton() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-surface-hover">
-      <div className="shrink-0 border-b border-border-default bg-surface px-6 py-4">
-        <SkeletonBlock className="h-6 w-40" />
-        <SkeletonBlock className="mt-2 h-4 w-72" />
-      </div>
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <div className="min-h-0 flex-1 overflow-y-auto border-r border-border-default p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <SkeletonBlock className="h-5 w-36" />
-            <SkeletonBlock className="h-4 w-20" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-[1.5rem] border border-border-default bg-surface p-3">
-                <SkeletonBlock className="aspect-[4/3] w-full rounded-[1rem]" />
-                <SkeletonBlock className="mt-3 h-4 w-3/4" />
-                <SkeletonBlock className="mt-2 h-5 w-1/3" />
-                <SkeletonBlock className="mt-3 h-3 w-1/2" />
+      {/* Two-column layout — main + sidebar */}
+      <div className="flex min-h-0 flex-1 overflow-hidden max-w-[1600px] w-full mx-auto">
+
+        {/* Main content column */}
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 lg:pr-6">
+          <div className="max-w-4xl mx-auto w-full">
+
+            {/* Hero skeleton */}
+            <div className="rounded-2xl border border-border-default bg-surface p-6 sm:p-8 mb-8">
+              <SkeletonBlock className="h-5 w-32 rounded-full mb-4" />
+              <SkeletonBlock className="h-8 w-64 mb-3" />
+              <SkeletonBlock className="h-4 w-full max-w-md mb-2" />
+              <SkeletonBlock className="h-4 w-3/4 max-w-sm" />
+            </div>
+
+            {/* Marketplace Overview skeleton */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <SkeletonBlock className="h-5 w-48" />
+                <SkeletonBlock className="h-4 w-28" />
               </div>
-            ))}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-surface border border-border-default rounded-2xl p-6">
+                    <SkeletonBlock className="h-12 w-12 rounded-xl mb-4" />
+                    <SkeletonBlock className="h-9 w-16 mb-2" />
+                    <SkeletonBlock className="h-4 w-28" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions skeleton */}
+            <div className="mb-10">
+              <SkeletonBlock className="h-5 w-36 mb-4" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bg-surface border border-border-default rounded-2xl p-5 sm:p-6 flex flex-col items-center">
+                    <SkeletonBlock className="h-14 w-14 rounded-xl mb-3" />
+                    <SkeletonBlock className="h-4 w-16" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Explore Sellers CTA skeleton */}
+            <div className="rounded-2xl border border-border-default bg-surface p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6">
+              <div className="flex-1">
+                <SkeletonBlock className="h-6 w-52 mb-3" />
+                <SkeletonBlock className="h-4 w-full mb-2" />
+                <SkeletonBlock className="h-4 w-3/4" />
+              </div>
+              <SkeletonBlock className="h-12 w-40 rounded-xl shrink-0" />
+            </div>
+
           </div>
         </div>
-        <div className="w-80 shrink-0 border-l border-border-default bg-surface p-6 xl:w-96">
-          <SkeletonBlock className="h-5 w-32" />
-          <div className="mt-5 space-y-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex gap-3">
-                <SkeletonBlock className="h-11 w-11 rounded-full" />
-                <div className="flex-1 space-y-2">
-                  <SkeletonBlock className="h-4 w-3/4" />
-                  <SkeletonBlock className="h-3 w-full" />
-                  <SkeletonBlock className="h-3 w-1/2" />
+
+        {/* Right sidebar skeleton — desktop only */}
+        <div className="hidden lg:flex lg:w-[380px] xl:w-[420px] shrink-0 flex-col border-l border-border-default bg-surface h-full overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6">
+            {/* My Activity skeleton */}
+            <SkeletonBlock className="h-5 w-28 mb-4" />
+            <div className="flex flex-col gap-2 mb-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-4 py-3.5 bg-surface-hover border border-border-default rounded-xl">
+                  <SkeletonBlock className="h-10 w-10 rounded-lg shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <SkeletonBlock className="h-4 w-3/4" />
+                    <SkeletonBlock className="h-3 w-1/2" />
+                  </div>
+                  <SkeletonBlock className="h-6 w-6 shrink-0" />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Recent Activity panel skeleton */}
+            <SkeletonBlock className="h-5 w-32 mb-4" />
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex gap-3 px-2 py-3">
+                  <SkeletonBlock className="h-10 w-10 rounded-full shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <SkeletonBlock className="h-4 w-4/5" />
+                    <SkeletonBlock className="h-3 w-full" />
+                    <SkeletonBlock className="h-3 w-2/5" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   )

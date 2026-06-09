@@ -1,4 +1,4 @@
-import { Prisma, ProductStatus } from "@prisma/client";
+import { ProductStatus } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { AppError } from "../../utils/AppError";
 import { getPaginationMeta, PaginationMeta } from "../../utils/pagination";

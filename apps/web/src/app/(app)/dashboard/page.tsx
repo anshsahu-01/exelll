@@ -1,8 +1,10 @@
-import { Suspense } from 'react'
 import { getConversations, getMyOrders, getMySales, getMarketplaceOverview } from '@/lib/services'
 import RecentActivityPanel from '@/components/dashboard/RecentActivityPanel'
 import { MarketplaceOverviewCards } from '@/components/dashboard/MarketplaceOverviewCards'
 import { DashboardQuickActions } from '@/components/dashboard/DashboardQuickActions'
+import { DashboardHero } from '@/components/dashboard/DashboardHero'
+import { ExploreSellersCTA } from '@/components/dashboard/ExploreSellersCTA'
+import { MyActivitySummary } from '@/components/dashboard/MyActivitySummary'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,41 +13,63 @@ export default async function DashboardPage() {
     getConversations().catch(() => []),
     getMyOrders().catch(() => []),
     getMySales().catch(() => []),
-    getMarketplaceOverview().catch(() => ({ totalActiveListings: 0, totalSellers: 0, totalSoldItems: 0 })),
+    getMarketplaceOverview().catch(() => ({
+      totalActiveListings: 0,
+      totalSellers: 0,
+      totalSoldItems: 0,
+    })),
   ])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <div className="shrink-0 border-b border-border-default bg-surface px-4 py-4 sm:px-6 lg:px-6">
-        <h1 className="text-xl font-semibold text-primary sm:text-2xl">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-secondary">Welcome back - here's what's happening</p>
-      </div>
+    <div className="flex h-full flex-col overflow-hidden bg-surface-hover">
+      <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden lg:flex-row">
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-        <div className="min-h-0 flex-1 overflow-y-auto bg-surface-hover p-4 sm:p-6 lg:border-r border-border-default">
-          <DashboardQuickActions />
-          
-          <Suspense fallback={<div className="h-40 bg-surface rounded-xl border border-border-default animate-pulse"></div>}>
-            <MarketplaceOverviewCards 
-              totalActiveListings={overview.totalActiveListings} 
-              totalSellers={overview.totalSellers} 
-              totalSoldItems={overview.totalSoldItems} 
+        {/* Main Content */}
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 lg:pr-6">
+          <div className="mx-auto w-full max-w-5xl space-y-8">
+
+            <DashboardHero />
+            
+            
+            <DashboardQuickActions />
+            
+            
+            <MarketplaceOverviewCards
+              totalActiveListings={overview.totalActiveListings}
+              totalSellers={overview.totalSellers}
+              totalSoldItems={overview.totalSoldItems}
             />
-          </Suspense>
 
-        </div>
+            
 
-        <div className="hidden lg:block lg:w-80 xl:w-96">
-          <div className="h-full overflow-y-auto border-l border-border-default bg-surface">
-            {/* Products is passed empty array because we don't fetch my recently listed products anymore, they weren't required for the activity panel per user instructions. Wait, RecentActivityPanel needs 'products'. Let's pass empty array. */}
-            <RecentActivityPanel
-              conversations={conversations}
-              products={[]} 
-              orders={orders}
-              sales={sales}
-            />
+            <ExploreSellersCTA />
+
           </div>
         </div>
+
+        {/* Desktop Sidebar */}
+        <aside className="hidden h-full shrink-0 border-l border-border-default bg-surface lg:flex lg:w-[380px] xl:w-[420px]">
+          <div className="flex-1 overflow-y-auto p-6">
+
+            <MyActivitySummary
+              conversationsCount={conversations.length}
+              ordersCount={orders.length}
+              salesCount={sales.length}
+            />
+
+            <div className="mt-8">
+              <RecentActivityPanel
+                conversations={conversations}
+                products={[]}
+                orders={orders}
+                sales={sales}
+                compact={true}
+              />
+            </div>
+
+          </div>
+        </aside>
+
       </div>
     </div>
   )

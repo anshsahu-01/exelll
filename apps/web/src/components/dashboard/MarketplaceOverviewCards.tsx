@@ -1,4 +1,5 @@
 import { PackageSearch, Users, ShoppingBag } from 'lucide-react'
+import Link from 'next/link'
 
 export function MarketplaceOverviewCards({ 
   totalActiveListings, 
@@ -11,44 +12,50 @@ export function MarketplaceOverviewCards({
 }) {
   return (
     <div className="mb-8">
-      <h2 className="text-lg font-semibold text-primary mb-4">Marketplace Overview</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-primary">Marketplace Overview</h2>
+        <Link href="/sellers" className="text-xs font-medium text-primary hover:underline">
+          View Directory →
+        </Link>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5">
         
-        <a href="/listings" className="group bg-surface hover:bg-surface-hover border border-border-default rounded-xl p-5 transition-all hover:shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-50 text-blue-600 rounded-lg group-hover:scale-110 transition-transform">
-              <PackageSearch className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-secondary mb-1">Active Listings</p>
-              <p className="text-2xl font-bold text-primary">{totalActiveListings}</p>
+        <Link href="/listings" className="group relative overflow-hidden bg-surface hover:bg-surface-hover border border-border-default rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-surface-hover border border-border-default rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <PackageSearch className="w-5 h-5 text-primary" />
             </div>
           </div>
-        </a>
+          <div>
+            <p className="text-3xl font-bold text-primary mb-1">{totalActiveListings}</p>
+            <p className="text-sm font-medium text-secondary">Active Listings</p>
+          </div>
+        </Link>
 
-        <a href="/sellers" className="group bg-surface hover:bg-surface-hover border border-border-default rounded-xl p-5 transition-all hover:shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-50 text-purple-600 rounded-lg group-hover:scale-110 transition-transform">
-              <Users className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-secondary mb-1">Total Sellers</p>
-              <p className="text-2xl font-bold text-primary">{totalSellers}</p>
+        <Link href="/sellers" className="group relative overflow-hidden bg-surface hover:bg-surface-hover border border-border-default rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-surface-hover border border-border-default rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <Users className="w-5 h-5 text-primary" />
             </div>
           </div>
-        </a>
+          <div>
+            <p className="text-3xl font-bold text-primary mb-1">{totalSellers}</p>
+            <p className="text-sm font-medium text-secondary">Total Sellers</p>
+          </div>
+        </Link>
 
-        <a href="/sellers" className="group bg-surface hover:bg-surface-hover border border-border-default rounded-xl p-5 transition-all hover:shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-50 text-green-600 rounded-lg group-hover:scale-110 transition-transform">
-              <ShoppingBag className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-secondary mb-1">Items Sold</p>
-              <p className="text-2xl font-bold text-primary">{totalSoldItems}</p>
+        <Link href="/sellers" className="group relative overflow-hidden bg-surface hover:bg-surface-hover border border-border-default rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-surface-hover border border-border-default rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <ShoppingBag className="w-5 h-5 text-primary" />
             </div>
           </div>
-        </a>
+          <div>
+            <p className="text-3xl font-bold text-primary mb-1">{totalSoldItems}</p>
+            <p className="text-sm font-medium text-secondary">Items Sold</p>
+          </div>
+        </Link>
 
       </div>
     </div>
