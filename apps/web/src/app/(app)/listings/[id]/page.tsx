@@ -8,6 +8,8 @@ import { ListingCard } from '@/components/listings/ListingCard'
 import { PageBackButton } from '@/components/ui/PageBackButton'
 import { AddToCartButton } from '@/components/listings/AddToCartButton'
 import { formatINR } from '@/lib/format'
+import { auth } from '@clerk/nextjs/server'
+import { getMe } from '@/lib/marketplace'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +31,18 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
     console.error('Failed to fetch product', error)
     notFound()
   }
+
+  const authObj = await auth()
+  const token = await authObj.getToken()
+  let currentUserId = null
+  if (token) {
+    try {
+      const me = await getMe(token)
+      currentUserId = me.id
+    } catch (e) {}
+  }
+
+  const isOwner = currentUserId === listing.seller.id
 
   const timeAgo = new Date(listing.createdAt).toLocaleDateString('en-US', {
     month: 'long',
@@ -71,10 +85,10 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
             <div className="text-3xl font-bold text-primary">{formatINR(listing.price)}</div>
 
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="rounded-full bg-surface-hover px-3 py-1 font-medium text-gray-800">
+              <span className="rounded-full bg-surface-hover px-3 py-1 font-medium text-primary">
                 {listing.condition}
               </span>
-              <span className="rounded-full bg-surface-hover px-3 py-1 font-medium text-gray-800">
+              <span className="rounded-full bg-surface-hover px-3 py-1 font-medium text-primary">
                 {listing.category?.name || 'Uncategorized'}
               </span>
             </div>
@@ -88,16 +102,22 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
             <div className="my-2 h-px bg-surface-hover" />
 
             <div className="flex flex-col gap-3">
-              <div className="grid grid-cols-2 gap-3">
-                <AddToCartButton productId={listing.id} />
-                <Link
-                  href={`/checkout?productId=${listing.id}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-border-default bg-surface py-3 font-medium text-black transition-colors hover:border-black"
-                >
-                  Buy Now
-                </Link>
-              </div>
-              <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-border-default bg-surface py-3 font-medium text-black transition-colors hover:border-black">
+              {isOwner ? (
+                <div className="w-full text-center py-3 bg-surface-hover border border-border-default rounded-xl text-secondary font-medium">
+                  This is your listing
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <AddToCartButton productId={listing.id} />
+                  <Link
+                    href={`/checkout?productId=${listing.id}`}
+                    className="inline-flex items-center justify-center rounded-xl border border-border-default bg-surface py-3 font-medium text-primary transition-colors hover:border-black"
+                  >
+                    Buy Now
+                  </Link>
+                </div>
+              )}
+              <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-border-default bg-surface py-3 font-medium text-primary transition-colors hover:border-black">
                 <Heart className="h-5 w-5" />
                 Add to Favourites
               </button>
@@ -107,6 +127,7 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
           <SellerInfo
             seller={listing.seller}
             productId={listing.id}
+            hideContact={isOwner}
           />
 
           <div className="flex items-start gap-3 rounded-xl border border-border-default bg-surface-hover p-4 text-sm text-secondary">

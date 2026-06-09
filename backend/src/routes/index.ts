@@ -8,7 +8,7 @@ import productRoutes from "../modules/product/product.routes";
 import orderRoutes from "../modules/order/order.routes";
 import userRoutes from "../modules/user/user.routes";
 import adminRoutes from "../modules/admin/admin.routes";
-
+import sellerRoutes from "../modules/seller/seller.routes";
 const router = Router();
 
 router.get("/health", (_req, res) => {
@@ -24,5 +24,6 @@ router.use("/favourites", favouritesRoutes);
 router.use("/orders", orderRoutes);
 router.use("/users", userRoutes);
 router.use("/admin", adminRoutes);
+router.use("/sellers", sellerRoutes);
 
 export default router;

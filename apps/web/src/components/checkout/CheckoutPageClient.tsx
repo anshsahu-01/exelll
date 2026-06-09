@@ -124,6 +124,22 @@ export function CheckoutPageClient() {
     [items]
   )
 
+  const isFormValid =
+  !!form.fullName.trim() &&
+  !!form.mobileNumber.trim() &&
+  !!form.address.trim() &&
+  !!form.city.trim() &&
+  !!form.state.trim() &&
+  !!form.pincode.trim() &&
+  /^\d{10,15}$/.test(form.mobileNumber.trim()) &&
+  (
+    paymentMethod === 'COD' ||
+    (
+      !!form.utrNumber.trim() &&
+      !!form.screenshotDataUrl
+    )
+  )
+
   const validate = () => {
     if (
       !form.fullName.trim() ||
@@ -271,6 +287,7 @@ export function CheckoutPageClient() {
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name">
               <input
+                required
                 className={sharedInputClass}
                 value={form.fullName}
                 onChange={(e) => setForm((c) => ({ ...c, fullName: e.target.value }))}
@@ -279,6 +296,9 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="Mobile number">
               <input
+                required
+                inputMode="numeric"
+                maxLength={15}
                 className={sharedInputClass}
                 value={form.mobileNumber}
                 onChange={(e) => setForm((c) => ({ ...c, mobileNumber: e.target.value }))}
@@ -287,6 +307,7 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="Pickup / delivery address" className="sm:col-span-2">
               <textarea
+                required
                 className={`${sharedInputClass} min-h-28 resize-none py-4`}
                 value={form.address}
                 onChange={(e) => setForm((c) => ({ ...c, address: e.target.value }))}
@@ -295,6 +316,7 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="City">
               <input
+                required
                 className={sharedInputClass}
                 value={form.city}
                 onChange={(e) => setForm((c) => ({ ...c, city: e.target.value }))}
@@ -303,6 +325,7 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="State">
               <input
+                required
                 className={sharedInputClass}
                 value={form.state}
                 onChange={(e) => setForm((c) => ({ ...c, state: e.target.value }))}
@@ -311,6 +334,9 @@ export function CheckoutPageClient() {
             </Field>
             <Field label="Pincode" className="sm:col-span-2">
               <input
+                required
+                inputMode="numeric"
+                maxLength={6}
                 className={sharedInputClass}
                 value={form.pincode}
                 onChange={(e) => setForm((c) => ({ ...c, pincode: e.target.value }))}
@@ -343,6 +369,7 @@ export function CheckoutPageClient() {
                   </div>
                   <Field label="UTR / transaction reference number">
                     <input
+                      required
                       className={sharedInputClass}
                       value={form.utrNumber}
                       onChange={(e) => setForm((c) => ({ ...c, utrNumber: e.target.value }))}
@@ -364,6 +391,7 @@ export function CheckoutPageClient() {
                         </span>
                         <span className="mt-1 text-xs text-secondary">{screenshotName || 'PNG, JPG, or JPEG'}</span>
                         <input
+                          required
                           type="file"
                           accept="image/*"
                           className="hidden"
@@ -416,8 +444,8 @@ export function CheckoutPageClient() {
         <button
           type="button"
           onClick={() => void placeOrder()}
-          disabled={submitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400"
+          disabled={submitting || !isFormValid}
+          className="disabled:cursor-not-allowed disabled:bg-gray-400 disabled:hover:bg-gray-400 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           Place Order

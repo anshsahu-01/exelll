@@ -26,12 +26,10 @@ export function CartBadge() {
     void load()
     const onUpdate = () => void load()
     window.addEventListener('cart-updated', onUpdate)
-    const timer = window.setInterval(load, 15000)
 
     return () => {
       active = false
       window.removeEventListener('cart-updated', onUpdate)
-      window.clearInterval(timer)
     }
   }, [getToken])
 

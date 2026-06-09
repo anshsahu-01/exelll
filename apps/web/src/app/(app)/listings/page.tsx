@@ -3,6 +3,7 @@ import { getProducts, getCategories } from '@/lib/services'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { SearchFilters } from '@/components/listings/SearchFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { Pagination } from '@/components/ui/Pagination'
 import { PackageSearch, AlertTriangle } from 'lucide-react'
 import { ProductFilters } from '@/types'
 
@@ -102,42 +103,11 @@ export default async function ListingsPage({ searchParams }: PageProps) {
           </div>
 
           {pagination && pagination.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
-              {pagination.page > 1 && (
-                <Link
-                  href={buildPageUrl(pagination.page - 1)}
-                  className="px-4 py-2 border rounded-lg hover:bg-surface-hover"
-                >
-                  ⮜
-                </Link>
-              )}
-
-              {Array.from(
-                { length: pagination.totalPages },
-                (_, i) => i + 1
-              ).map((page) => (
-                <Link
-                  key={page}
-                  href={buildPageUrl(page)}
-                  className={`px-4 py-2 rounded-lg border-gray-500 ${
-                    page === pagination.page
-                      ? 'bg-primary text-background border-black'
-                      : 'bg-surface hover:bg-surface-hover'
-                  }`}
-                >
-                  {page}
-                </Link>
-              ))}
-
-              {pagination.page < pagination.totalPages && (
-                <Link
-                  href={buildPageUrl(pagination.page + 1)}
-                  className="px-4 py-2 border rounded-lg hover:bg-surface-hover"
-                >
-                  ⮞
-                </Link>
-              )}
-            </div>
+            <Pagination 
+              currentPage={pagination.page} 
+              totalPages={pagination.totalPages} 
+              buildPageUrl={buildPageUrl} 
+            />
           )}
         </>
       ) : (

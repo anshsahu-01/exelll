@@ -1,4 +1,4 @@
-import { ApiResponse, Product, ProductFilters, Category, ConversationListItem, Order } from '@/types';
+import { ApiResponse, Product, ProductFilters, Category, ConversationListItem, Order, SellerDirectoryUser, SellerProfile, MarketplaceOverview } from '@/types';
 import { apiRequest } from '@/lib/api';
 
 export async function getProducts(filters: ProductFilters = {}) {
@@ -52,5 +52,28 @@ export async function getMySales() {
     return Array.isArray(res.data) ? res.data : [];
   } catch {
     return [];
+  }
+}
+
+export async function getSellers(page: number = 1, limit: number = 12) {
+  try {
+    const res = await apiRequest<ApiResponse<SellerDirectoryUser[]>>(`/sellers?page=${page}&limit=${limit}`);
+    return { sellers: Array.isArray(res.data) ? res.data : [], pagination: res.pagination };
+  } catch {
+    return { sellers: [], pagination: undefined };
+  }
+}
+
+export async function getSellerById(id: string) {
+  const res = await apiRequest<ApiResponse<SellerProfile>>(`/sellers/${id}`);
+  return res.data;
+}
+
+export async function getMarketplaceOverview() {
+  try {
+    const res = await apiRequest<ApiResponse<MarketplaceOverview>>('/sellers/overview');
+    return res.data;
+  } catch {
+    return { totalActiveListings: 0, totalSellers: 0, totalSoldItems: 0 };
   }
 }

@@ -63,6 +63,28 @@ export interface MyProductsResponse {
   sold: Product[];
 }
 
+export interface SellerDirectoryUser {
+  id: string;
+  name: string;
+  profileImage: string | null;
+  collegeName: string | null;
+  createdAt: string;
+  totalUploads: number;
+  activeListings: number;
+  soldListings: number;
+}
+
+export interface SellerProfile extends SellerDirectoryUser {
+  activeProducts: Product[];
+  soldProducts: Product[];
+}
+
+export interface MarketplaceOverview {
+  totalActiveListings: number;
+  totalSellers: number;
+  totalSoldItems: number;
+}
+
 export interface ConversationListItem {
   id: string;
   productId: string;

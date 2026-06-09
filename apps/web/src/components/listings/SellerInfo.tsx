@@ -9,9 +9,10 @@ import { createConversation } from '@/lib/marketplace'
 interface SellerInfoProps {
   seller: Product['seller']
   productId: string
+  hideContact?: boolean
 }
 
-export function SellerInfo({ seller, productId }: SellerInfoProps) {
+export function SellerInfo({ seller, productId, hideContact }: SellerInfoProps) {
   const router = useRouter()
   const { getToken } = useAuth()
 
@@ -68,13 +69,15 @@ export function SellerInfo({ seller, productId }: SellerInfoProps) {
         </div>
       )}
 
-      <button
-        onClick={handleContactSeller}
-        className="cursor-pointer mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-border-default rounded-lg text-sm font-medium text-secondary hover:bg-surface-hover transition-colors"
-      >
-        <MessageCircle className="w-4 h-4" />
-        Contact Seller
-      </button>
+      {!hideContact && (
+        <button
+          onClick={handleContactSeller}
+          className="cursor-pointer mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-border-default rounded-lg text-sm font-medium text-secondary hover:bg-surface-hover transition-colors"
+        >
+          <MessageCircle className="w-4 h-4" />
+          Contact Seller
+        </button>
+      )}
     </div>
   )
 }
