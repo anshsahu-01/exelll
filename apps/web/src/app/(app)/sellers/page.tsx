@@ -1,6 +1,7 @@
 import { getSellers } from '@/lib/services'
 import { SellerCard } from '@/components/sellers/SellerCard'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { PageBackButton } from '@/components/ui/PageBackButton'
 import { Pagination } from '@/components/ui/Pagination'
 import { Users, AlertTriangle } from 'lucide-react'
 
@@ -36,6 +37,11 @@ export default async function SellersDirectoryPage({ searchParams }: PageProps) 
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+      <div className="mb-6">
+        <PageBackButton href="/dashboard" label="Dashboard" />
+      </div>
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-primary">Browse Sellers</h1>
         <p className="mt-1 text-sm text-secondary">

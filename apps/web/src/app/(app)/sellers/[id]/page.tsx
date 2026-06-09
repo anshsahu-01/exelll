@@ -4,6 +4,7 @@ import { ListingCard } from '@/components/listings/ListingCard'
 import { SoldProductCard } from '@/components/sellers/SoldProductCard'
 import { User as UserIcon, Calendar, MessageCircle } from 'lucide-react'
 import { ContactSellerButton } from '@/components/sellers/ContactSellerButton'
+import { PageBackButton } from '@/components/ui/PageBackButton'
 import { getMe } from '@/lib/marketplace'
 import { auth } from '@clerk/nextjs/server'
 
@@ -38,6 +39,11 @@ export default async function SellerProfilePage(props: { params: Promise<{ id: s
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+      <div className="mb-6">
+        <PageBackButton href="/sellers" label="Sellers" />
+      </div>
+
       {/* Header Section */}
       <div className="bg-surface border border-border-default rounded-2xl p-6 sm:p-8 mb-10 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
         {seller.profileImage ? (
