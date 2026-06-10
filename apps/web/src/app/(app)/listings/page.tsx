@@ -58,19 +58,21 @@ export default async function ListingsPage({ searchParams }: PageProps) {
     error = err.message || 'Failed to load products'
   }
 
-  const buildPageUrl = (page: number) => {
-    const params = new URLSearchParams()
+  const params = new URLSearchParams()
 
-    Object.entries(resolvedSearchParams).forEach(([key, value]) => {
-      if (typeof value === 'string' && value.length > 0) {
-        params.set(key, value)
-      }
-    })
-
-    params.set('page', String(page))
-
-    return `/listings?${params.toString()}`
+Object.entries(resolvedSearchParams).forEach(([key, value]) => {
+  if (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    key !== 'page'
+  ) {
+    params.set(key, value)
   }
+})
+
+const baseUrl = `/listings${
+  params.toString() ? `?${params.toString()}` : ''
+}`
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -103,10 +105,10 @@ export default async function ListingsPage({ searchParams }: PageProps) {
           </div>
 
           {pagination && pagination.totalPages > 1 && (
-            <Pagination 
-              currentPage={pagination.page} 
-              totalPages={pagination.totalPages} 
-              buildPageUrl={buildPageUrl} 
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              baseUrl={baseUrl}
             />
           )}
         </>
