@@ -21,6 +21,7 @@ import { useState, useEffect } from 'react'
 const mainNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Listings', href: '/listings', icon: ShoppingBag },
+  { name: 'Sellers', href: '/sellers', icon: User },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Settings', href: '/settings', icon: Settings },

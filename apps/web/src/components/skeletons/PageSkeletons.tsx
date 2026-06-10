@@ -13,11 +13,8 @@ export function DashboardSkeleton() {
           <div className="max-w-4xl mx-auto w-full">
 
             {/* Hero skeleton */}
-            <div className="rounded-2xl border border-border-default bg-surface p-6 sm:p-8 mb-8">
-              <SkeletonBlock className="h-5 w-32 rounded-full mb-4" />
-              <SkeletonBlock className="h-8 w-64 mb-3" />
-              <SkeletonBlock className="h-4 w-full max-w-md mb-2" />
-              <SkeletonBlock className="h-4 w-3/4 max-w-sm" />
+            <div className="overflow-hidden rounded-2xl border border-border-default bg-surface mb-8">
+              <SkeletonBlock className="aspect-[4/1] w-full" />
             </div>
 
             {/* Marketplace Overview skeleton */}
