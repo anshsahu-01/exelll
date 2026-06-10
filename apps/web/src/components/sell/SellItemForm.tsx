@@ -269,8 +269,8 @@ export function SellItemForm({ productId }: { productId?: string }) {
         </div>
 
         <Field label="Category" error={errors.categoryId}>
-          <select className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.categoryId} onChange={(e) => updateField('categoryId', e.target.value)}>
-            <option className="bg-surface text-primary" value="">{loadingCategories ? 'Loading categories...' : 'Select category'}</option>
+          <select className="w-full rounded-2xl border border-border-default bg-surface text-primary appearance-none px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.categoryId} onChange={(e) => updateField('categoryId', e.target.value)}>
+            <option className='text-primary' value="">{loadingCategories ? 'Loading categories...' : 'Select category'}</option>
             {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
           </select>
         </Field>
