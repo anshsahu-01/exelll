@@ -29,11 +29,6 @@ export default async function SellersDirectoryPage({ searchParams }: PageProps) 
     error = err.message || 'Failed to load sellers'
   }
 
-  const buildPageUrl = (targetPage: number) => {
-    const params = new URLSearchParams()
-    params.set('page', String(targetPage))
-    return `/sellers?${params.toString()}`
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -68,10 +63,10 @@ export default async function SellersDirectoryPage({ searchParams }: PageProps) 
           </div>
 
           {pagination && pagination.totalPages > 1 && (
-            <Pagination 
-              currentPage={pagination.page} 
-              totalPages={pagination.totalPages} 
-              buildPageUrl={buildPageUrl} 
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              baseUrl="/sellers"
             />
           )}
         </>
