@@ -116,7 +116,7 @@ const baseUrl = `/listings${
         <EmptyState
           icon={PackageSearch}
           title="No listings found"
-          description="Try adjusting your search or filters."
+          description="Try adjusting your search or filters..."
         />
       )}
     </div>
