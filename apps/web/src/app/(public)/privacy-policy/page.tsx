@@ -14,6 +14,17 @@ export default function PrivacyPolicyPage() {
           listing content, photos, pricing information, transaction records, and support messages.
         </p>
         <p>
+          Contact information is revealed only after a seller accepts an order. The buyer phone
+          number shown to sellers is the number entered during checkout or order placement. The
+          seller phone number shown to buyers is the public contact number provided with the
+          listing.
+        </p>
+        <p>
+          We do not intend to expose private account or profile phone numbers through order
+          details, chat surfaces, or listing views unless a user has explicitly made that
+          information public for the listing.
+        </p>
+        <p>
           When you use manual payment verification, we may also collect payment proof, such as a
           transaction reference number and uploaded screenshot, to verify the status of a purchase
           or resolve a dispute.
@@ -52,6 +63,21 @@ export default function PrivacyPolicyPage() {
           protect user information against unauthorized access, alteration, disclosure, or loss.
           No system can be guaranteed completely secure, but we work to minimize risk and respond
           promptly to suspected issues.
+        </p>
+      </Section>
+
+      <Section heading="Contact Information Disclosure">
+        <p>
+          Users are responsible for providing safe and appropriate contact information during
+          listing creation and order placement. Exell only facilitates the exchange of information
+          and is not responsible for the phone numbers or contact details provided by buyers or
+          sellers.
+        </p>
+        <p>
+          For buyers, any phone number shared with a seller comes from checkout or order
+          placement data only. For sellers, any phone number shown to a buyer must come from the
+          public listing contact details and should never be copied from a private account or
+          profile field.
         </p>
       </Section>
 

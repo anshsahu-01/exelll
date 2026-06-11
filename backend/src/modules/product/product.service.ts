@@ -30,7 +30,9 @@ const productInclude = {
 
 type ProductWithRelations = Prisma.ProductGetPayload<{
   include: typeof productInclude;
-}>;
+}> & {
+  contactNumber?: string | null;
+};
 
 function formatProduct(product: ProductWithRelations) {
   const { user, ...rest } = product;
@@ -41,6 +43,15 @@ function formatProduct(product: ProductWithRelations) {
     isSold,
     seller: user,
   };
+}
+
+function formatProductForViewer(product: ProductWithRelations, viewerId?: string) {
+  const formatted = formatProduct(product);
+  if (!viewerId || viewerId !== product.userId) {
+    const { contactNumber, ...publicProduct } = formatted;
+    return publicProduct;
+  }
+  return formatted;
 }
 
 async function getFavouriteProductIds(userId?: string) {
@@ -79,12 +90,13 @@ export async function createProduct(userId: string, input: CreateProductInput) {
       description: input.description,
       price: input.price,
       condition: input.condition,
+      contactNumber: input.contactNumber ?? null,
       images: input.images,
       categoryId: input.categoryId,
       userId,
       status: ProductStatus.ACTIVE,
       isSold: false,
-    },
+    } as Prisma.ProductUncheckedCreateInput & { contactNumber?: string | null },
     include: productInclude,
   });
 
@@ -111,7 +123,7 @@ export async function getAllProducts(query: GetProductsQuery, userId?: string) {
   const favouriteIds = await getFavouriteProductIds(userId);
 
   return {
-    products: annotateFavourite(products.map(formatProduct), favouriteIds),
+    products: annotateFavourite(products.map((product) => formatProductForViewer(product, userId)), favouriteIds),
     pagination: getPaginationMeta(page, limit, total) satisfies PaginationMeta,
   };
 }
@@ -128,7 +140,7 @@ export async function getProductById(id: string, userId?: string) {
 
   const favouriteIds = await getFavouriteProductIds(userId);
   return {
-    ...formatProduct(product),
+    ...formatProductForViewer(product, userId),
     isFavourite: favouriteIds.has(id),
   };
 }
@@ -143,12 +155,12 @@ export async function getMyProducts(userId: string) {
     include: productInclude,
   });
 
-  const formatted = products.map(formatProduct);
+  const formattedForViewer = products.map((product) => formatProductForViewer(product, userId));
   const favouriteIds = await getFavouriteProductIds(userId);
 
   return {
-    active: annotateFavourite(formatted.filter((p) => p.status === ProductStatus.ACTIVE), favouriteIds),
-    sold: annotateFavourite(formatted.filter((p) => p.status === ProductStatus.SOLD), favouriteIds),
+    active: annotateFavourite(formattedForViewer.filter((p) => p.status === ProductStatus.ACTIVE), favouriteIds),
+    sold: annotateFavourite(formattedForViewer.filter((p) => p.status === ProductStatus.SOLD), favouriteIds),
   };
 }
 
@@ -183,15 +195,16 @@ export async function updateProduct(
       description: input.description,
       price: input.price,
       condition: input.condition,
+      contactNumber: input.contactNumber ?? null,
       categoryId: input.categoryId,
       images: input.images,
-    },
+    } as Prisma.ProductUncheckedUpdateInput & { contactNumber?: string | null },
     include: productInclude,
   });
 
   const favouriteIds = await getFavouriteProductIds(userId);
   return {
-    ...formatProduct(updated),
+    ...formatProductForViewer(updated, userId),
     isFavourite: favouriteIds.has(id),
   };
 }

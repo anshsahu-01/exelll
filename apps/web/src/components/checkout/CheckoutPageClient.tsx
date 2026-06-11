@@ -284,6 +284,10 @@ export function CheckoutPageClient() {
         </Panel>
 
         <Panel title="Delivery details">
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-6 text-amber-900">
+            Contact information is revealed only after a seller accepts an order. The phone number
+            entered here is used for checkout and may be shown to the seller after acceptance.
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name">
               <input
@@ -303,6 +307,15 @@ export function CheckoutPageClient() {
                 value={form.mobileNumber}
                 onChange={(e) => setForm((c) => ({ ...c, mobileNumber: e.target.value }))}
                 placeholder="10-digit mobile number"
+              />
+            </Field>
+            <Field label="College name">
+              <input
+                required
+                className={sharedInputClass}
+                value={(form as any).collegeName ?? ''}
+                onChange={(e) => setForm((c) => ({ ...c, collegeName: e.target.value } as any))}
+                placeholder="Enter your college name (e.g. RGPV Bhopal)"
               />
             </Field>
             <Field label="Pickup / delivery address" className="sm:col-span-2">

@@ -48,6 +48,7 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
     description: body.description,
     price: body.price,
     condition: body.condition,
+    contactNumber: body.contactNumber,
     categoryId: body.categoryId,
     images: [...(body.existingImages ?? []), ...(req.uploadedImageUrls ?? [])],
   });

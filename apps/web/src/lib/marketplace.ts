@@ -11,6 +11,13 @@ import {
   User,
 } from '@/types'
 
+export interface ConversationMessageStats {
+  userMessageCount: number
+  maxAllowedMessages: number
+  remainingMessages: number
+  isMessageLimitReached: boolean
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
 async function request<T>(
@@ -88,7 +95,7 @@ export async function sendConversationMessage(
   content: string,
   token?: string
 ) {
-  const res = await request<ApiResponse<ChatMessage>>(
+  const res = await request<ApiResponse<ChatMessage & ConversationMessageStats>>(
     `/chats/conversations/${conversationId}/messages`,
     {
       method: 'POST',
@@ -150,6 +157,19 @@ export async function updateOrderStatus(
   return res.data
 }
 
+export async function sellerDecision(
+  id: string,
+  status: 'accepted' | 'rejected',
+  token?: string
+) {
+  const res = await request<ApiResponse<Order>>(`/orders/${id}/decision`, {
+    method: 'PATCH',
+    body: { status },
+    token,
+  })
+  return res.data
+}
+
 export async function createConversation(productId: string, token?: string) {
   const res = await request<ApiResponse<{ id: string }>>('/chats/conversations', {
     method: 'POST',
@@ -178,6 +198,9 @@ export async function updateListing(
   formData.append('price', input.price)
   formData.append('condition', input.condition)
   formData.append('categoryId', input.categoryId)
+  if (input.contactNumber) {
+    formData.append('contactNumber', input.contactNumber)
+  }
   formData.append('existingImages', JSON.stringify(input.existingImages))
 
   input.imageFiles.forEach((file) => {
@@ -238,6 +261,9 @@ export async function createListing(
   formData.append('price', input.price)
   formData.append('condition', input.condition)
   formData.append('categoryId', input.categoryId)
+  if (input.contactNumber) {
+    formData.append('contactNumber', input.contactNumber)
+  }
 
   input.imageFiles.forEach((file) => {
     formData.append('images', file, file.name)

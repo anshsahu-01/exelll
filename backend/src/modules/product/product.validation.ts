@@ -5,6 +5,11 @@ export const createProductSchema = z.object({
   description: z.string().trim().min(1, "Description is required").max(5000),
   price: z.coerce.number().positive("Price must be greater than 0"),
   condition: z.string().trim().min(1, "Condition is required").max(50),
+  contactNumber: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === "" ? undefined : value)),
   categoryId: z.string().uuid("Invalid category ID"),
 });
 
@@ -24,6 +29,11 @@ export const updateProductSchema = z.object({
   description: z.string().trim().min(1, "Description is required").max(5000),
   price: z.coerce.number().positive("Price must be greater than 0"),
   condition: z.string().trim().min(1, "Condition is required").max(50),
+  contactNumber: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === "" ? undefined : value)),
   categoryId: z.string().uuid("Invalid category ID"),
   existingImages: existingImagesSchema.optional().default([]),
 });

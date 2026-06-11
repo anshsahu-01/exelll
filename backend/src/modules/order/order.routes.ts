@@ -5,6 +5,7 @@ import * as orderController from "./order.controller";
 import {
   createOrderSchema,
   orderIdParamSchema,
+  sellerDecisionSchema,
   updateOrderStatusSchema,
 } from "./order.validation";
 
@@ -34,6 +35,14 @@ router.patch(
   validate(orderIdParamSchema, "params"),
   validate(updateOrderStatusSchema),
   orderController.updateOrderStatus
+);
+
+router.patch(
+  "/:id/decision",
+  authenticate,
+  validate(orderIdParamSchema, "params"),
+  validate(sellerDecisionSchema),
+  orderController.sellerDecision
 );
 
 export default router;

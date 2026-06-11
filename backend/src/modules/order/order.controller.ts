@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { getValidated } from "../../middleware/validate";
 import * as orderService from "./order.service";
-import { CreateOrderBody, UpdateOrderStatusBody } from "./order.validation";
+import { CreateOrderBody, SellerDecisionBody, UpdateOrderStatusBody } from "./order.validation";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   console.log("BACKEND_BODY_STAGE", {
@@ -38,6 +38,16 @@ export const updateOrderStatus = asyncHandler(async (req: Request, res: Response
     id,
     req.user!.userId,
     getValidated<UpdateOrderStatusBody>(req, "body")
+  );
+  res.json({ success: true, data: order });
+});
+
+export const sellerDecision = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = getValidated<{ id: string }>(req, "params");
+  const order = await orderService.sellerDecision(
+    id,
+    req.user!.userId,
+    getValidated<SellerDecisionBody>(req, "body")
   );
   res.json({ success: true, data: order });
 });

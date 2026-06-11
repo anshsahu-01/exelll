@@ -12,6 +12,7 @@ import {
   getMyOrders,
   getMySales,
   getOrderById,
+  sellerDecision,
   updateOrderStatus,
 } from '@/lib/marketplace'
 import { Order } from '@/types'
@@ -21,6 +22,8 @@ type Mode = 'buyer' | 'seller' | 'detail'
 
 const statusLabelMap: Record<Order['orderStatus'], string> = {
   pending: 'Pending',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
   processing: 'Processing',
   shipped: 'Shipped',
   delivered: 'Delivered',
@@ -29,13 +32,15 @@ const statusLabelMap: Record<Order['orderStatus'], string> = {
 
 const statusStyles: Record<Order['orderStatus'], string> = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  accepted: 'bg-sky-50 text-sky-700 border-sky-200',
+  rejected: 'bg-rose-50 text-rose-700 border-rose-200',
   processing: 'bg-blue-50 text-blue-700 border-blue-200',
   shipped: 'bg-indigo-50 text-indigo-700 border-indigo-200',
   delivered: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   cancelled: 'bg-red-50 text-red-700 border-red-200',
 }
 
-const orderTimeline: Order['orderStatus'][] = ['pending', 'processing', 'shipped', 'delivered']
+const orderTimeline: Order['orderStatus'][] = ['pending', 'accepted', 'processing', 'shipped', 'delivered']
 
 export function OrdersClient({
   mode,
@@ -96,6 +101,25 @@ export function OrdersClient({
     try {
       const token = await getToken()
       const updated = await updateOrderStatus(current.id, nextStatus, token ?? undefined)
+      if (mode === 'detail') {
+        setOrder(updated)
+      } else {
+        setOrders((currentOrders) =>
+          currentOrders.map((item) => (item.id === updated.id ? updated : item))
+        )
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not update order status')
+    } finally {
+      setSavingStatusId(null)
+    }
+  }
+
+  const handleSellerDecision = async (current: Order, nextStatus: 'accepted' | 'rejected') => {
+    setSavingStatusId(current.id)
+    try {
+      const token = await getToken()
+      const updated = await sellerDecision(current.id, nextStatus, token ?? undefined)
       if (mode === 'detail') {
         setOrder(updated)
       } else {
@@ -216,9 +240,9 @@ export function OrdersClient({
                   onClick={async () =>
                     handleStatusUpdate(
                       order,
-                      order.orderStatus === 'pending'
+                    order.orderStatus === 'pending'
                         ? 'confirmed'
-                        : order.orderStatus === 'processing'
+                        : order.orderStatus === 'accepted' || order.orderStatus === 'processing'
                           ? 'shipped'
                           : 'delivered'
                     )
@@ -263,7 +287,7 @@ export function OrdersClient({
                         {statusLabelMap[status]}
                       </p>
                       <p className="text-sm text-secondary">
-                        {index === 0 ? 'Order placed' : index === 1 ? 'Seller confirmed the order' : index === 2 ? 'Order shipped' : 'Order delivered'}
+                    {index === 0 ? 'Order placed' : index === 1 ? 'Seller accepted the order' : index === 2 ? 'Order confirmed for fulfillment' : index === 3 ? 'Order shipped' : 'Order delivered'}
                       </p>
                     </div>
                   </div>
@@ -288,8 +312,20 @@ export function OrdersClient({
             <div className="rounded-[2rem] border border-border-default bg-surface p-6">
               <h2 className="text-lg font-semibold text-primary">People</h2>
               <div className="mt-4 space-y-4">
-                <PersonCard label="Buyer" name={order.buyer.name} image={order.buyer.profileImage} college={order.buyer.collegeName} />
-                <PersonCard label="Seller" name={order.seller.name} image={order.seller.profileImage} college={order.seller.collegeName} />
+                <PersonCard
+                  label="Buyer"
+                  name={order.buyer.name}
+                  image={order.buyer.profileImage}
+                  college={order.buyer.collegeName}
+                  phone={currentUserId === order.sellerId && order.orderStatus === 'accepted' ? order.mobileNumber : null}
+                />
+                <PersonCard
+                  label="Seller"
+                  name={order.seller.name}
+                  image={order.seller.profileImage}
+                  college={order.seller.collegeName}
+                  phone={currentUserId === order.buyerId && order.orderStatus === 'accepted' ? order.product.contactNumber : null}
+                />
               </div>
             </div>
 
@@ -416,14 +452,13 @@ export function OrdersClient({
                   <div className="mt-4 flex flex-wrap gap-2">
                     {current.orderStatus === 'pending' ? (
                       <>
-                        <ActionChip label="Confirm" onClick={() => void handleStatusUpdate(current, 'confirmed')} />
-                        <ActionChip label="Cancel" onClick={() => void handleStatusUpdate(current, 'cancelled')} />
+                        <ActionChip label="Accept" onClick={() => void handleSellerDecision(current, 'accepted')} />
+                        <ActionChip label="Reject" onClick={() => void handleSellerDecision(current, 'rejected')} />
                       </>
                     ) : null}
-                    {current.orderStatus === 'processing' ? (
+                    {current.orderStatus === 'accepted' || current.orderStatus === 'processing' ? (
                       <>
                         <ActionChip label="Mark shipped" onClick={() => void handleStatusUpdate(current, 'shipped')} />
-                        <ActionChip label="Cancel" onClick={() => void handleStatusUpdate(current, 'cancelled')} />
                       </>
                     ) : null}
                     {current.orderStatus === 'shipped' ? (
@@ -454,11 +489,13 @@ function PersonCard({
   name,
   image,
   college,
+  phone,
 }: {
   label: string
   name: string
   image: string | null
   college: string | null
+  phone?: string | null
 }) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border-default bg-surface-hover p-3">
@@ -473,6 +510,7 @@ function PersonCard({
         <p className="text-xs uppercase tracking-wide text-secondary">{label}</p>
         <p className="text-sm font-semibold text-primary">{name}</p>
         <p className="text-xs text-secondary">{college || '—'}</p>
+        {phone ? <p className="text-xs text-secondary">{phone}</p> : null}
       </div>
     </div>
   )

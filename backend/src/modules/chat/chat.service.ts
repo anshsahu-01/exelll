@@ -35,6 +35,10 @@ const conversationInclude = {
   },
 } satisfies Prisma.ConversationInclude;
 
+const DEFAULT_MESSAGE_LIMIT = 20;
+const ACCEPTED_MESSAGE_LIMIT = 50;
+const UNLOCKED_ORDER_STATUSES = new Set(["accepted"] as const);
+
 type ConversationListItem = Prisma.ConversationGetPayload<{
   include: typeof conversationInclude;
 }>;
@@ -64,10 +68,53 @@ function formatConversation(conversation: ConversationListItem, currentUserId: s
   };
 }
 
+async function getConversationMessageStats(conversationId: string) {
+  const conversation = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: {
+      buyerId: true,
+      sellerId: true,
+      productId: true,
+    },
+  });
+
+  if (!conversation) {
+    throw new AppError("Conversation not found", 404);
+  }
+
+  const [userMessageCount, unlockedOrder] = await Promise.all([
+    prisma.message.count({
+      where: {
+        conversationId,
+        isSystem: false,
+      },
+    }),
+    prisma.order.findFirst({
+      where: {
+        buyerId: conversation.buyerId,
+        sellerId: conversation.sellerId,
+        productId: conversation.productId,
+        orderStatus: { in: [...UNLOCKED_ORDER_STATUSES] },
+      },
+      select: { id: true },
+    }),
+  ]);
+
+  const maxAllowedMessages = unlockedOrder ? ACCEPTED_MESSAGE_LIMIT : DEFAULT_MESSAGE_LIMIT;
+  const remainingMessages = Math.max(0, maxAllowedMessages - userMessageCount);
+
+  return {
+    userMessageCount,
+    maxAllowedMessages,
+    remainingMessages,
+    isMessageLimitReached: remainingMessages === 0,
+  };
+}
+
 async function getConversationForUser(conversationId: string, userId: string) {
   const conversation = await prisma.conversation.findUnique({
     where: { id: conversationId },
-    select: { id: true, buyerId: true, sellerId: true },
+    select: { id: true, buyerId: true, sellerId: true, productId: true },
   });
 
   if (!conversation) {
@@ -189,6 +236,7 @@ export async function getConversationMessages(
 
   const otherUser =
     conversation.buyerId === userId ? conversation.seller : conversation.buyer;
+  const messageStats = await getConversationMessageStats(conversationId);
 
   return {
     id: conversation.id,
@@ -198,6 +246,7 @@ export async function getConversationMessages(
     productPrice: Number(conversation.product.price),
     isSold: conversation.product.isSold || conversation.product.status === "SOLD",
     otherUser,
+    ...messageStats,
     messages: messages.map((m) => ({
       id: m.id,
       content: m.content,
@@ -218,6 +267,28 @@ export async function sendMessage(
   const conversation = await getConversationForUser(conversationId, userId);
 
   const message = await prisma.$transaction(async (tx) => {
+    const userMessageCount = await tx.message.count({
+      where: {
+        conversationId,
+        isSystem: false,
+      },
+    });
+
+    const conversationOrder = await tx.order.findFirst({
+      where: {
+        buyerId: conversation.buyerId,
+        sellerId: conversation.sellerId,
+        productId: conversation.productId,
+        orderStatus: { in: [...UNLOCKED_ORDER_STATUSES] },
+      },
+      select: { id: true },
+    });
+
+    const maxAllowedMessages = conversationOrder ? ACCEPTED_MESSAGE_LIMIT : DEFAULT_MESSAGE_LIMIT;
+    if (userMessageCount >= maxAllowedMessages) {
+      throw new AppError("Message limit reached for this listing discussion", 429);
+    }
+
     const created = await tx.message.create({
       data: {
         conversationId,
@@ -235,6 +306,8 @@ export async function sendMessage(
     });
 
     return created;
+  }, {
+    isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
   });
 
   const formattedMessage = {
@@ -246,6 +319,7 @@ export async function sendMessage(
     isMine: true,
     sender: message.sender,
   };
+  const messageStats = await getConversationMessageStats(conversationId);
 
   // Emit realtime event
   try {
@@ -268,7 +342,10 @@ export async function sendMessage(
     console.error("Failed to emit socket event:", error);
   }
 
-  return formattedMessage;
+  return {
+    ...formattedMessage,
+    ...messageStats,
+  };
 }
 
 export async function editMessage(

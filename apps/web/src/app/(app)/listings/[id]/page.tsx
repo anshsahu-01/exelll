@@ -2,11 +2,11 @@ import { getProductById, getProducts } from '@/lib/services'
 import { ProductGallery } from '@/components/listings/ProductGallery'
 import { SellerInfo } from '@/components/listings/SellerInfo'
 import { Heart, MapPin, Share2, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ListingCard } from '@/components/listings/ListingCard'
 import { PageBackButton } from '@/components/ui/PageBackButton'
 import { AddToCartButton } from '@/components/listings/AddToCartButton'
+import { BuyNowButton, ListingActions } from '@/components/listings/ListingActions'
 import { formatINR } from '@/lib/format'
 import { auth } from '@clerk/nextjs/server'
 import { getMe } from '@/lib/marketplace'
@@ -109,18 +109,10 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   <AddToCartButton productId={listing.id} />
-                  <Link
-                    href={`/checkout?productId=${listing.id}`}
-                    className="inline-flex items-center justify-center rounded-xl border border-border-default bg-surface py-3 font-medium text-primary transition-colors hover:border-black"
-                  >
-                    Buy Now
-                  </Link>
+                  <BuyNowButton productId={listing.id} />
                 </div>
               )}
-              <button className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-border-default bg-surface py-3 font-medium text-primary transition-colors hover:border-black">
-                <Heart className="h-5 w-5" />
-                Add to Favourites
-              </button>
+              <ListingActions productId={listing.id} />
             </div>
           </div>
 

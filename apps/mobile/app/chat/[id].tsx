@@ -274,7 +274,13 @@ export default function ChatScreen() {
         setConversation((prev) => {
           if (!prev) return prev;
           if (prev.messages.some(m => m.id === message.id)) return prev;
-          return { ...prev, messages: [...prev.messages, { ...message, isMine: true }] };
+          return {
+            ...prev,
+            messages: [...prev.messages, { ...message, isMine: true }],
+            userMessageCount: message.userMessageCount,
+            remainingMessages: message.remainingMessages,
+            isMessageLimitReached: message.isMessageLimitReached,
+          };
         });
         setOptimisticMessage(null);
         setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
@@ -409,6 +415,22 @@ export default function ChatScreen() {
     if (item.deliveredAt) return <Ionicons name="checkmark-done" size={14} color="rgba(255,255,255,0.7)" />;
     return <Ionicons name="checkmark" size={14} color="rgba(255,255,255,0.7)" />;
   };
+
+  const remainingMessages = conversation?.remainingMessages ?? 0;
+  const maxAllowedMessages = conversation?.maxAllowedMessages ?? 20;
+  const isMessageLimitReached = conversation?.isMessageLimitReached ?? false;
+  const isYellowWarning = remainingMessages <= 10 && remainingMessages > 5;
+  const isOrangeWarning = remainingMessages <= 5 && remainingMessages > 3;
+  const isRedWarning = remainingMessages <= 3 && remainingMessages > 0;
+  const limitBannerClass = isRedWarning
+    ? "border-red-200 bg-red-50"
+    : isOrangeWarning
+      ? "border-orange-200 bg-orange-50"
+      : isYellowWarning
+        ? "border-yellow-200 bg-yellow-50"
+        : isMessageLimitReached
+          ? "border-red-200 bg-red-50"
+          : "border-line bg-canvas";
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8F8FA]" edges={["top"]}>
@@ -554,6 +576,24 @@ export default function ChatScreen() {
             className="border-t border-line bg-white px-4 py-3" 
             style={{ paddingBottom: Math.max(insets.bottom, 8) }}
           >
+            <View className={cn("mb-2 rounded-2xl border px-3 py-2", limitBannerClass)}>
+              <Text
+                className={cn(
+                  "text-[13px] font-medium",
+                  isRedWarning || isMessageLimitReached
+                    ? "text-red-700"
+                    : isOrangeWarning
+                      ? "text-orange-700"
+                      : isYellowWarning
+                        ? "text-yellow-800"
+                        : "text-muted"
+                )}
+              >
+                {isMessageLimitReached
+                  ? "Message limit reached for this listing discussion"
+                  : `${remainingMessages} message${remainingMessages === 1 ? "" : "s"} remaining of ${maxAllowedMessages}`}
+              </Text>
+            </View>
             {editingMessageId && (
               <View className="mb-2 flex-row items-center justify-between bg-canvas p-2 rounded-lg">
                 <Text className="text-[12px] font-medium text-ink">Editing message...</Text>
@@ -571,20 +611,21 @@ export default function ChatScreen() {
                   value={text}
                   onChangeText={handleTextChange}
                   multiline
+                  editable={!isMessageLimitReached}
                 />
               </View>
               <Pressable
                 onPress={handleSend}
-                disabled={sending || !text.trim()}
+                disabled={sending || !text.trim() || isMessageLimitReached}
                 className={cn(
                   "h-[40px] w-[40px] items-center justify-center rounded-full bg-ink",
-                  (!text.trim() || sending) && "bg-[#E5E5EA] opacity-100"
+                  (!text.trim() || sending || isMessageLimitReached) && "bg-[#E5E5EA] opacity-100"
                 )}
               >
                 <Ionicons 
                   name={editingMessageId ? "checkmark" : "send"} 
                   size={16} 
-                  color={(!text.trim() || sending) ? "#8E8E93" : "#FFFFFF"} 
+                  color={(!text.trim() || sending || isMessageLimitReached) ? "#8E8E93" : "#FFFFFF"} 
                   style={{ marginLeft: editingMessageId ? 0 : 2, marginTop: 1 }} 
                 />
               </Pressable>

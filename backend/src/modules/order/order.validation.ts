@@ -38,4 +38,11 @@ export const updateOrderStatusSchema = z.object({
   }),
 });
 
+export const sellerDecisionSchema = z.object({
+  status: z.enum(["accepted", "rejected"], {
+    message: "Status must be 'accepted' or 'rejected'",
+  }),
+});
+
 export type UpdateOrderStatusBody = z.infer<typeof updateOrderStatusSchema>;
+export type SellerDecisionBody = z.infer<typeof sellerDecisionSchema>;

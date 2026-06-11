@@ -115,7 +115,13 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
       setMessage('')
       setActiveConversation((current) =>
         current
-          ? { ...current, messages: [...current.messages, { ...sent, isMine: true }] }
+          ? {
+              ...current,
+              messages: [...current.messages, { ...sent, isMine: true }],
+              userMessageCount: sent.userMessageCount,
+              remainingMessages: sent.remainingMessages,
+              isMessageLimitReached: sent.isMessageLimitReached,
+            }
           : current
       )
       await loadConversations()
@@ -138,6 +144,21 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
   }
 
   const activeConversationSummary = activeConversation ?? null
+  const remainingMessages = activeConversationSummary?.remainingMessages ?? 0
+  const maxAllowedMessages = activeConversationSummary?.maxAllowedMessages ?? 20
+  const isMessageLimitReached = activeConversationSummary?.isMessageLimitReached ?? false
+  const isYellowWarning = remainingMessages <= 10 && remainingMessages > 5
+  const isOrangeWarning = remainingMessages <= 5 && remainingMessages > 3
+  const isRedWarning = remainingMessages <= 3 && remainingMessages > 0
+  const limitBannerClass = isRedWarning
+    ? 'border-red-200 bg-red-50 text-red-700'
+    : isOrangeWarning
+      ? 'border-orange-200 bg-orange-50 text-orange-700'
+      : isYellowWarning
+        ? 'border-yellow-200 bg-yellow-50 text-yellow-800'
+        : isMessageLimitReached
+          ? 'border-red-200 bg-red-50 text-red-700'
+          : 'border-border-default bg-surface-hover text-secondary'
 
   const showThreadOnly = Boolean(activeId)
 
@@ -289,6 +310,15 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   </div>
                 </div>
               </div>
+              <div className={`mt-3 rounded-2xl border px-3 py-2 text-sm ${limitBannerClass}`}>
+                {isMessageLimitReached ? (
+                  <span>Message limit reached for this listing discussion</span>
+                ) : (
+                  <span>
+                    {remainingMessages} message{remainingMessages === 1 ? '' : 's'} remaining of {maxAllowedMessages}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto bg-background p-4">
@@ -324,17 +354,23 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   onChange={(event) => setMessage(event.target.value)}
                   placeholder="Write a message"
                   rows={1}
-                  className="min-h-[50px] flex-1 resize-none rounded-2xl border border-border-default bg-surface-hover px-4 py-3 text-sm outline-none transition focus:border-border-default focus:bg-surface"
+                  disabled={isMessageLimitReached}
+                  className="min-h-[50px] flex-1 resize-none rounded-2xl border border-border-default bg-surface-hover px-4 py-3 text-sm outline-none transition focus:border-border-default focus:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
                 />
                 <button
                   onClick={handleSend}
-                  disabled={sending || !message.trim()}
+                  disabled={sending || !message.trim() || isMessageLimitReached}
                   className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-surface-hover disabled:text-secondary"
                 >
                   {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   Send
                 </button>
               </div>
+              {isMessageLimitReached ? (
+                <p className="mt-2 text-sm font-medium text-red-600">
+                  Message limit reached for this listing discussion
+                </p>
+              ) : null}
             </div>
           </>
         )}

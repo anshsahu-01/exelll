@@ -38,6 +38,9 @@ export async function createProduct(input: CreateProductInput, token: string) {
   formData.append("price", input.price);
   formData.append("condition", input.condition);
   formData.append("categoryId", input.categoryId);
+  if ((input as CreateProductInput & { contactNumber?: string }).contactNumber) {
+    formData.append("contactNumber", (input as CreateProductInput & { contactNumber?: string }).contactNumber as string);
+  }
 
   input.imageUris.forEach((uri, index) => {
     formData.append("images", {
@@ -68,6 +71,9 @@ export async function updateProduct(
   formData.append("price", input.price);
   formData.append("condition", input.condition);
   formData.append("categoryId", input.categoryId);
+  if ((input as CreateProductInput & { contactNumber?: string }).contactNumber) {
+    formData.append("contactNumber", (input as CreateProductInput & { contactNumber?: string }).contactNumber as string);
+  }
   formData.append("existingImages", JSON.stringify(input.existingImages ?? []));
 
   input.imageUris.forEach((uri, index) => {

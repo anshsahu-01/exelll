@@ -3,6 +3,7 @@ import {
   ConversationDetail,
   ConversationListItem,
   ChatMessage,
+  ConversationMessageStats,
 } from "@/types";
 import { apiRequest } from "./api";
 
@@ -42,7 +43,7 @@ export async function sendMessage(
   content: string,
   token: string
 ) {
-  const res = await apiRequest<ApiResponse<ChatMessage>>(
+  const res = await apiRequest<ApiResponse<ChatMessage & ConversationMessageStats>>(
     `/chats/conversations/${conversationId}/messages`,
     {
       method: "POST",

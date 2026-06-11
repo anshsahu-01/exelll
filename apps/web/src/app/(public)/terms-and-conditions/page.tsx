@@ -39,6 +39,21 @@ export default function TermsAndConditionsPage() {
         </p>
       </Section>
 
+      <Section heading="Contact Information Rules">
+        <p>
+          Contact information is revealed only after a seller accepts an order. The buyer phone
+          number shown to sellers is the number entered during checkout or order placement. The
+          seller phone number shown to buyers is the public contact number provided with the
+          listing.
+        </p>
+        <p>
+          Users are responsible for providing safe and appropriate contact information during
+          listing creation and order placement. Exell only facilitates the exchange of information
+          and is not responsible for the phone numbers or contact details provided by buyers or
+          sellers.
+        </p>
+      </Section>
+
       <Section heading="Suspension and Enforcement">
         <p>
           We may suspend, limit, or terminate access to any account that violates these Terms,

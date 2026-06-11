@@ -17,7 +17,8 @@ const productSelect = {
   title: true,
   images: true,
   price: true,
-} satisfies Prisma.ProductSelect;
+  contactNumber: true,
+} as Prisma.ProductSelect & { contactNumber: true };
 
 const orderInclude = {
   product: { select: productSelect },
@@ -30,9 +31,16 @@ type OrderWithRelations = Prisma.OrderGetPayload<{
 }>;
 
 function formatOrder(order: OrderWithRelations) {
+  const isAccepted = order.orderStatus === OrderStatus.accepted;
+  const product = order.product as typeof order.product & { contactNumber?: string | null };
   return {
     ...order,
     amount: Number(order.amount),
+    mobileNumber: isAccepted ? order.mobileNumber : null,
+    product: {
+      ...product,
+      contactNumber: isAccepted ? product.contactNumber : null,
+    },
   };
 }
 
@@ -151,6 +159,71 @@ export async function getOrderById(orderId: string, userId: string) {
   return formatOrder(order);
 }
 
+export async function sellerDecision(
+  orderId: string,
+  actorId: string,
+  input: { status: "accepted" | "rejected" }
+) {
+  const updatedOrder = await prisma.$transaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
+      select: {
+        id: true,
+        buyerId: true,
+        sellerId: true,
+        productId: true,
+        paymentStatus: true,
+        orderStatus: true,
+      },
+    });
+
+    if (!order) throw new AppError("Order not found", 404);
+    if (order.sellerId !== actorId) throw new AppError("Only the seller can update this order", 403);
+
+    if (order.orderStatus === OrderStatus.accepted || order.orderStatus === OrderStatus.rejected) {
+      throw new AppError("Final order decisions cannot be changed", 400);
+    }
+
+    if (order.orderStatus !== OrderStatus.pending) {
+      throw new AppError("Only pending orders can be decided", 400);
+    }
+
+    if (input.status === "accepted") {
+      const accepted = await tx.order.update({
+        where: { id: orderId },
+        data: { paymentStatus: PaymentStatus.confirmed, orderStatus: OrderStatus.accepted },
+        include: orderInclude,
+      });
+
+      await tx.product.update({
+        where: { id: order.productId },
+        data: { status: ProductStatus.SOLD, isSold: true },
+      });
+
+      await tx.order.updateMany({
+        where: {
+          productId: order.productId,
+          id: { not: orderId },
+          orderStatus: OrderStatus.pending,
+        },
+        data: { paymentStatus: PaymentStatus.cancelled, orderStatus: OrderStatus.cancelled },
+      });
+
+      return accepted;
+    }
+
+    const rejected = await tx.order.update({
+      where: { id: orderId },
+      data: { paymentStatus: PaymentStatus.cancelled, orderStatus: OrderStatus.rejected },
+      include: orderInclude,
+    });
+
+    return rejected;
+  });
+
+  return formatOrder(updatedOrder);
+}
+
 export async function updateOrderStatus(
   orderId: string,
   actorId: string,
@@ -206,7 +279,7 @@ export async function updateOrderStatus(
         where: { id: orderId },
         data: {
           paymentStatus: PaymentStatus.confirmed,
-          orderStatus: OrderStatus.processing,
+          orderStatus: OrderStatus.accepted,
         },
         include: orderInclude,
       });
@@ -236,8 +309,8 @@ export async function updateOrderStatus(
         throw new AppError("Only the seller can mark this order as shipped", 403);
       }
 
-      if (order.orderStatus !== OrderStatus.processing) {
-        throw new AppError("Only processing orders can be marked as shipped", 400);
+      if (order.orderStatus !== OrderStatus.accepted && order.orderStatus !== OrderStatus.processing) {
+        throw new AppError("Only accepted or processing orders can be marked as shipped", 400);
       }
 
       return tx.order.update({
@@ -265,6 +338,7 @@ export async function updateOrderStatus(
 
     if (
       order.orderStatus !== OrderStatus.pending &&
+      order.orderStatus !== OrderStatus.accepted &&
       order.orderStatus !== OrderStatus.processing
     ) {
       throw new AppError("Completed, shipped, or cancelled orders cannot be cancelled", 400);
@@ -283,7 +357,7 @@ export async function updateOrderStatus(
       include: orderInclude,
     });
 
-    if (order.orderStatus === OrderStatus.processing) {
+    if (order.orderStatus === OrderStatus.processing || order.orderStatus === OrderStatus.accepted) {
       await tx.product.update({
         where: { id: order.productId },
         data: { status: ProductStatus.ACTIVE, isSold: false },

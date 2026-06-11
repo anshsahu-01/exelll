@@ -39,6 +39,7 @@ export interface Product {
   description: string;
   price: number;
   condition: string;
+  contactNumber?: string | null;
   images: string[];
   isSold: boolean;
   status: ProductStatus;
@@ -81,6 +82,13 @@ export interface ChatMessage {
   sender: PublicUser;
 }
 
+export interface ConversationMessageStats {
+  userMessageCount: number;
+  maxAllowedMessages: number;
+  remainingMessages: number;
+  isMessageLimitReached: boolean;
+}
+
 export interface ConversationDetail {
   id: string;
   productId: string;
@@ -89,6 +97,10 @@ export interface ConversationDetail {
   productPrice: number;
   isSold: boolean;
   otherUser: PublicUser;
+  userMessageCount: number;
+  maxAllowedMessages: number;
+  remainingMessages: number;
+  isMessageLimitReached: boolean;
   messages: ChatMessage[];
 }
 
@@ -133,13 +145,14 @@ export interface CreateProductInput {
   price: string;
   condition: string;
   categoryId: string;
+  contactNumber?: string;
   imageUris: string[];
 }
 
 export type PaymentMethod = "COD" | "UPI";
 
 export type PaymentStatus = "payment_pending" | "verification_pending" | "confirmed" | "cancelled";
-export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+export type OrderStatus = "pending" | "accepted" | "processing" | "shipped" | "delivered" | "cancelled";
 
 export interface Order {
   id: string;
@@ -150,11 +163,11 @@ export interface Order {
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
-  mobileNumber: string;
+  mobileNumber: string | null;
   deliveryAddress: string;
   locationDetails: string;
   createdAt: string;
-  product: Pick<Product, "id" | "title" | "images" | "price">;
+  product: Pick<Product, "id" | "title" | "images" | "price" | "contactNumber">;
   buyer: PublicUser;
   seller: PublicUser;
 }

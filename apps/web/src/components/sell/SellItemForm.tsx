@@ -16,7 +16,7 @@ type FormState = {
   categoryId: string
   condition: string
   location: string
-  contactPreference: string
+  contactNumber: string
   additionalNotes: string
 }
 
@@ -29,7 +29,7 @@ const initialState: FormState = {
   categoryId: '',
   condition: 'Good',
   location: '',
-  contactPreference: '',
+  contactNumber: '',
   additionalNotes: '',
 }
 
@@ -66,7 +66,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
             categoryId: product.category.id,
             condition: product.condition,
             location: '',
-            contactPreference: '',
+            contactNumber: product.contactNumber ?? '',
             additionalNotes: '',
           })
           setExistingImages(product.images || [])
@@ -132,6 +132,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
     else if (Number.isNaN(Number(form.price)) || Number(form.price) <= 0) nextErrors.price = 'Enter a valid price.'
     if (!form.categoryId) nextErrors.categoryId = 'Choose a category.'
     if (!form.condition) nextErrors.condition = 'Choose a condition.'
+    if (!form.contactNumber.trim()) nextErrors.contactNumber = 'Public contact number is required.'
     if (!form.location.trim()) nextErrors.location = 'Location is required.'
     if (images.length === 0 && existingImages.length === 0) nextErrors.images = 'Add at least one image.'
 
@@ -149,14 +150,15 @@ export function SellItemForm({ productId }: { productId?: string }) {
 
     try {
       const token = await getToken()
-      const payload = {
-        title: form.title.trim(),
-        description: form.description.trim(),
-        price: form.price.trim(),
-        condition: form.condition,
-        categoryId: form.categoryId,
-        imageFiles: images,
-      }
+        const payload = {
+          title: form.title.trim(),
+          description: form.description.trim(),
+          price: form.price.trim(),
+          condition: form.condition,
+          categoryId: form.categoryId,
+          contactNumber: form.contactNumber.trim(),
+          imageFiles: images,
+        }
       
       const product = isEditMode
         ? await updateListing(productId, { ...payload, existingImages }, token ?? undefined, setProgress)
@@ -285,8 +287,8 @@ export function SellItemForm({ productId }: { productId?: string }) {
           </div>
         </Field>
 
-        <Field label="Contact preference">
-          <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.contactPreference} onChange={(e) => updateField('contactPreference', e.target.value)} placeholder="Chat, call, WhatsApp" />
+        <Field label="Public contact number" error={errors.contactNumber}>
+          <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.contactNumber} onChange={(e) => updateField('contactNumber', e.target.value)} placeholder="Enter the public phone number for this listing" />
         </Field>
 
         <Field label="Additional notes">
