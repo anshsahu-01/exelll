@@ -4,7 +4,7 @@ export function DashboardHero() {
   return (
     <div className="overflow-hidden rounded-2xl border border-border-default bg-surface mb-8">
       <Image
-        src="/banner.png"
+        src="/banner1.png"
         alt="Dashboard Banner"
         width={512}
         height={128}

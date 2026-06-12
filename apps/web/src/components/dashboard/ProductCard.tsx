@@ -11,7 +11,7 @@ import { toggleFavourite } from '@/lib/marketplace'
 import { formatINR } from '@/lib/format'
 
 export default function ProductCard({ product }: { product: Product }) {
-  const { getToken } = useAuth()
+  const { getToken, isSignedIn } = useAuth()
   const router = useRouter()
   const [isFavourite, setIsFavourite] = useState(product.isFavourite ?? false)
   const [isToggling, setIsToggling] = useState(false)
@@ -21,6 +21,10 @@ export default function ProductCard({ product }: { product: Product }) {
   }, [product.isFavourite])
 
   const handleFavouriteToggle = async () => {
+    if (!isSignedIn) {
+      router.push('/sign-in')
+      return
+    }
     const nextFavourite = !isFavourite
     setIsFavourite(nextFavourite)
     setIsToggling(true)

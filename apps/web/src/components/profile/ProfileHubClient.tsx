@@ -237,6 +237,12 @@ export function ProfileHubClient() {
             icon={Store}
           />
           <ActionCard
+            href="/profile/sales"
+            title="Manage Orders"
+            subtitle="Review requests and approve or reject them."
+            icon={ShoppingBag}
+          />
+          <ActionCard
             href="/profile/favourites"
             title="Favourites"
             subtitle="Browse saved items."

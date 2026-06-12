@@ -324,7 +324,7 @@ export function CheckoutPageClient() {
                 className={`${sharedInputClass} min-h-28 resize-none py-4`}
                 value={form.address}
                 onChange={(e) => setForm((c) => ({ ...c, address: e.target.value }))}
-                placeholder="Street / building / landmark"
+                placeholder="Enter College Name From Where You Want To Pickup / Deliver The Product"
               />
             </Field>
             <Field label="City">

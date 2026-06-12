@@ -197,6 +197,7 @@ export interface Order {
   mobileNumber: string | null;
   deliveryAddress: string;
   locationDetails: string;
+  rejectionReason?: string | null;
   utrNumber?: string | null;
   paymentScreenshot?: string | null;
   createdAt: string;

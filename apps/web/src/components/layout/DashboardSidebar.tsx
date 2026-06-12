@@ -16,12 +16,14 @@ import {
   User,
   Users,
   LogOut,
+  ClipboardList,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const mainNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Listings', href: '/listings', icon: ShoppingBag },
+  { name: 'Orders / Requests', href: '/profile/sales', icon: ClipboardList },
   { name: 'Sellers', href: '/sellers', icon: Users },
   { name: 'Messages', href: '/messages', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },

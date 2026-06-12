@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getConversations, getMyOrders, getMySales, getMarketplaceOverview } from '@/lib/services'
 import RecentActivityPanel from '@/components/dashboard/RecentActivityPanel'
 import { MarketplaceOverviewCards } from '@/components/dashboard/MarketplaceOverviewCards'
@@ -40,7 +41,34 @@ export default async function DashboardPage() {
               totalSoldItems={overview.totalSoldItems}
             />
 
-            
+            <section className="rounded-[2rem] border border-border-default bg-surface p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-primary">Recent Orders</h2>
+                  <p className="mt-1 text-sm text-secondary">Quick access to your latest order requests.</p>
+                </div>
+                <Link
+                  href="/profile/sales"
+                  className="inline-flex items-center rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+                >
+                  View all
+                </Link>
+              </div>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {sales.slice(0, 3).map((order) => (
+                  <Link
+                    key={order.id}
+                    href={`/profile/orders/${order.id}`}
+                    className="group rounded-[1.5rem] border border-border-default bg-surface-hover p-4 transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <p className="text-sm font-semibold text-primary">{order.product.title}</p>
+                    <p className="mt-2 text-sm text-secondary">Buyer: {order.buyer.name}</p>
+                    <p className="mt-1 text-sm text-secondary">Status: {order.orderStatus}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
 
             <ExploreSellersCTA />
 

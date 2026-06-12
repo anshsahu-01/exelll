@@ -253,87 +253,8 @@ export async function updateOrderStatus(
       throw new AppError("You are not authorized to update this order", 403);
     }
 
-    if (input.status === PaymentStatus.confirmed) {
-      if (!isSeller) {
-        throw new AppError("Only the seller can confirm this order", 403);
-      }
-
-      if (order.orderStatus !== OrderStatus.pending) {
-        throw new AppError("Only pending orders can be confirmed", 400);
-      }
-
-      const product = await tx.product.findUnique({
-        where: { id: order.productId },
-        select: { id: true, status: true, isSold: true },
-      });
-
-      if (!product) {
-        throw new AppError("Product not found", 404);
-      }
-
-      if (product.status === ProductStatus.SOLD || product.isSold) {
-        throw new AppError("This product has already been marked as sold", 400);
-      }
-
-      const confirmedOrder = await tx.order.update({
-        where: { id: orderId },
-        data: {
-          paymentStatus: PaymentStatus.confirmed,
-          orderStatus: OrderStatus.accepted,
-        },
-        include: orderInclude,
-      });
-
-      await tx.product.update({
-        where: { id: order.productId },
-        data: { status: ProductStatus.SOLD, isSold: true },
-      });
-
-      await tx.order.updateMany({
-        where: {
-          productId: order.productId,
-          id: { not: orderId },
-          orderStatus: OrderStatus.pending,
-        },
-        data: {
-          paymentStatus: PaymentStatus.cancelled,
-          orderStatus: OrderStatus.cancelled,
-        },
-      });
-
-      return confirmedOrder;
-    }
-
-    if (input.status === "shipped") {
-      if (!isSeller) {
-        throw new AppError("Only the seller can mark this order as shipped", 403);
-      }
-
-      if (order.orderStatus !== OrderStatus.accepted && order.orderStatus !== OrderStatus.processing) {
-        throw new AppError("Only accepted or processing orders can be marked as shipped", 400);
-      }
-
-      return tx.order.update({
-        where: { id: orderId },
-        data: { orderStatus: OrderStatus.shipped },
-        include: orderInclude,
-      });
-    }
-
-    if (input.status === "delivered") {
-      if (!isSeller) {
-        throw new AppError("Only the seller can mark this order as delivered", 403);
-      }
-
-      if (order.orderStatus !== OrderStatus.shipped) {
-        throw new AppError("Only shipped orders can be marked as delivered", 400);
-      }
-
-      return tx.order.update({
-        where: { id: orderId },
-        data: { orderStatus: OrderStatus.delivered },
-        include: orderInclude,
-      });
+    if (input.status !== PaymentStatus.cancelled) {
+      throw new AppError("Only cancellations are supported through this endpoint", 400);
     }
 
     if (

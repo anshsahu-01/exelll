@@ -28,13 +28,8 @@ export const orderIdParamSchema = z.object({
 });
 
 export const updateOrderStatusSchema = z.object({
-  status: z.enum([
-    PaymentStatus.confirmed,
-    PaymentStatus.cancelled,
-    "shipped",
-    "delivered",
-  ], {
-    message: "Status must be 'confirmed', 'cancelled', 'shipped', or 'delivered'",
+  status: z.enum([PaymentStatus.cancelled], {
+    message: "Only cancellation is supported through this endpoint",
   }),
 });
 

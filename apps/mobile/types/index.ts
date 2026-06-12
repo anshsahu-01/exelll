@@ -166,6 +166,7 @@ export interface Order {
   mobileNumber: string | null;
   deliveryAddress: string;
   locationDetails: string;
+  rejectionReason?: string | null;
   createdAt: string;
   product: Pick<Product, "id" | "title" | "images" | "price" | "contactNumber">;
   buyer: PublicUser;
