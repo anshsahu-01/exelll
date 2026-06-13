@@ -154,7 +154,7 @@ export default function MarketplaceLanding({
                 />
               </div>
               <p className="mt-4 max-w-3xl text-sm leading-6 text-secondary">
-                Browse student listings first. Login is only required for protected actions like chat, orders, reports, and selling.
+                Buy, sell, and save within your college community.
               </p>
             </div>
 
@@ -197,127 +197,152 @@ export default function MarketplaceLanding({
       </Section>
 
       <footer className="relative mt-24 border-t border-border-default bg-surface/80 backdrop-blur-md">
-      {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1.25fr]">
-          
-          {/* Brand Column */}
-          <div className="flex flex-col justify-between">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
+
+            {/* Brand Column */}
+            <div className="flex flex-col justify-between">
+              <div>
+                <Link href="/" className="inline-block transition-transform duration-200 hover:scale-[1.02]">
+                  {mounted && (
+                    <Image
+                      src={resolvedTheme === 'dark' ? '/sqlogo_dark.png' : '/sqlogo_light.png'}
+                      alt="Exell"
+                      width={90}
+                      height={45}
+                      className="object-contain"
+                    />
+                  )}
+                </Link>
+                <p className="mt-5 max-w-xs text-sm leading-relaxed text-secondary/90">
+                  India's premier student marketplace for buying and selling college essentials, electronics, books, and campus gear.
+                </p>
+              </div>
+
+              {/* Pill Badges */}
+              <div className="mt-6 flex flex-wrap gap-2">
+                {['Student First', 'Campus Verified'].map((text) => (
+                  <span
+                    key={text}
+                    className="inline-flex items-center rounded-full bg-surface-hover border border-border-default/50 px-3 py-1 text-xs font-medium text-secondary transition-all hover:border-primary/30"
+                  >
+                    <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    {text}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Links: Marketplace */}
             <div>
-              <Link href="/" className="inline-block transition-transform duration-200 hover:scale-[1.02]">
-                {mounted && (
-                  <Image
-                    src={resolvedTheme === 'dark' ? '/sqlogo_dark.png' : '/sqlogo_light.png'}
-                    alt="Exell"
-                    width={90}
-                    height={45}
-                    className="object-contain"
-                  />
-                )}
-              </Link>
-              <p className="mt-5 max-w-xs text-sm leading-relaxed text-secondary/90">
-                India's premier student marketplace for buying and selling college essentials, electronics, books, and campus gear.
-              </p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                Marketplace
+              </h3>
+              <ul className="mt-4 space-y-3">
+                {[
+                  { label: 'Browse Listings', href: '/listings' },
+                  { label: 'Sell Item', href: '/sell' },
+                  { label: 'Dashboard', href: '/dashboard' }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            
-            {/* Pill Badges */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {['Student First', 'Campus Verified'].map((text) => (
-                <span 
-                  key={text} 
-                  className="inline-flex items-center rounded-full bg-surface-hover border border-border-default/50 px-3 py-1 text-xs font-medium text-secondary transition-all hover:border-primary/30"
-                >
-                  <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {text}
-                </span>
-              ))}
+
+            {/* Navigation Links: Legal */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                Legal
+              </h3>
+              <ul className="mt-4 space-y-3">
+                {[
+                  { label: 'Privacy Policy', href: '/privacy-policy' },
+                  { label: 'Terms & Conditions', href: '/terms-and-conditions' }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          {/* Navigation Links: Marketplace */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-              Marketplace
-            </h3>
-            <ul className="mt-4 space-y-3">
-              {[
-                { label: 'Browse Listings', href: '/listings' },
-                { label: 'Sell Item', href: '/sell' },
-                { label: 'Dashboard', href: '/dashboard' }
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link 
-                    href={link.href} 
-                    className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
 
-          {/* Navigation Links: Legal */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-              Legal
-            </h3>
-            <ul className="mt-4 space-y-3">
-              {[
-                { label: 'Privacy Policy', href: '/privacy-policy' },
-                { label: 'Terms & Conditions', href: '/terms-and-conditions' }
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link 
-                    href={link.href} 
-                    className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Platform Metrics Column */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-              Live Network
-            </h3>
-            <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-1">
-              {[
-                { value: `${products.length}+`, label: 'Active Listings' },
-                { value: `${categories.length}+`, label: 'Categories' }
-              ].map((stat, i) => (
-                <div 
-                  key={i} 
-                  className="group rounded-xl border border-border-default/60 bg-surface-hover/30 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-sm"
-                >
-                  <p className="text-2xl font-bold tracking-tight text-primary transition-colors group-hover:text-primary-hover">
-                    {stat.value}
-                  </p>
-                  <p className="mt-0.5 text-xs font-medium text-secondary/70">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
+            {/* Navigation Links: Account */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                Account
+              </h3>
+              <ul className="mt-4 space-y-3">
+                {[
+                  { label: 'Messages', href: '/messages' },
+                  { label: 'Orders', href: '/orders' },
+                  { label: 'Dashboard', href: '/dashboard' },
+                  { label: 'Profile', href: '/profile' }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
+
+            {/* Navigation Links: Resources */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                Resources
+              </h3>
+              <ul className="mt-4 space-y-3">
+                {[
+                  { label: 'Browse Listings', href: '/listings' },
+                  { label: 'Sell Item', href: '/sell' },
+                  { label: 'Categories', href: '/categories' },
+                  { label: 'Contact Us', href: '/contact' }
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-block text-sm text-secondary transition-colors duration-200 hover:text-primary hover:translate-x-1 transform"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+
           </div>
 
-        </div>
-
-        {/* Footer Bottom Bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-default/60 pt-8 text-xs font-medium text-secondary/80 md:flex-row">
-          <p>© {new Date().getFullYear()} Exell. All rights reserved.</p>
-          <div className="flex items-center gap-1.5">
-            <span className="h-1 w-1 rounded-full bg-primary" />
-            <p className="tracking-wide uppercase text-[10px]">Built exclusively for students</p>
+          {/* Footer Bottom Bar */}
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-default/60 pt-8 text-xs font-medium text-secondary/80 md:flex-row">
+            <p>© {new Date().getFullYear()} Exell. All rights reserved.</p>
+            <div className="flex items-center gap-1.5">
+              <span className="h-1 w-1 rounded-full bg-primary" />
+              <p className="tracking-wide uppercase text-[10px]">Built exclusively for students</p>
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
     </main>
 
   )
