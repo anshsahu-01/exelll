@@ -6,6 +6,7 @@ import { buildProductOrderBy, buildProductWhere } from "./product.query";
 import {
   CreateProductInput,
   GetProductsQuery,
+  ProductSearchSuggestionsQuery,
   UpdateProductInput,
   UpdateProductStatusBody,
 } from "./product.validation";
@@ -22,6 +23,15 @@ const categorySelect = {
   id: true,
   name: true,
 } satisfies Prisma.CategorySelect;
+
+const suggestionProductInclude = {
+  category: { select: categorySelect },
+  user: { select: sellerSelect },
+} satisfies Prisma.ProductInclude;
+
+type SuggestionProduct = Prisma.ProductGetPayload<{
+  include: typeof suggestionProductInclude;
+}>;
 
 const productInclude = {
   user: { select: sellerSelect },
@@ -142,6 +152,78 @@ export async function getAllProducts(query: GetProductsQuery, userId?: string) {
   return {
     products: annotateFavourite(products.map((product) => formatProductForViewer(product, userId)), favouriteIds),
     pagination: getPaginationMeta(page, limit, total) satisfies PaginationMeta,
+  };
+}
+
+export async function getSearchSuggestions(query: ProductSearchSuggestionsQuery) {
+  const term = query.q.trim();
+  const lower = term.toLowerCase();
+
+  const products = await prisma.product.findMany({
+    where: {
+      status: ProductStatus.ACTIVE,
+      OR: [
+        { title: { contains: term, mode: "insensitive" } },
+        { category: { name: { contains: term, mode: "insensitive" } } },
+        { user: { name: { contains: term, mode: "insensitive" } } },
+      ],
+    },
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    include: suggestionProductInclude,
+  });
+
+  const productSuggestions = (products as SuggestionProduct[]).map((product) => ({
+    id: product.id,
+    title: product.title,
+    price: Number(product.price),
+    image: product.images[0] ?? null,
+    categoryName: product.category?.name ?? null,
+    sellerName: product.user.name,
+  }));
+
+  const titleSuggestions = await prisma.product.findMany({
+    where: {
+      status: ProductStatus.ACTIVE,
+      title: { contains: term, mode: "insensitive" },
+    },
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: { title: true },
+  });
+
+  const categorySuggestions = await prisma.category.findMany({
+    where: {
+      name: { contains: term, mode: "insensitive" },
+    },
+    take: 5,
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+
+  const sellerSuggestions = await prisma.user.findMany({
+    where: {
+      name: { contains: term, mode: "insensitive" },
+      isDeleted: false,
+    },
+    take: 5,
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, profileImage: true },
+  });
+
+  const searchSuggestions = Array.from(
+    new Set(
+      [...titleSuggestions.map((item) => item.title), ...categorySuggestions.map((item) => item.name), ...sellerSuggestions.map((item) => item.name)]
+        .filter(Boolean)
+    )
+  ).slice(0, 5);
+
+  return {
+    searchSuggestions,
+    productSuggestions,
+    categories: categorySuggestions,
+    sellers: sellerSuggestions,
+    matchedQuery: lower,
   };
 }
 

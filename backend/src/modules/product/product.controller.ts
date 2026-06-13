@@ -5,6 +5,7 @@ import * as productService from "./product.service";
 import {
   CreateProductBody,
   GetProductsQuery,
+  ProductSearchSuggestionsQuery,
   UpdateProductBody,
   UpdateProductStatusBody,
 } from "./product.validation";
@@ -38,6 +39,13 @@ export const getProductById = asyncHandler(async (req: Request, res: Response) =
   const { id } = getValidated<{ id: string }>(req, "params");
   const product = await productService.getProductById(id, req.user?.userId);
   res.json({ success: true, data: product });
+});
+
+export const getSearchSuggestions = asyncHandler(async (req: Request, res: Response) => {
+  const data = await productService.getSearchSuggestions(
+    getValidated<ProductSearchSuggestionsQuery>(req, "query")
+  );
+  res.json({ success: true, data });
 });
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {

@@ -58,7 +58,7 @@ export function DashboardSidebar() {
         ])
         if (!active) return
         setOrdersBadge(sales.filter((order) => order.orderStatus === 'pending').length)
-        setMessagesBadge(conversations.filter((conversation) => conversation.lastMessage && !conversation.lastMessage.isMine).length)
+        setMessagesBadge(conversations.filter((conversation) => (conversation.unreadCount ?? 0) > 0).length)
       } catch {
         if (!active) return
         setOrdersBadge(0)

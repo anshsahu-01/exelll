@@ -41,7 +41,9 @@ const UNLOCKED_ORDER_STATUSES = new Set(["accepted"] as const);
 
 type ConversationListItem = Prisma.ConversationGetPayload<{
   include: typeof conversationInclude;
-}>;
+}> & {
+  unreadCount?: number;
+};
 
 function formatConversation(conversation: ConversationListItem, currentUserId: string) {
   const otherUser =
@@ -65,6 +67,8 @@ function formatConversation(conversation: ConversationListItem, currentUserId: s
       : null,
     lastMessageAt: conversation.lastMessageAt ?? conversation.createdAt,
     createdAt: conversation.createdAt,
+    unreadCount: conversation.unreadCount ?? 0,
+    hasUnreadMessages: (conversation.unreadCount ?? 0) > 0,
   };
 }
 
@@ -204,7 +208,32 @@ export async function getUserConversations(userId: string) {
     ],
   });
 
-  return conversations.map((c) => formatConversation(c, userId));
+  const unreadCounts = await prisma.message.groupBy({
+    by: ["conversationId"],
+    where: {
+      conversationId: { in: conversations.map((conversation) => conversation.id) },
+      senderId: { not: userId },
+      isSystem: false,
+      seenAt: null,
+    },
+    _count: { _all: true },
+  });
+
+  const unreadMap = new Map(
+    unreadCounts.map((entry) => [entry.conversationId, entry._count._all])
+  );
+
+  return conversations
+    .filter((conversation) => conversation.messages.length > 0)
+    .map((c) =>
+      formatConversation(
+        {
+          ...c,
+          unreadCount: unreadMap.get(c.id) ?? 0,
+        },
+        userId
+      )
+    );
 }
 
 export async function getConversationMessages(
@@ -212,6 +241,18 @@ export async function getConversationMessages(
   userId: string
 ) {
   await getConversationForUser(conversationId, userId);
+
+  await prisma.message.updateMany({
+    where: {
+      conversationId,
+      senderId: { not: userId },
+      isSystem: false,
+      seenAt: null,
+    },
+    data: {
+      seenAt: new Date(),
+    },
+  });
 
   const conversation = await prisma.conversation.findUnique({
     where: { id: conversationId },

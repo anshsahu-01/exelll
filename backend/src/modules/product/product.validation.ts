@@ -65,6 +65,15 @@ export const getProductsQuerySchema = z.object({
   sort: z.enum(productSortOptions).default("latest"),
 });
 
+export const productSearchSuggestionsQuerySchema = z.object({
+  q: z
+    .string()
+    .trim()
+    .min(1, "Search query is required")
+    .max(120)
+    .transform((value) => value.trim()),
+});
+
 export type CreateProductBody = z.infer<typeof createProductSchema>;
 export type UpdateProductBody = z.infer<typeof updateProductSchema>;
 
@@ -75,6 +84,7 @@ export type UpdateProductInput = Omit<UpdateProductBody, "existingImages"> & {
   images: string[];
 };
 export type GetProductsQuery = z.infer<typeof getProductsQuerySchema>;
+export type ProductSearchSuggestionsQuery = z.infer<typeof productSearchSuggestionsQuerySchema>;
 
 export const productStatusValues = ["ACTIVE", "SOLD", "HIDDEN"] as const;
 

@@ -99,6 +99,8 @@ export interface ConversationListItem {
   } | null;
   lastMessageAt: string;
   createdAt: string;
+  unreadCount?: number;
+  hasUnreadMessages?: boolean;
 }
 
 export interface ChatMessage {

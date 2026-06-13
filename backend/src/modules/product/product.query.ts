@@ -9,35 +9,43 @@ export function buildProductWhere(
   };
 
   if (query.search) {
-  where.OR = [
-    {
-      title: {
-        contains: query.search,
-        mode: "insensitive",
-      },
-    },
-    {
-      description: {
-        contains: query.search,
-        mode: "insensitive",
-      },
-    },
-    {
-      category: {
-        name: {
+    where.OR = [
+      {
+        title: {
           contains: query.search,
           mode: "insensitive",
         },
       },
-    },
-    {
-      condition: {
-        contains: query.search,
-        mode: "insensitive",
+      {
+        description: {
+          contains: query.search,
+          mode: "insensitive",
+        },
       },
-    },
-  ];
-}
+      {
+        category: {
+          name: {
+            contains: query.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        condition: {
+          contains: query.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        user: {
+          name: {
+            contains: query.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
 
   if (query.categoryId) {
     where.categoryId = query.categoryId;

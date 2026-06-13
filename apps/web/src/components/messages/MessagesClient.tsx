@@ -133,14 +133,15 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
   }
 
   const openConversation = async (conversationId: string) => {
-    setSelectedConversationId(conversationId)
-    setError(null)
-    await loadThread(conversationId)
-    if (activeId) {
-      router.replace(`/messages/${conversationId}`)
-    } else {
-      router.push(`/messages/${conversationId}`)
-    }
+      setSelectedConversationId(conversationId)
+      setError(null)
+      await loadThread(conversationId)
+      await loadConversations()
+      if (activeId) {
+        router.replace(`/messages/${conversationId}`)
+      } else {
+        router.push(`/messages/${conversationId}`)
+      }
   }
 
   const activeConversationSummary = activeConversation ?? null
@@ -241,7 +242,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                       {conversation.lastMessage ? conversation.lastMessage.content : 'No messages yet'}
                     </p>
                   </div>
-                  {!conversation.lastMessage?.isMine ? (
+                  {(conversation.unreadCount ?? 0) > 0 ? (
                     <span className="mt-2 h-2.5 w-2.5 rounded-full bg-rose-500" />
                   ) : null}
                 </button>

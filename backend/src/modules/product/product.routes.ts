@@ -40,6 +40,13 @@ router.get(
 );
 
 router.get(
+  "/search/suggestions",
+  authenticateOptional,
+  validate(getProductsQuerySchema, "query"),
+  productController.getAllProducts
+);
+
+router.get(
   "/:id",
   authenticateOptional,
   validate(productIdParamSchema, "params"),
