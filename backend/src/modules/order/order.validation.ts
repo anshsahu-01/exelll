@@ -37,6 +37,11 @@ export const sellerDecisionSchema = z.object({
   status: z.enum(["accepted", "rejected"], {
     message: "Status must be 'accepted' or 'rejected'",
   }),
+  rejectionReason: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value === "" ? undefined : value)),
 });
 
 export type UpdateOrderStatusBody = z.infer<typeof updateOrderStatusSchema>;

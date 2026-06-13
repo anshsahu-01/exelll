@@ -160,11 +160,12 @@ export async function updateOrderStatus(
 export async function sellerDecision(
   id: string,
   status: 'accepted' | 'rejected',
+  rejectionReason?: string,
   token?: string
 ) {
   const res = await request<ApiResponse<Order>>(`/orders/${id}/decision`, {
     method: 'PATCH',
-    body: { status },
+    body: { status, rejectionReason },
     token,
   })
   return res.data

@@ -87,7 +87,11 @@ export function OrdersClient({
     setSavingId(current.id)
     try {
       const token = await getToken()
-      const updated = await sellerDecision(current.id, nextStatus, token ?? undefined)
+      const rejectionReason =
+        nextStatus === 'rejected'
+          ? window.prompt('Optional rejection reason for the buyer:')?.trim() || undefined
+          : undefined
+      const updated = await sellerDecision(current.id, nextStatus, rejectionReason, token ?? undefined)
       if (mode === 'detail') {
         setOrder(updated)
       } else {

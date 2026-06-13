@@ -3,6 +3,8 @@ import { prisma } from "../../config/prisma";
 import { AppError } from "../../utils/AppError";
 import { CreateOrderBody, UpdateOrderStatusBody } from "./order.validation";
 import { uploadImageBuffer } from "../../utils/upload";
+import { buildAcceptedOrderEmail, buildNewOrderEmail, buildRejectedOrderEmail } from "./order.email";
+import { sendTransactionalEmail } from "../../utils/email";
 
 const userSelect = {
   id: true,
@@ -42,6 +44,18 @@ function formatOrder(order: OrderWithRelations) {
       contactNumber: isAccepted ? product.contactNumber : null,
     },
   };
+}
+
+function toOrderUrl(orderId: string) {
+  return `${process.env.APP_WEB_URL ?? "http://localhost:3001"}/profile/orders/${orderId}`;
+}
+
+async function queueEmail(task: () => Promise<unknown>, label: string) {
+  setImmediate(() => {
+    void task().catch((error) => {
+      console.error(`[email] ${label} failed`, error);
+    });
+  });
 }
 
 export async function createOrder(buyerId: string, input: CreateOrderBody) {
@@ -119,6 +133,25 @@ export async function createOrder(buyerId: string, input: CreateOrderBody) {
     paymentStatus: order.paymentStatus,
   });
 
+  void queueEmail(async () => {
+    const seller = await prisma.user.findUnique({
+      where: { id: order.sellerId },
+      select: { email: true },
+    });
+    if (!seller?.email) return;
+    await sendTransactionalEmail({
+      to: seller.email,
+      subject: "New Order Request Received",
+      html: buildNewOrderEmail({
+        productName: order.product.title,
+        buyerName: order.buyer.name,
+        buyerCollege: order.buyer.collegeName,
+        orderDate: order.createdAt.toLocaleString(),
+        orderUrl: toOrderUrl(order.id),
+      }),
+    });
+  }, "new-order");
+
   return formatOrder(order);
 }
 
@@ -162,7 +195,7 @@ export async function getOrderById(orderId: string, userId: string) {
 export async function sellerDecision(
   orderId: string,
   actorId: string,
-  input: { status: "accepted" | "rejected" }
+  input: { status: "accepted" | "rejected"; rejectionReason?: string }
 ) {
   const updatedOrder = await prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
@@ -195,6 +228,24 @@ export async function sellerDecision(
         include: orderInclude,
       });
 
+      const acceptedPayload = formatOrder(accepted);
+      void queueEmail(async () => {
+      const buyer = await prisma.user.findUnique({
+        where: { id: acceptedPayload.buyerId },
+        select: { email: true },
+      });
+      if (!buyer?.email) return;
+      await sendTransactionalEmail({
+        to: buyer.email,
+        subject: "Your Order Has Been Accepted",
+          html: buildAcceptedOrderEmail({
+            productName: acceptedPayload.product.title,
+            sellerName: acceptedPayload.seller.name,
+            orderUrl: toOrderUrl(acceptedPayload.id),
+          }),
+        });
+      }, "order-accepted");
+
       await tx.product.update({
         where: { id: order.productId },
         data: { status: ProductStatus.SOLD, isSold: true },
@@ -214,9 +265,32 @@ export async function sellerDecision(
 
     const rejected = await tx.order.update({
       where: { id: orderId },
-      data: { paymentStatus: PaymentStatus.cancelled, orderStatus: OrderStatus.rejected },
+      data: {
+        paymentStatus: PaymentStatus.cancelled,
+        orderStatus: OrderStatus.rejected,
+        rejectionReason: input.rejectionReason ?? null,
+      },
       include: orderInclude,
     });
+
+    const rejectedPayload = formatOrder(rejected);
+    void queueEmail(async () => {
+    const buyer = await prisma.user.findUnique({
+      where: { id: rejectedPayload.buyerId },
+      select: { email: true },
+    });
+    if (!buyer?.email) return;
+    await sendTransactionalEmail({
+      to: buyer.email,
+      subject: "Order Request Update",
+        html: buildRejectedOrderEmail({
+          productName: rejectedPayload.product.title,
+          sellerName: rejectedPayload.seller.name,
+          rejectionReason: rejectedPayload.rejectionReason,
+          orderUrl: toOrderUrl(rejectedPayload.id),
+        }),
+      });
+    }, "order-rejected");
 
     return rejected;
   });
