@@ -1,11 +1,32 @@
 "use client";
 
 import { useClerk } from "@clerk/nextjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAdminApiService } from "@/services/api";
 
 export function Topbar() {
   const { signOut } = useClerk();
-  const [notifCount] = useState(0);
+  const api = useAdminApiService();
+  const [notifCount, setNotifCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const orders = await api.getOrders();
+        if (!active) return;
+        setNotifCount(orders.filter((order) => `${order.paymentStatus}`.includes("pending")).length);
+      } catch {
+        if (!active) return;
+        setNotifCount(0);
+      }
+    };
+
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [api]);
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:px-6" style={{ borderColor: "#EEEEEE" }}>

@@ -212,20 +212,28 @@ function ListingGroup({
             </div>
             <p className="mt-3 line-clamp-2 text-sm text-secondary">{product.description}</p>
             <div className="mt-4 flex gap-2">
-              <Link
-                href={`/sell/${product.id}`}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
-              >
-                <Edit3 className="h-4 w-4" />
-                Edit
-              </Link>
-              <button
-                onClick={() => onDelete(product)}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border-default px-4 py-2.5 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </button>
+              {sold ? (
+                <div className="flex-1 rounded-full border border-border-default px-4 py-2.5 text-center text-sm font-semibold text-secondary">
+                  Sold listings are locked
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href={`/sell/${product.id}`}
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                  >
+                    <Edit3 className="h-4 w-4" />
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => onDelete(product)}
+                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border-default px-4 py-2.5 text-sm font-semibold text-secondary transition hover:bg-surface-hover"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </article>

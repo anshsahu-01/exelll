@@ -172,14 +172,15 @@ export function OrdersClient({
                   ['Rejection reason', order.rejectionReason || '—'],
                 ]}
               />
-              <InfoCard
-                title="Buyer details"
-                items={[
-                  ['Name', order.buyer.name],
-                  ['College', order.buyer.collegeName || '—'],
-                  ['Phone', canSeeContact ? order.mobileNumber || '—' : 'Hidden until accepted'],
-                ]}
-              />
+            <InfoCard
+              title="Buyer details"
+              items={[
+                ['Name', order.buyer.name],
+                ['College', order.buyer.collegeName || '—'],
+                ['Phone', canSeeContact ? order.mobileNumber || '—' : 'Hidden until accepted'],
+                ['Pickup / meetup location', canSeeContact ? order.locationDetails || '—' : 'Hidden until accepted'],
+              ]}
+            />
             </div>
 
             <InfoCard

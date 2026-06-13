@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { usePathname } from 'next/navigation'
-import { useClerk } from '@clerk/nextjs'
+import { useAuth, useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -19,6 +19,7 @@ import {
   ClipboardList,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { getConversations, getMySales } from '@/lib/marketplace'
 
 const mainNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -32,8 +33,11 @@ const mainNavigation = [
 
 export function DashboardSidebar() {
   const pathname = usePathname()
+  const { getToken } = useAuth()
   const { signOut } = useClerk()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [ordersBadge, setOrdersBadge] = useState(0)
+  const [messagesBadge, setMessagesBadge] = useState(0)
 
   const { resolvedTheme } = useTheme()
 
@@ -42,6 +46,31 @@ export function DashboardSidebar() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    let active = true
+    const loadBadges = async () => {
+      try {
+        const token = await getToken()
+        const [sales, conversations] = await Promise.all([
+          getMySales(token ?? undefined).catch(() => []),
+          getConversations(token ?? undefined).catch(() => []),
+        ])
+        if (!active) return
+        setOrdersBadge(sales.filter((order) => order.orderStatus === 'pending').length)
+        setMessagesBadge(conversations.filter((conversation) => conversation.lastMessage && !conversation.lastMessage.isMine).length)
+      } catch {
+        if (!active) return
+        setOrdersBadge(0)
+        setMessagesBadge(0)
+      }
+    }
+
+    void loadBadges()
+    return () => {
+      active = false
+    }
+  }, [getToken])
 
   const handleLogout = async () => {
     await signOut()
@@ -117,6 +146,8 @@ export function DashboardSidebar() {
 
             const Icon = item.icon
 
+            const badge = item.href === '/profile/sales' ? ordersBadge : item.href === '/messages' ? messagesBadge : 0
+
             return (
               <Link
                 key={item.name}
@@ -136,7 +167,12 @@ export function DashboardSidebar() {
                     isActive ? 'text-primary' : 'text-secondary'
                   }`}
                 />
-                {item.name}
+                <span className="flex-1">{item.name}</span>
+                {badge > 0 ? (
+                  <span className="rounded-full bg-black px-2 py-0.5 text-[10px] font-semibold text-white">
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                ) : null}
               </Link>
             )
           })}

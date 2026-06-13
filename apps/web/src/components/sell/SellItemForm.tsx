@@ -50,6 +50,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [errors, setErrors] = useState<Errors>({})
   const [submitMessage, setSubmitMessage] = useState<string | null>(null)
+  const [isSold, setIsSold] = useState(false)
 
   useEffect(() => {
     if (!productId) return
@@ -59,6 +60,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
         const token = await getToken()
         const product = await getProductById(productId, token ?? undefined)
         if (mounted && product) {
+          setIsSold(Boolean(product.isSold || product.status === 'SOLD'))
           setForm({
             title: product.title,
             description: product.description,
@@ -241,6 +243,12 @@ export function SellItemForm({ productId }: { productId?: string }) {
           </div>
         </div>
 
+        {isEditMode && isSold ? (
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            This listing is sold and locked. Sold listings cannot be modified.
+          </div>
+        ) : null}
+
         {submitting ? (
           <div className="mt-4 rounded-2xl border border-border-default bg-surface-hover p-4">
             <div className="mb-2 flex items-center justify-between text-sm text-secondary">
@@ -280,7 +288,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
         <Field label="Condition" error={errors.condition}>
           <div className="grid grid-cols-2 gap-2">
             {CONDITIONS.map((condition) => (
-              <button key={condition} type="button" onClick={() => updateField('condition', condition)} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${form.condition === condition ? 'border-black bg-primary text-background' : 'border-border-default text-secondary hover:bg-surface-hover'}`}>
+              <button key={condition} type="button" disabled={isEditMode && isSold} onClick={() => updateField('condition', condition)} className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${form.condition === condition ? 'border-black bg-primary text-background' : 'border-border-default text-secondary hover:bg-surface-hover'} ${(isEditMode && isSold) ? 'cursor-not-allowed opacity-60' : ''}`}>
                 {condition}
               </button>
             ))}
@@ -288,7 +296,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
         </Field>
 
         <Field label="Public contact number" error={errors.contactNumber}>
-          <input className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary" value={form.contactNumber} onChange={(e) => updateField('contactNumber', e.target.value)} placeholder="Enter the public phone number for this listing" />
+          <input disabled={isEditMode && isSold} className="w-full rounded-2xl border border-border-default px-4 py-3 text-sm outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:bg-surface-hover" value={form.contactNumber} onChange={(e) => updateField('contactNumber', e.target.value)} placeholder="Enter the public phone number for this listing" />
         </Field>
 
         <Field label="Additional notes">
@@ -297,7 +305,7 @@ export function SellItemForm({ productId }: { productId?: string }) {
 
         {submitMessage ? <p className={`text-sm ${submitMessage.includes('successfully') ? 'text-emerald-700' : 'text-red-600'}`}>{submitMessage}</p> : null}
 
-        <button type="submit" disabled={submitting} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400">
+        <button type="submit" disabled={submitting || (isEditMode && isSold)} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400">
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlusCircle className="h-4 w-4" />}
           {isEditMode ? 'Save changes' : 'Publish listing'}
         </button>

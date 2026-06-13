@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useAdminApiService } from "@/services/api";
 
 const navItems = [
   { label: "Dashboard", href: "/dashboard", icon: "grid" },
@@ -26,6 +28,27 @@ function NavIcon({ type, active }: { type: string; active: boolean }) {
 export function Sidebar() {
   const pathname = usePathname();
   const { signOut } = useClerk();
+  const api = useAdminApiService();
+  const [reportsBadge, setReportsBadge] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const orders = await api.getOrders();
+        if (!active) return;
+        setReportsBadge(orders.filter((order) => `${order.paymentStatus}`.includes("pending")).length);
+      } catch {
+        if (!active) return;
+        setReportsBadge(0);
+      }
+    };
+
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [api]);
 
   return (
     <aside className="w-full border-b bg-white md:h-screen md:w-64 md:border-b-0 md:border-r" style={{ borderColor: "#EEEEEE" }}>
@@ -34,8 +57,9 @@ export function Sidebar() {
         <p className="mt-1 text-lg font-semibold" style={{ color: "#111111" }}>Control Panel</p>
       </div>
       <nav className="flex gap-2 overflow-x-auto px-3 pb-3 md:block md:space-y-1 md:overflow-visible md:pb-0">
-        {navItems.map((item) => {
+          {navItems.map((item) => {
           const active = pathname === item.href;
+          const badge = item.href === "/reports" ? reportsBadge : 0;
           return (
             <Link
               key={item.href}
@@ -48,7 +72,8 @@ export function Sidebar() {
               }}
             >
               <NavIcon type={item.icon} active={active} />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {badge > 0 ? <span className="rounded-full bg-[#FF4C3B] px-2 py-0.5 text-[10px] font-semibold text-white">{badge > 99 ? "99+" : badge}</span> : null}
             </Link>
           );
         })}

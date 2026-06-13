@@ -81,6 +81,23 @@ async function ensureCategoryExists(categoryId: string): Promise<void> {
   }
 }
 
+async function ensureProductMutable(id: string) {
+  const product = await prisma.product.findUnique({
+    where: { id },
+    select: { id: true, userId: true, status: true, isSold: true },
+  });
+
+  if (!product) {
+    throw new AppError("Product not found", 404);
+  }
+
+  if (product.status === ProductStatus.SOLD || product.isSold) {
+    throw new AppError("Sold listings cannot be modified.", 400);
+  }
+
+  return product;
+}
+
 export async function createProduct(userId: string, input: CreateProductInput) {
   await ensureCategoryExists(input.categoryId);
 
@@ -169,14 +186,7 @@ export async function updateProduct(
   userId: string,
   input: UpdateProductInput
 ) {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    select: { id: true, userId: true },
-  });
-
-  if (!product) {
-    throw new AppError("Product not found", 404);
-  }
+  const product = await ensureProductMutable(id);
 
   if (product.userId !== userId) {
     throw new AppError("You are not allowed to update this product", 403);
@@ -214,14 +224,7 @@ export async function updateProductStatus(
   userId: string,
   input: UpdateProductStatusBody
 ) {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    select: { id: true, userId: true },
-  });
-
-  if (!product) {
-    throw new AppError("Product not found", 404);
-  }
+  const product = await ensureProductMutable(id);
 
   if (product.userId !== userId) {
     throw new AppError("You are not allowed to update this product", 403);
@@ -242,14 +245,7 @@ export async function updateProductStatus(
 }
 
 export async function deleteProduct(id: string, userId: string) {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    select: { id: true, userId: true },
-  });
-
-  if (!product) {
-    throw new AppError("Product not found", 404);
-  }
+  const product = await ensureProductMutable(id);
 
   if (product.userId !== userId) {
     throw new AppError("You are not allowed to delete this product", 403);
