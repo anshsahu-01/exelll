@@ -7,11 +7,13 @@ import { useAuth } from '@clerk/nextjs'
 import { ChevronRight, Search, Sparkles } from 'lucide-react'
 import { Category, Product } from '@/types'
 import { formatINR } from '@/lib/format'
+import { useTheme } from 'next-themes'
+import { ThemeToggle } from "@/components/theme/ThemeToggle"
 
 const heroSlides = [
   '/banner1.png',
   '/banner2.png',
-  '/banner1.png',
+  '/banner3.png',
 ]
 
 const sectionKeywords: Record<string, string[]> = {
@@ -60,17 +62,36 @@ export default function MarketplaceLanding({
     [categories]
   )
 
+  const { resolvedTheme } = useTheme()
+
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <main className="min-h-screen bg-surface-hover text-primary">
       <header className="sticky top-0 z-20 border-b border-border-default bg-surface/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-black text-sm font-bold text-white">E</div>
-            <div>
-              <p className="text-sm font-semibold text-primary">Exell</p>
-              <p className="text-xs text-secondary">Marketplace for students</p>
-            </div>
-          </div>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
+           <div className="flex items-center justify-center px-5 py-1">
+          <Link href="/dashboard" className="flex items-center">
+            {mounted && (
+              <Image
+                src={
+                  resolvedTheme === 'dark'
+                    ? '/sqlogo_dark.png'
+                    : '/sqlogo_light.png'
+                }
+                alt="Exell"
+                width={62}
+                height={28}
+                priority
+                className="object-contain rounded-full"
+              />
+            )}
+          </Link>
+        </div>
 
           <div className="hidden flex-1 items-center justify-center px-8 md:flex">
             <div className="flex w-full max-w-2xl items-center gap-3 rounded-full border border-border-default bg-surface px-4 py-3 shadow-sm">
@@ -79,7 +100,10 @@ export default function MarketplaceLanding({
             </div>
           </div>
 
+
+
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {isSignedIn ? (
               <Link href="/dashboard" className="rounded-full border border-border-default px-4 py-2 text-sm font-semibold text-secondary transition hover:bg-surface-hover">
                 Dashboard

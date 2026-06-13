@@ -45,7 +45,7 @@ export function DashboardSidebar() {
 
   const handleLogout = async () => {
     await signOut()
-    window.location.replace('/sign-in')
+    window.location.replace('/')
   }
 
   return (

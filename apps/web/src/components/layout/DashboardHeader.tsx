@@ -52,7 +52,7 @@ export function DashboardHeader() {
 
   const handleLogout = async () => {
     await signOut()
-    window.location.replace('/sign-in')
+    window.location.replace('/')
   }
 
   return (
