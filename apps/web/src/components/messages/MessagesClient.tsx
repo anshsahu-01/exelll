@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { Loader2, Search, Send, MessageSquare } from 'lucide-react'
@@ -51,6 +51,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
   const [message, setMessage] = useState('')
   const [search, setSearch] = useState('')
   const [sending, setSending] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const filteredConversations = useMemo(() => {
     const term = search.trim().toLowerCase()
@@ -104,6 +105,8 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
       setSelectedConversationId(null)
     }
   }, [activeId])
+
+
 
   const handleSend = async () => {
     if (!selectedConversationId || !message.trim()) return
@@ -161,10 +164,16 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
           ? 'border-red-200 bg-red-50 text-red-700'
           : 'border-border-default bg-surface-hover text-secondary'
 
-  const showThreadOnly = Boolean(activeId)
+  const showThreadOnly = Boolean(activeId)  
+  
+  useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({
+    behavior: 'smooth',
+  })
+}, [activeConversationSummary?.messages])
 
   return (
-    <div className="h-[calc(100dvh-4rem)] overflow-hidden bg-background">
+    <div className="h-[calc(100dvh-8.6rem)] overflow-hidden bg-background">
       <div
         className={`grid h-full min-h-0 ${
           showThreadOnly ? 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none' : 'grid-rows-[minmax(0,1fr)] lg:grid-cols-[30%_70%] lg:grid-rows-none'
@@ -252,7 +261,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
         </div>
       </aside>
 
-      <main className={`min-h-0 flex-col overflow-hidden bg-surface ${showThreadOnly ? 'flex' : 'hidden lg:flex'}`}>
+      <main className={`flex h-full flex-col overflow-hidden bg-surface ${showThreadOnly ? 'flex' : 'hidden lg:flex'}`}>
         {!activeConversationSummary ? (
           <div className="flex h-full items-center justify-center px-6 text-center">
             <div>
@@ -322,7 +331,7 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto bg-background p-4">
+            <div className="flex-1 overflow-y-auto bg-background p-4">
               {loadingThread ? (
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -344,11 +353,12 @@ export function MessagesClient({ activeId }: { activeId?: string }) {
                   {activeConversationSummary.messages.map((item) => (
                     <MessageBubble key={item.id} item={item} />
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
               )}
             </div>
 
-            <div className="shrink-0 border-t border-border-default p-4">
+           <div className="sticky bottom-0 shrink-0 border-t border-border-default bg-surface p-4">
               <div className="flex items-end gap-3">
                 <textarea
                   value={message}
