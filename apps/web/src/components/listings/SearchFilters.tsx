@@ -75,8 +75,8 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
   return (
     <div className="mb-6 space-y-3">
       {/* Search + Sort row */}
-      <div className="flex gap-3 items-center">
-        <div className="relative flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative w-full sm:flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary pointer-events-none" />
           <input
             type="text"
@@ -87,27 +87,31 @@ export function SearchFilters({ categories }: { categories: Category[] }) {
           />
         </div>
 
-        <select
-          value={sort}
-          onChange={(e) => handleSort(e.target.value)}
-          className="px-3 py-2.5 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          {SORT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
+        <div className="flex w-full gap-3 sm:w-auto">
+  <select
+    value={sort}
+    onChange={(e) => handleSort(e.target.value)}
+    className="flex-1 sm:flex-none px-3 py-2.5 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary"
+  >
+    {SORT_OPTIONS.map((o) => (
+      <option key={o.value} value={o.value}>
+        {o.label}
+      </option>
+    ))}
+  </select>
 
-        <button
-          onClick={() => setShowFilters((v) => !v)}
-          className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition ${
-            showFilters
-              ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
-          }`}
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-        </button>
+  <button
+    onClick={() => setShowFilters((v) => !v)}
+    className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium border transition ${
+      showFilters
+        ? 'bg-gray-900 text-white border-gray-900'
+        : 'bg-surface text-secondary border-border-default hover:bg-surface-hover'
+    }`}
+  >
+    <SlidersHorizontal className="h-4 w-4" />
+    Filters
+  </button>
+</div>
 
         {hasFilters && (
           <button

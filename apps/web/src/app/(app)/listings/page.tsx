@@ -4,8 +4,9 @@ import { ListingCard } from '@/components/listings/ListingCard'
 import { SearchFilters } from '@/components/listings/SearchFilters'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Pagination } from '@/components/ui/Pagination'
-import { PackageSearch, AlertTriangle } from 'lucide-react'
+import { PackageSearch, AlertTriangle, ChevronRight, Sparkles } from 'lucide-react'
 import { ProductFilters } from '@/types'
+import { HeroBanner } from '@/components/hero/HeroBanner'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,7 +78,7 @@ const baseUrl = `/listings${
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary">Marketplace</h1>
+        <h1 className="text-2xl font-bold text-primary">Active Listings</h1>
 
         <p className="mt-1 text-sm text-secondary">
           {error
@@ -87,6 +88,35 @@ const baseUrl = `/listings${
             : `${products.length} listings found`}
         </p>
       </div>
+
+            <section className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+  <div className="overflow-hidden rounded-[2rem] border border-border-default bg-surface shadow-sm">
+    <div className="grid lg:grid-cols-[1.3fr_0.7fr]">
+      
+      {/* Banner */}
+      <div className="p-4">
+        <HeroBanner />
+      </div>
+
+      {/* Right Side Content */}
+      <div className="hidden lg:flex flex-col items-center justify-center border-l border-border-default px-8">
+        <h2 className="text-5xl xl:text-6xl font-black tracking-tight text-primary text-center">
+          EXPLORE
+        </h2>
+
+        <h2 className="text-5xl xl:text-6xl font-black tracking-tight text-primary text-center">
+          NOW
+        </h2>
+
+        <p className="mt-4 text-center text-secondary text-sm max-w-xs">
+          Discover the best deals from students around your campus.
+        </p>
+
+      </div>
+
+    </div>
+  </div>
+</section>
 
       <SearchFilters categories={categories} />
 
@@ -98,7 +128,7 @@ const baseUrl = `/listings${
         />
       ) : products.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {products.map((product) => (
               <ListingCard key={product.id} listing={product} />
             ))}

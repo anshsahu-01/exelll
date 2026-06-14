@@ -3,7 +3,7 @@ import { getConversations, getMyOrders, getMySales, getMarketplaceOverview } fro
 import RecentActivityPanel from '@/components/dashboard/RecentActivityPanel'
 import { MarketplaceOverviewCards } from '@/components/dashboard/MarketplaceOverviewCards'
 import { DashboardQuickActions } from '@/components/dashboard/DashboardQuickActions'
-import { DashboardHero } from '@/components/dashboard/DashboardHero'
+import { HeroBanner } from '@/components/hero/HeroBanner'
 import { ExploreSellersCTA } from '@/components/dashboard/ExploreSellersCTA'
 import { MyActivitySummary } from '@/components/dashboard/MyActivitySummary'
 
@@ -29,7 +29,7 @@ export default async function DashboardPage() {
         <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 lg:pr-6">
           <div className="mx-auto w-full max-w-5xl space-y-8">
 
-            <DashboardHero />
+            <HeroBanner />
             
             
             <DashboardQuickActions />

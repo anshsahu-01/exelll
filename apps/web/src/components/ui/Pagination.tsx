@@ -27,7 +27,7 @@ export function Pagination({
           href={getPageUrl(currentPage - 1)}
           className="px-4 py-2 border border-border-default rounded-lg hover:bg-surface-hover text-primary transition-colors"
         >
-          ⮜
+          ❮
         </Link>
       )}
 
@@ -50,7 +50,7 @@ export function Pagination({
           href={getPageUrl(currentPage + 1)}
           className="px-4 py-2 border border-border-default rounded-lg hover:bg-surface-hover text-primary transition-colors"
         >
-          ⮞
+          ❯
         </Link>
       )}
     </div>

@@ -9,6 +9,7 @@ import { Category, Product } from '@/types'
 import { formatINR } from '@/lib/format'
 import { useTheme } from 'next-themes'
 import { ThemeToggle } from "@/components/theme/ThemeToggle"
+import { HeroBanner } from '@/components/hero/HeroBanner'
 
 const heroSlides = [
   '/banner1.png',
@@ -127,32 +128,13 @@ export default function MarketplaceLanding({
           <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center gap-2 rounded-full border border-border-default bg-surface-hover px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
+                <span className="inline-flex items-center mb-6 gap-2 rounded-full border border-border-default bg-surface-hover px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
                   <Sparkles className="h-3.5 w-3.5" />
                   Featured
                 </span>
-                <div className="flex items-center gap-2">
-                  {heroSlides.map((_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => setActiveSlide(index)}
-                      className={`h-2 rounded-full transition-all ${index === activeSlide ? 'w-8 bg-black' : 'w-2.5 bg-border-default'}`}
-                      aria-label={`Banner ${index + 1}`}
-                    />
-                  ))}
-                </div>
+                
               </div>
-              <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-border-default bg-background">
-                <Image
-                  src={heroSlides[activeSlide]}
-                  alt="Marketplace banner"
-                  width={1200}
-                  height={360}
-                  className="h-auto w-full object-cover"
-                  priority
-                />
-              </div>
+              <HeroBanner />
               <p className="mt-4 max-w-3xl text-sm leading-6 text-secondary">
                 Buy, sell, and save within your college community.
               </p>
