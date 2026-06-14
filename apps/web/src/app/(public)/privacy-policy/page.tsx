@@ -4,7 +4,7 @@ export default function PrivacyPolicyPage() {
   return (
     <LegalPageShell
       title="Privacy Policy"
-      intro="This Privacy Policy explains how Exell collects, uses, shares, and protects information when you use our marketplace, messaging, and order verification features."
+      intro="This Privacy Policy explains how Exelll collects, uses, shares, and protects information when you use our marketplace, messaging, and order verification features."
     >
       <Section heading="Information We Collect">
         <p>
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
 
       <Section heading="Data Sharing and Third-Party Services">
         <p>
-          Exell uses third-party authentication services, including Clerk, to secure sign-in
+          Exelll uses third-party authentication services, including Clerk, to secure sign-in
           and account management. We may also use infrastructure and storage providers that help us
           deliver the service. These providers are only permitted to process information on our
           behalf for legitimate platform purposes.
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
       <Section heading="Contact Information Disclosure">
         <p>
           Users are responsible for providing safe and appropriate contact information during
-          listing creation and order placement. Exell only facilitates the exchange of information
+          listing creation and order placement. Exelll only facilitates the exchange of information
           and is not responsible for the phone numbers or contact details provided by buyers or
           sellers.
         </p>

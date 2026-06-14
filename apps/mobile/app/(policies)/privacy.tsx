@@ -17,11 +17,11 @@ export default function PrivacyScreen() {
 
         <View className="my-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
           <Text className="mb-2 text-lg font-bold text-ink">3. Disclaimer of Liability</Text>
-          <Text className="text-sm font-medium text-ink">• Exell only connects buyers and sellers.</Text>
-          <Text className="text-sm font-medium text-ink">• Exell is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</Text>
+          <Text className="text-sm font-medium text-ink">• Exelll only connects buyers and sellers.</Text>
+          <Text className="text-sm font-medium text-ink">• Exelll is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</Text>
           <Text className="text-sm font-medium text-ink">• Users interact at their own risk.</Text>
-          <Text className="text-sm font-medium text-ink">• Exell does not guarantee the identity of buyers or sellers.</Text>
-          <Text className="text-sm font-medium text-ink">• Exell can remove listings and ban accounts.</Text>
+          <Text className="text-sm font-medium text-ink">• Exelll does not guarantee the identity of buyers or sellers.</Text>
+          <Text className="text-sm font-medium text-ink">• Exelll can remove listings and ban accounts.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

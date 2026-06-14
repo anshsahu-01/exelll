@@ -116,7 +116,7 @@ export function DashboardSidebar() {
                     ? '/logo_dark.png'
                     : '/logo_light.png'
                 }
-                alt="Exell"
+                alt="Exelll"
                 width={152}
                 height={57}
                 priority

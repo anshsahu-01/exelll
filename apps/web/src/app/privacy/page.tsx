@@ -15,11 +15,11 @@ export default function PrivacyPage() {
         <div className="my-8 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-6">
           <h2 className="mb-4 text-xl font-bold text-black">3. Disclaimer of Liability</h2>
           <ul className="list-inside list-disc space-y-2 font-medium text-gray-800">
-            <li>Exell only connects buyers and sellers.</li>
-            <li>Exell is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</li>
+            <li>Exelll only connects buyers and sellers.</li>
+            <li>Exelll is not responsible for transactions, payments, deliveries, meetings, disputes, fraud, injuries, theft, or damages.</li>
             <li>Users interact at their own risk.</li>
-            <li>Exell does not guarantee the identity of buyers or sellers.</li>
-            <li>Exell can remove listings and ban accounts.</li>
+            <li>Exelll does not guarantee the identity of buyers or sellers.</li>
+            <li>Exelll can remove listings and ban accounts.</li>
           </ul>
         </div>
         

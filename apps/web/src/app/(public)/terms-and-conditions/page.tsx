@@ -4,11 +4,11 @@ export default function TermsAndConditionsPage() {
   return (
     <LegalPageShell
       title="Terms & Conditions"
-      intro="These Terms govern your use of Exell. By accessing the platform, you agree to use it responsibly and in accordance with marketplace rules and applicable law."
+      intro="These Terms govern your use of Exelll. By accessing the platform, you agree to use it responsibly and in accordance with marketplace rules and applicable law."
     >
       <Section heading="Marketplace Role">
         <p>
-          Exell acts as a marketplace facilitator. We provide the platform, tools, and
+          Exelll acts as a marketplace facilitator. We provide the platform, tools, and
           communication channels that connect buyers and sellers, but we do not take ownership of
           user-listed items unless expressly stated.
         </p>
@@ -48,7 +48,7 @@ export default function TermsAndConditionsPage() {
         </p>
         <p>
           Users are responsible for providing safe and appropriate contact information during
-          listing creation and order placement. Exell only facilitates the exchange of information
+          listing creation and order placement. Exelll only facilitates the exchange of information
           and is not responsible for the phone numbers or contact details provided by buyers or
           sellers.
         </p>
@@ -66,7 +66,7 @@ export default function TermsAndConditionsPage() {
         <p>
           We may assist with dispute coordination, but final resolution may depend on the facts of
           the transaction and the conduct of the parties involved. To the fullest extent permitted
-          by law, Exell is not liable for indirect, incidental, or consequential damages arising
+          by law, Exelll is not liable for indirect, incidental, or consequential damages arising
           from user-to-user transactions, except where liability cannot be limited by applicable law.
         </p>
       </Section>

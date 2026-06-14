@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Exell",
-    "slug": "becho",
+    "name": "Exelll",
+    "slug": "Exelll",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "becho",
+    "scheme": "Exelll",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -36,7 +36,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Exell to access your photos to list items."
+          "photosPermission": "Allow Exelll to access your photos to list items."
         }
       ],
       "expo-web-browser"

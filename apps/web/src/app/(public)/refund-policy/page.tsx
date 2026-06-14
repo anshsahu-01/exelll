@@ -16,7 +16,7 @@ export default function RefundPolicyPage() {
 
       <Section heading="Direct Buyer-Seller Transactions">
         <p>
-          If a buyer and seller complete a transaction directly outside Exell’s verification
+          If a buyer and seller complete a transaction directly outside Exelll’s verification
           workflow, the platform does not provide product-condition guarantees or warranty-like
           protection. Any disputes regarding defects, damage, mismatch, or quality are the
           responsibility of the buyer and seller to resolve between themselves.
@@ -25,11 +25,11 @@ export default function RefundPolicyPage() {
 
       <Section heading="Platform-Assisted Verified Transactions">
         <p>
-          When a transaction is completed through Exell’s verification-assisted purchase flow,
+          When a transaction is completed through Exelll’s verification-assisted purchase flow,
           a platform service fee or commission of 10% applies to the assisted workflow.
         </p>
         <p>
-          In these verified transactions, Exell may assist with product condition review,
+          In these verified transactions, Exelll may assist with product condition review,
           coordinate communication between the parties, and help mediate issues involving damage,
           non-functionality, or significant mismatch. Where appropriate, the platform may support a
           negotiated adjustment, resale coordination, or other practical resolution between buyer

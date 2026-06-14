@@ -84,7 +84,7 @@ export default function MarketplaceLanding({
                       ? '/sqlogo_dark.png'
                       : '/sqlogo_light.png'
                   }
-                  alt="Exell"
+                  alt="Exelll"
                   width={62}
                   height={28}
                   priority
@@ -192,7 +192,7 @@ export default function MarketplaceLanding({
                   {mounted && (
                     <Image
                       src={resolvedTheme === 'dark' ? '/sqlogo_dark.png' : '/sqlogo_light.png'}
-                      alt="Exell"
+                      alt="Exelll"
                       width={90}
                       height={45}
                       className="object-contain"
@@ -317,7 +317,7 @@ export default function MarketplaceLanding({
 
           {/* Footer Bottom Bar */}
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border-default/60 pt-8 text-xs font-medium text-secondary/80 md:flex-row">
-            <p>© {new Date().getFullYear()} Exell. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Exelll. All rights reserved.</p>
             <div className="flex items-center gap-1.5">
               <span className="h-1 w-1 rounded-full bg-primary" />
               <p className="tracking-wide uppercase text-[10px]">Built exclusively for students</p>

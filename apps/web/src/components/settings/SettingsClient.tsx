@@ -69,7 +69,7 @@ export function SettingsClient() {
 
       <div className="mb-8">
         <h1 className="text-3xl font-semibold text-primary">Settings</h1>
-        <p className="mt-2 text-sm text-secondary">Manage account, privacy, and support for your Exell profile.</p>
+        <p className="mt-2 text-sm text-secondary">Manage account, privacy, and support for your Exelll profile.</p>
       </div>
 
       <div className="grid gap-6">
@@ -159,7 +159,7 @@ export function SettingsClient() {
         <Section title="App Preferences" icon={MoonStar}>
           <div className="rounded-2xl border border-border-default bg-surface p-4">
             <p className="text-sm font-semibold text-primary">Theme preference</p>
-            <p className="mt-1 text-sm text-secondary">Exell web theme preference applies across all platforms dynamically.</p>
+            <p className="mt-1 text-sm text-secondary">Exelll web theme preference applies across all platforms dynamically.</p>
           </div>
           <div className="rounded-2xl border border-border-default bg-surface p-4">
             <p className="text-sm font-semibold text-primary">Interface preferences</p>
@@ -169,16 +169,16 @@ export function SettingsClient() {
 
         <Section title="Support" icon={HelpCircle}>
           <ActionRow href="/messages" title="Help / FAQ" description="Browse support conversations and common help flows." />
-          <ActionRow href="mailto:support@exell.local" title="Report issue" description="Send a support request to the team." external />
-          <ActionRow href="mailto:support@exell.local" title="Contact support" description="Reach the Exell support inbox." external />
-          <ActionRow href="/dashboard" title="About Exell" description="Return to the marketplace dashboard and explore the product." />
+          <ActionRow href="mailto:relatablecoder01@gmail.com" title="Report issue" description="Send a support request to the team." external />
+          <ActionRow href="mailto:relatablecoder01@gmail.com" title="Contact support" description="Reach the Exelll support inbox." external />
+          <ActionRow href="/dashboard" title="About Exelll" description="Return to the marketplace dashboard and explore the product." />
         </Section>
 
         <Section title="Legal" icon={Shield}>
-          <ActionRow href="/terms" title="Terms of Service" description="Our full terms governing use of the Exell marketplace." />
+          <ActionRow href="/terms" title="Terms of Service" description="Our full terms governing use of the Exelll marketplace." />
           <ActionRow href="/privacy" title="Privacy Policy" description="How we collect, use, and protect your data." />
           <ActionRow href="/safety" title="Safety Guidelines" description="Tips for safe meetups and transactions." />
-          <ActionRow href="/prohibited" title="Prohibited Items" description="Items that are banned from being listed on Exell." />
+          <ActionRow href="/prohibited" title="Prohibited Items" description="Items that are banned from being listed on Exelll." />
         </Section>
       </div>
 
