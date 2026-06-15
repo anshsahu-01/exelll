@@ -47,7 +47,7 @@ function formatOrder(order: OrderWithRelations) {
 }
 
 function toOrderUrl(orderId: string) {
-  return `${process.env.APP_WEB_URL ?? "http://localhost:3001"}/profile/orders/${orderId}`;
+  return `${process.env.APP_WEB_URL || "https://exelll.me"}/profile/orders/${orderId}`;
 }
 
 async function queueEmail(task: () => Promise<unknown>, label: string) {
