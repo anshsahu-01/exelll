@@ -17,12 +17,21 @@ type RequestOptions = {
   isFormData?: boolean;
 };
 
+let tokenProvider: (() => Promise<string | null>) | null = null;
+
+export const setTokenProvider = (provider: () => Promise<string | null>) => {
+  tokenProvider = provider;
+};
+
 export async function apiRequest<T>(
   path: string,
   options: RequestOptions = {}
 ): Promise<T> {
   const { method = "GET", body, token, isFormData = false } = options;
-  const authToken = token !== undefined ? token : await getToken();
+  let authToken = tokenProvider ? await tokenProvider() : null;
+  if (!authToken) {
+    authToken = token !== undefined ? token : await getToken();
+  }
   const url = `${API_URL}${path}`;
 
   const headers: Record<string, string> = {};
@@ -33,24 +42,31 @@ export async function apiRequest<T>(
     headers.Authorization = `Bearer ${authToken}`;
   }
 
-  const response = await fetch(url, {
-    method,
-    headers,
-    body: isFormData
-      ? (body as FormData)
-      : body
-        ? JSON.stringify(body)
-        : undefined,
-  });
+  try {
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: isFormData
+        ? (body as FormData)
+        : body
+          ? JSON.stringify(body)
+          : undefined,
+    });
 
-  const data = await response.json().catch(() => ({}));
+    
+    const data = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
-    throw new ApiError(
-      data.message ?? "Something went wrong",
-      response.status
-    );
+
+    if (!response.ok) {
+      throw new ApiError(
+        data.message ?? "Something went wrong",
+        response.status
+      );
+    }
+
+    return data as T;
+  } catch (error) {
+    console.error(`[API Error] ${method} ${url}:`, error);
+    throw error;
   }
-
-  return data as T;
 }

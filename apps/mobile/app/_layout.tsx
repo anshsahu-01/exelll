@@ -13,6 +13,7 @@ import * as authService from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
 import { clearAuthStorage } from "@/utils/storage";
 import { disconnectSocket } from "@/services/socket.service";
+import { setTokenProvider } from "@/services/api";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -23,6 +24,10 @@ if (!publishableKey) {
 function InitialLayout() {
   const { isLoaded, isSignedIn, getToken, signOut } = useClerkAuth();
   const segments = useSegments();
+
+  useEffect(() => {
+    setTokenProvider(getToken);
+  }, [getToken]);
   const router = useRouter();
   const navigationState = useRootNavigationState();
   const isRouterReady = !!navigationState?.key;
