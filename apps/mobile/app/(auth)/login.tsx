@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,26 +9,33 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth as useClerkAuth, useSignIn, useUser } from "@clerk/clerk-expo";
+import { useAuth as useClerkAuth, useSignIn, useUser, useOAuth } from "@clerk/clerk-expo";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
 
 import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/Button";
+import { GoogleLogo } from "@/components/GoogleLogo";
 import { Input } from "@/components/Input";
 
 import * as authService from "@/services/auth.service";
 import { useAuthStore } from "@/store/authStore";
 import { setStoredUser, setToken } from "@/utils/storage";
 
+WebBrowser.maybeCompleteAuthSession();
+
 export default function LoginScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const { getToken } = useClerkAuth();
   const { user: clerkUser } = useUser();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const syncLocalSession = async () => {
     await clerkUser?.reload();
@@ -51,8 +58,42 @@ export default function LoginScreen() {
     });
   };
 
+  const handleGoogleOAuth = useCallback(async () => {
+    try {
+      setGoogleLoading(true);
+      setError("");
+
+      const { createdSessionId, setActive: setOAuthActive } = await startOAuthFlow({
+        redirectUrl: Linking.createURL("/(tabs)", { scheme: "exelll" }),
+      });
+
+      if (createdSessionId) {
+        await setOAuthActive!({ session: createdSessionId });
+        await clerkUser?.reload();
+        
+        // Ensure collegeName exists
+        const metadata = clerkUser?.unsafeMetadata || {};
+        if (!metadata.collegeName) {
+          router.replace("/(auth)/complete-profile");
+          return;
+        }
+
+        await syncLocalSession();
+        router.replace("/(tabs)");
+      }
+    } catch (err: any) {
+      if (err.message && err.message.includes("canceled")) {
+        // user canceled
+        return;
+      }
+      setError(err.errors?.[0]?.message || err.message || "Google Sign-In failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [startOAuthFlow, clerkUser]);
+
   const handleLogin = async () => {
-    if (!isLoaded || loading) return;
+    if (!isLoaded || loading || googleLoading) return;
 
     if (!email.trim() || !password.trim()) {
       setError("Enter email and password");
@@ -139,6 +180,20 @@ export default function LoginScreen() {
             </Text>
 
             <View className="mb-4">
+              <Button
+                title="Continue with Google"
+                onPress={handleGoogleOAuth}
+                loading={googleLoading}
+                className="mb-4 rounded-2xl bg-white border border-line"
+                textClassName="text-ink font-semibold"
+                icon={<GoogleLogo size={20} />}
+              />
+              <View className="mb-4 flex-row items-center">
+                <View className="flex-1 h-[1px] bg-line" />
+                <Text className="mx-3 text-[13px] text-muted font-medium">OR</Text>
+                <View className="flex-1 h-[1px] bg-line" />
+              </View>
+
               <Input
                 label="Email"
                 value={email}
@@ -177,6 +232,7 @@ export default function LoginScreen() {
                 title="Log in"
                 onPress={handleLogin}
                 loading={loading}
+                disabled={!email.trim() || !password.trim()}
                 className="rounded-2xl"
               />
             </View>

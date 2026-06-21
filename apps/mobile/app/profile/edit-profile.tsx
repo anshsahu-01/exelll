@@ -38,6 +38,9 @@ export default function EditProfileScreen() {
   const [mobile, setMobile] = useState((user as any)?.mobileNumber ?? "");
   const [bio, setBio] = useState((user as any)?.bio ?? "");
   const [localImage, setLocalImage] = useState<string | null>(null);
+  const [collegeName, setCollegeName] = useState(
+    (clerkUser?.unsafeMetadata?.collegeName as string) ?? (user as any)?.collegeName ?? ""
+  );
   const [saving, setSaving] = useState(false);
   const [verificationVisible, setVerificationVisible] = useState(false);
   const [otpCode, setOtpCode] = useState("");
@@ -91,6 +94,7 @@ export default function EditProfileScreen() {
 
     if (mobile.trim()) formData.append("mobileNumber", mobile.trim());
     if (bio.trim()) formData.append("bio", bio.trim());
+    if (collegeName.trim()) formData.append("collegeName", collegeName.trim());
 
     if (localImage) {
       const filename = localImage.split("/").pop() ?? "profile.jpg";
@@ -365,6 +369,18 @@ export default function EditProfileScreen() {
               maxLength={200}
             />
             <Text style={styles.charCount}>{bio.length}/200</Text>
+          </View>
+
+          <View style={styles.fieldGroup}>
+            <Text style={styles.label}>College</Text>
+            <TextInput
+              style={styles.input}
+              value={collegeName}
+              onChangeText={setCollegeName}
+              placeholder="Your college name"
+              placeholderTextColor="#C4BEB8"
+              autoCapitalize="words"
+            />
           </View>
 
           <TouchableOpacity

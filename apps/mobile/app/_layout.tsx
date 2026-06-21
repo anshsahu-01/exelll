@@ -136,12 +136,17 @@ function InitialLayout() {
     if (isInitializing || !isRouterReady) return;
 
     const inAuthGroup = segments[0] === "(auth)";
+    const inPublicGroup = segments[0] === "(public)";
+    // complete-profile is in (auth) group but must be accessible after Google OAuth
+    // even though the user is already "authenticated" from Clerk's perspective
+    const inCompleteProfile = segments[1] === "complete-profile";
 
-    if (!isAuthenticated && !inAuthGroup) {
+    if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
       // Redirect to login if signed out and attempting to access app
-      router.replace("/(auth)/login");
-    } else if (isAuthenticated && inAuthGroup) {
+      setTimeout(() => router.replace("/(auth)/login"), 0);
+    } else if (isAuthenticated && inAuthGroup && !inCompleteProfile) {
       // Redirect to main tabs if signed in and attempting to access auth screen
+      // But do NOT redirect away from complete-profile – that's intentional mid-onboarding
       router.replace("/(tabs)");
     }
   }, [isAuthenticated, isInitializing, isRouterReady, segments[0]]);
@@ -160,6 +165,7 @@ function InitialLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(public)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="product/[id]"

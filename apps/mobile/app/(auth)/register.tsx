@@ -1,39 +1,107 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   View,
 } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSignUp } from "@clerk/clerk-expo";
+import { useSignUp, useAuth as useClerkAuth, useUser, useOAuth } from "@clerk/clerk-expo";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { Ionicons } from "@expo/vector-icons";
+
 import { BrandMark } from "@/components/BrandMark";
 import { Button } from "@/components/Button";
+import { GoogleLogo } from "@/components/GoogleLogo";
 import { Input } from "@/components/Input";
 import { ScreenHeader } from "@/components/ScreenHeader";
 
+import * as authService from "@/services/auth.service";
+import { useAuthStore } from "@/store/authStore";
+import { setStoredUser, setToken } from "@/utils/storage";
+
+WebBrowser.maybeCompleteAuthSession();
+
 export default function RegisterScreen() {
   const { signUp, isLoaded } = useSignUp();
+  const { getToken } = useClerkAuth();
+  const { user: clerkUser } = useUser();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [collegeName, setCollegeName] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const syncLocalSession = async () => {
+    await clerkUser?.reload();
+    const token = await getToken();
+    if (!token) throw new Error("Could not restore session");
+    const user = await authService.getMe(token);
+    await setToken(token);
+    await setStoredUser(user);
+    useAuthStore.setState({ token, user, isHydrated: true });
+  };
+
+  const handleGoogleOAuth = useCallback(async () => {
+    if (!termsAccepted) {
+      setError("You must accept the Terms & Conditions, Privacy Policy and Community Guidelines.");
+      return;
+    }
+
+    try {
+      setGoogleLoading(true);
+      setError("");
+
+      const { createdSessionId, setActive: setOAuthActive } = await startOAuthFlow({
+        redirectUrl: Linking.createURL("/(tabs)", { scheme: "exelll" }),
+      });
+
+      if (createdSessionId) {
+        await setOAuthActive!({ session: createdSessionId });
+        await clerkUser?.reload();
+        
+        const metadata = clerkUser?.unsafeMetadata || {};
+        if (!metadata.collegeName) {
+          router.replace("/(auth)/complete-profile");
+          return;
+        }
+
+        await syncLocalSession();
+        router.replace("/(tabs)");
+      }
+    } catch (err: any) {
+      if (err.message && err.message.includes("canceled")) return;
+      setError(err.errors?.[0]?.message || err.message || "Google Sign-Up failed");
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [startOAuthFlow, clerkUser, termsAccepted]);
 
   const handleRegister = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded || loading || googleLoading) return;
 
     if (!name.trim() || !email.trim() || password.length < 6) {
       setError("Fill all fields. Password must be 6+ characters.");
       return;
     }
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     if (!termsAccepted) {
-      setError("You must accept the Terms of Service and Privacy Policy.");
+      setError("You must accept the Terms & Conditions, Privacy Policy and Community Guidelines.");
       return;
     }
 
@@ -81,7 +149,7 @@ export default function RegisterScreen() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
-          contentContainerClassName="p-5 pt-3"
+          contentContainerClassName="p-5 pt-3 flex-grow"
           keyboardShouldPersistTaps="handled"
         >
           <View className="mb-5">
@@ -92,43 +160,73 @@ export default function RegisterScreen() {
             <Text className="mb-1 text-[20px] font-semibold text-ink">Set up your profile</Text>
             <Text className="mb-5 text-[15px] text-muted">Create an account to get started</Text>
 
-            <Input label="Full name" value={name} onChangeText={setName} placeholder="Your name" />
-            <Input
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              placeholder="you@college.edu"
-            />
-            <Input
-              label="College"
-              value={collegeName}
-              onChangeText={setCollegeName}
-              placeholder="College name (optional)"
-            />
-            <Input
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              placeholder="Min 8 characters"
-            />
-
-            <View className="mb-4 mt-2 flex-row items-center">
-              <View 
-                className={`mr-3 h-5 w-5 items-center justify-center rounded border ${termsAccepted ? 'bg-primary border-primary' : 'border-line'}`}
-                onTouchEnd={() => setTermsAccepted(!termsAccepted)}
-              >
-                {termsAccepted && <Text className="text-white text-xs font-bold">✓</Text>}
+            <View className="mb-4">
+              <Button
+                title="Continue with Google"
+                onPress={handleGoogleOAuth}
+                loading={googleLoading}
+                className="mb-4 rounded-2xl bg-white border border-line"
+                textClassName="text-ink font-semibold"
+                icon={<GoogleLogo size={20} />}
+              />
+              <View className="mb-4 flex-row items-center">
+                <View className="flex-1 h-[1px] bg-line" />
+                <Text className="mx-3 text-[13px] text-muted font-medium">OR</Text>
+                <View className="flex-1 h-[1px] bg-line" />
               </View>
-              <Text className="text-[13px] text-muted flex-1">
-                I agree to the <Text className="text-primary font-medium" onPress={() => router.push('/(public)/terms' as any)}>Terms of Service</Text> and <Text className="text-primary font-medium" onPress={() => router.push('/(public)/privacy' as any)}>Privacy Policy</Text>
+
+              <Input label="Full name" value={name} onChangeText={setName} placeholder="Your name" />
+              <Input
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="you@college.edu"
+              />
+              <Input
+                label="College"
+                value={collegeName}
+                onChangeText={setCollegeName}
+                placeholder="College name (optional)"
+              />
+              <Input
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                placeholder="Min 8 characters"
+              />
+              <Input
+                label="Confirm Password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                placeholder="Re-enter password"
+              />
+            </View>
+
+            <View className="mb-4 mt-2 flex-row items-start">
+              <Pressable
+                className={`mr-3 mt-0.5 h-5 w-5 items-center justify-center rounded border ${termsAccepted ? 'bg-primary border-primary' : 'border-line bg-white'}`}
+                onPress={() => setTermsAccepted(!termsAccepted)}
+                hitSlop={8}
+              >
+                {termsAccepted && <Ionicons name="checkmark" size={14} color="white" />}
+              </Pressable>
+              <Text className="text-[13px] text-muted flex-1 leading-5">
+                I agree to the <Text className="text-primary font-medium" onPress={() => router.push('/(public)/terms' as any)}>Terms & Conditions</Text>, <Text className="text-primary font-medium" onPress={() => router.push('/(public)/privacy' as any)}>Privacy Policy</Text> and <Text className="text-primary font-medium" onPress={() => router.push('/(public)/guidelines' as any)}>Community Guidelines</Text>
               </Text>
             </View>
 
             {error ? <Text className="mb-3 text-[13px] text-danger">{error}</Text> : null}
-            <Button title="Sign up" onPress={handleRegister} loading={loading} className="rounded-2xl" />
+            <Button 
+              title="Sign up" 
+              onPress={handleRegister} 
+              loading={loading} 
+              disabled={!name.trim() || !email.trim() || password.length < 6 || password !== confirmPassword || !termsAccepted}
+              className="rounded-2xl" 
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
