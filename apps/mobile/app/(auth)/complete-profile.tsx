@@ -95,11 +95,11 @@ export default function CompleteProfileScreen() {
           contentContainerClassName="flex-grow justify-center p-5"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="mb-6">
-            <BrandMark subtitle="Welcome to Exelll" size={350} />
-          </View>
-
           <View className="rounded-2xl border border-line bg-white p-5">
+            <View className="mb-6">
+              <BrandMark subtitle="Welcome to Exelll" size={350} />
+            </View>
+
             <Text className="mb-1 text-[24px] font-semibold text-ink">
               One last step
             </Text>

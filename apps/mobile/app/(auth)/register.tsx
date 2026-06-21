@@ -152,11 +152,10 @@ export default function RegisterScreen() {
           contentContainerClassName="p-5 pt-3 flex-grow"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="mb-5">
-            <BrandMark subtitle="Join your campus marketplace" size={350}/>
-          </View>
-
           <View className="rounded-2xl border border-line bg-white p-5">
+            <View className="mb-5">
+              <BrandMark subtitle="Join your campus marketplace" size={350}/>
+            </View>
             <Text className="mb-1 text-[20px] font-semibold text-ink">Set up your profile</Text>
             <Text className="mb-5 text-[15px] text-muted">Create an account to get started</Text>
 
@@ -208,11 +207,22 @@ export default function RegisterScreen() {
 
             <View className="mb-4 mt-2 flex-row items-start">
               <Pressable
-                className={`mr-3 mt-0.5 h-5 w-5 items-center justify-center rounded border ${termsAccepted ? 'bg-primary border-primary' : 'border-line bg-white'}`}
                 onPress={() => setTermsAccepted(!termsAccepted)}
                 hitSlop={8}
+                style={{
+                  marginRight: 10,
+                  marginTop: 2,
+                  width: 20,
+                  height: 20,
+                  borderRadius: 4,
+                  borderWidth: 2,
+                  borderColor: termsAccepted ? "#111111" : "#CCCCCC",
+                  backgroundColor: termsAccepted ? "#111111" : "#FFFFFF",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
-                {termsAccepted && <Ionicons name="checkmark" size={14} color="white" />}
+                {termsAccepted && <Ionicons name="checkmark" size={13} color="#FFFFFF" />}
               </Pressable>
               <Text className="text-[13px] text-muted flex-1 leading-5">
                 I agree to the <Text className="text-primary font-medium" onPress={() => router.push('/(public)/terms' as any)}>Terms & Conditions</Text>, <Text className="text-primary font-medium" onPress={() => router.push('/(public)/privacy' as any)}>Privacy Policy</Text> and <Text className="text-primary font-medium" onPress={() => router.push('/(public)/guidelines' as any)}>Community Guidelines</Text>
@@ -225,8 +235,21 @@ export default function RegisterScreen() {
               onPress={handleRegister} 
               loading={loading} 
               disabled={!name.trim() || !email.trim() || password.length < 6 || password !== confirmPassword || !termsAccepted}
-              className="rounded-2xl" 
+              className="rounded-2xl mb-4" 
             />
+
+            <Pressable
+              onPress={() =>
+                router.push("/(auth)/login")
+              }
+            >
+              <Text className="text-center text-[15px] text-muted">
+                Already have an account?{" "}
+                <Text className="font-medium text-ink">
+                  Log in
+                </Text>
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

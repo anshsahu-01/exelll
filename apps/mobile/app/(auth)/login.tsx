@@ -163,19 +163,19 @@ export default function LoginScreen() {
           contentContainerClassName="flex-grow justify-center p-5"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="mb-6">
-            <BrandMark
-              subtitle="Buy and sell on your campus"
-              size={350}
-            />
-          </View>
-
           <View className="rounded-2xl border border-line bg-white p-5">
-            <Text className="mb-1 text-[24px] font-semibold text-ink">
+            <View className="mb-6">
+              <BrandMark
+                subtitle="Buy and sell on your campus"
+                size={350}
+              />
+            </View>
+
+            <Text className="mb-3 text-[34px] font-bold text-ink text-center">
               Welcome back
             </Text>
 
-            <Text className="mb-5 text-[15px] text-muted">
+            <Text className="mb-12 text-[15px] text-muted text-center">
               Log in to continue
             </Text>
 

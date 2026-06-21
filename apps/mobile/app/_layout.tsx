@@ -3,7 +3,7 @@ import "../global.css";
 import { useEffect, useState } from "react";
 import { Stack, useSegments, useRouter, useRootNavigationState } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ClerkProvider, ClerkLoaded, useAuth as useClerkAuth } from "@clerk/clerk-expo";
+import { ClerkProvider, ClerkLoaded, useAuth as useClerkAuth, useUser } from "@clerk/clerk-expo";
 import { tokenCache } from "@/utils/tokenCache";
 import { LoadingState } from "@/components/LoadingState";
 import { useCartStore } from "@/store/cartStore";
@@ -23,6 +23,7 @@ if (!publishableKey) {
 
 function InitialLayout() {
   const { isLoaded, isSignedIn, getToken, signOut } = useClerkAuth();
+  const { user: clerkUser } = useUser();
   const segments = useSegments();
 
   useEffect(() => {
@@ -137,19 +138,26 @@ function InitialLayout() {
 
     const inAuthGroup = segments[0] === "(auth)";
     const inPublicGroup = segments[0] === "(public)";
-    // complete-profile is in (auth) group but must be accessible after Google OAuth
-    // even though the user is already "authenticated" from Clerk's perspective
     const inCompleteProfile = segments[1] === "complete-profile";
+    
+    // Check if the user is a Google OAuth user missing their college name
+    const needsProfileCompletion = clerkUser && !clerkUser.unsafeMetadata?.collegeName;
 
     if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
       // Redirect to login if signed out and attempting to access app
       setTimeout(() => router.replace("/(auth)/login"), 0);
     } else if (isAuthenticated && inAuthGroup && !inCompleteProfile) {
       // Redirect to main tabs if signed in and attempting to access auth screen
-      // But do NOT redirect away from complete-profile – that's intentional mid-onboarding
-      router.replace("/(tabs)");
+      if (needsProfileCompletion) {
+        setTimeout(() => router.replace("/(auth)/complete-profile"), 0);
+      } else {
+        setTimeout(() => router.replace("/(tabs)"), 0);
+      }
+    } else if (isAuthenticated && !inAuthGroup && !inPublicGroup && needsProfileCompletion) {
+      // If somehow they get past the auth group but still need completion
+      setTimeout(() => router.replace("/(auth)/complete-profile"), 0);
     }
-  }, [isAuthenticated, isInitializing, isRouterReady, segments[0]]);
+  }, [isAuthenticated, isInitializing, isRouterReady, segments[0], clerkUser]);
 
   if (!isRouterReady || isInitializing) {
     return (

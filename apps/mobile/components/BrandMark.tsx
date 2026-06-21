@@ -11,7 +11,7 @@ export function BrandMark({ subtitle: _subtitle, size = 132 }: BrandMarkProps) {
     <View className="items-center">
       <View style={{ width: size, height: size * 0.42 }} className="overflow-hidden">
         <Image
-          source={require("../assets/logo.png")}
+          source={require("../assets/exelll_logo_light.png")}
           style={{ width: "100%", height: "100%" }}
           contentFit="contain"
         />
