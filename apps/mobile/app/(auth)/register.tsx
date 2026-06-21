@@ -187,7 +187,7 @@ export default function RegisterScreen() {
                 label="College"
                 value={collegeName}
                 onChangeText={setCollegeName}
-                placeholder="College name (optional)"
+                placeholder="College name (Example : RGPV)"
               />
               <Input
                 label="Password"
