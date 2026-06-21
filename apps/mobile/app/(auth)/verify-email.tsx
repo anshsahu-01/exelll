@@ -2,10 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   BackHandler,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   Text,
   TextInput,
   View,
@@ -13,6 +10,7 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth as useClerkAuth, useSignUp, useUser } from "@clerk/clerk-expo";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button } from "@/components/Button";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -37,7 +35,15 @@ export default function VerifyEmailScreen() {
   const syncLocalSession = async () => {
     await clerkUser?.reload();
 
-    const token = await getToken();
+    // Retry getToken up to 5 times with exponential backoff.
+    // Clerk needs a moment after setActive() to issue a valid JWT.
+    let token: string | null = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      token = await getToken();
+      if (token) break;
+      await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+    }
+
     if (!token) {
       throw new Error("Could not restore your session. Please try again.");
     }
@@ -128,14 +134,11 @@ export default function VerifyEmailScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <ScreenHeader title="Verify Email" showBack />
       
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
       >
-        <ScrollView
-          contentContainerClassName="p-5 flex-grow justify-center"
-          keyboardShouldPersistTaps="handled"
-        >
           <View className="items-center mb-8">
             <View className="h-16 w-16 bg-primary/10 rounded-full items-center justify-center mb-4">
               <Ionicons name="mail-open-outline" size={32} color="#111111" />
@@ -225,8 +228,7 @@ export default function VerifyEmailScreen() {
               )}
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

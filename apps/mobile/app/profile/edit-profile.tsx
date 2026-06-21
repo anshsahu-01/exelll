@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Image } from "expo-image";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -292,19 +293,20 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
-            <Ionicons name="arrow-back" size={22} color="#1A1A1A" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 40 }} />
-        </View>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
+          <Ionicons name="arrow-back" size={22} color="#1A1A1A" />
+        </Pressable>
+        <Text style={styles.headerTitle}>Edit Profile</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+      >
           <TouchableOpacity style={styles.avatarWrapper} onPress={pickImage} activeOpacity={0.8}>
             {avatarUri ? (
               <Image source={{ uri: avatarUri }} style={styles.avatar} contentFit="cover" />
@@ -393,8 +395,7 @@ export default function EditProfileScreen() {
               {saving ? (hasEmailChange ? "Sending code..." : "Saving...") : "Save changes"}
             </Text>
           </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
 
       <Modal
         visible={verificationVisible}

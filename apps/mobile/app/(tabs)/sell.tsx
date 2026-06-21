@@ -1,4 +1,5 @@
-import { Alert, ScrollView } from "react-native";
+import { Alert, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CartButton } from "@/components/CartButton";
@@ -52,14 +53,19 @@ export default function SellScreen() {
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScreenHeader title="Sell an item" rightAction={<CartButton />} />
 
-      <ScrollView contentContainerClassName="p-4 pb-10" keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+      >
         <ListingForm
           submitLabel="Post listing"
           loading={loading}
           error={error}
           onSubmit={handleSubmit}
         />
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

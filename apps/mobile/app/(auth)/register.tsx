@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSignUp, useAuth as useClerkAuth, useUser, useOAuth } from "@clerk/clerk-expo";
@@ -144,14 +145,12 @@ export default function RegisterScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScreenHeader title="Create account" showBack />
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, padding: 20, paddingTop: 40, paddingBottom: 40 }}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={20}
       >
-        <ScrollView
-          contentContainerClassName="p-5 pt-3 flex-grow"
-          keyboardShouldPersistTaps="handled"
-        >
           <View className="rounded-2xl border border-line bg-white p-5">
             <View className="mb-5">
               <BrandMark subtitle="Join your campus marketplace" size={350}/>
@@ -251,8 +250,7 @@ export default function RegisterScreen() {
               </Text>
             </Pressable>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

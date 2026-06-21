@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth as useClerkAuth, useUser } from "@clerk/clerk-expo";
@@ -87,14 +88,12 @@ export default function CompleteProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScreenHeader title="Complete Profile" />
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, padding: 20, paddingTop: 64, paddingBottom: 40 }}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+        extraScrollHeight={20}
       >
-        <ScrollView
-          contentContainerClassName="flex-grow justify-center p-5"
-          keyboardShouldPersistTaps="handled"
-        >
           <View className="rounded-2xl border border-line bg-white p-5">
             <View className="mb-6">
               <BrandMark subtitle="Welcome to Exelll" size={350} />
@@ -130,8 +129,7 @@ export default function CompleteProfileScreen() {
               />
             </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

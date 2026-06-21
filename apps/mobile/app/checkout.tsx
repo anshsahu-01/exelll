@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View, Image as RNImage, KeyboardAvoidingView, Platform } from "react-native";
+import { Alert, Pressable, Text, View, Image as RNImage } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useLocalSearchParams } from "expo-router";
 import { Input } from "@/components/Input";
 import { Image } from "expo-image";
@@ -250,15 +251,13 @@ export default function CheckoutScreen() {
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScreenHeader title="Checkout" showBack />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <KeyboardAwareScrollView
         className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        extraScrollHeight={20}
       >
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
-          keyboardShouldPersistTaps="handled"
-        >
           <View className="rounded-2xl border border-line bg-white p-4">
             <Text className="text-[18px] font-semibold text-ink">Order details</Text>
             <Text className="mt-2 text-[14px] text-muted">
@@ -465,8 +464,7 @@ export default function CheckoutScreen() {
             </Pressable>
           )}
         </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

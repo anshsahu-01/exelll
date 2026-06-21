@@ -258,7 +258,6 @@ export default function ChatScreen() {
       setSending(true);
 
       if (isEdit) {
-        // Optimistic update for edit is optional, we just wait for server to keep it simple and safe
         const updated = await chatService.editMessage(targetMessageId!, content, token);
         setConversation((prev) => {
           if (!prev) return prev;
@@ -287,8 +286,8 @@ export default function ChatScreen() {
       }
     } catch (err) {
       if (!isEdit) setOptimisticMessage(null);
-      setText(content); // restore text
-      if (isEdit) setEditingMessageId(targetMessageId); // restore edit state
+      setText(content);
+      if (isEdit) setEditingMessageId(targetMessageId);
       
       Alert.alert(
         isEdit ? "Edit failed" : "Send failed",
@@ -300,7 +299,7 @@ export default function ChatScreen() {
   };
 
   const handleMessageLongPress = (item: ChatMessage) => {
-    if (!item.isMine || item.deletedAt) return; // Only allow editing/deleting own active messages
+    if (!item.isMine || item.deletedAt) return;
 
     const now = new Date().getTime();
     const createdTime = new Date(item.createdAt).getTime();
@@ -433,10 +432,14 @@ export default function ChatScreen() {
           : "border-line bg-canvas";
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8F8FA]" edges={["top"]}>
+    // edges={["top","bottom"]} + behavior="padding" is the correct pattern for
+    // WhatsApp-style sticky input on BOTH iOS and Android.
+    // SafeAreaView handles the status bar and bottom nav bar insets,
+    // while KeyboardAvoidingView + padding lifts the input above the software keyboard.
+    <SafeAreaView className="flex-1 bg-[#F8F8FA]" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior="padding"
       >
         <View className="flex-1">
           <View className="bg-white">

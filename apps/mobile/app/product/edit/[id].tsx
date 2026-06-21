@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CartButton } from "@/components/CartButton";
@@ -119,7 +120,12 @@ export default function EditProductScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScreenHeader title="Edit product" showBack rightAction={<CartButton />} />
-      <ScrollView contentContainerClassName="p-4 pb-10" keyboardShouldPersistTaps="handled">
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+      >
         <ListingForm
           initialValues={initialValues}
           submitLabel="Save changes"
@@ -127,7 +133,7 @@ export default function EditProductScreen() {
           error={error}
           onSubmit={handleSubmit}
         />
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

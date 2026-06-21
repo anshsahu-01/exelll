@@ -140,22 +140,25 @@ function InitialLayout() {
     const inPublicGroup = segments[0] === "(public)";
     const inCompleteProfile = segments[1] === "complete-profile";
     
-    // Check if the user is a Google OAuth user missing their college name
-    const needsProfileCompletion = clerkUser && !clerkUser.unsafeMetadata?.collegeName;
+    // Only require complete-profile for OAuth-only users (Google sign-in)
+    // who haven't set a password (i.e. pure OAuth accounts).
+    // Email/password users provide collegeName during registration,
+    // so we must NOT force them to complete-profile on every login.
+    const isOAuthOnlyUser = clerkUser &&
+      !clerkUser.passwordEnabled &&
+      clerkUser.externalAccounts.length > 0;
+    const needsProfileCompletion = isOAuthOnlyUser && !clerkUser?.unsafeMetadata?.collegeName;
 
     if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
-      // Redirect to login if signed out and attempting to access app
-      setTimeout(() => router.replace("/(auth)/login"), 0);
+      requestAnimationFrame(() => router.replace("/(auth)/login"));
     } else if (isAuthenticated && inAuthGroup && !inCompleteProfile) {
-      // Redirect to main tabs if signed in and attempting to access auth screen
       if (needsProfileCompletion) {
-        setTimeout(() => router.replace("/(auth)/complete-profile"), 0);
+        requestAnimationFrame(() => router.replace("/(auth)/complete-profile"));
       } else {
-        setTimeout(() => router.replace("/(tabs)"), 0);
+        requestAnimationFrame(() => router.replace("/(tabs)"));
       }
     } else if (isAuthenticated && !inAuthGroup && !inPublicGroup && needsProfileCompletion) {
-      // If somehow they get past the auth group but still need completion
-      setTimeout(() => router.replace("/(auth)/complete-profile"), 0);
+      requestAnimationFrame(() => router.replace("/(auth)/complete-profile"));
     }
   }, [isAuthenticated, isInitializing, isRouterReady, segments[0], clerkUser]);
 
