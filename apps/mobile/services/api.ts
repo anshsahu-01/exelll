@@ -66,7 +66,9 @@ export async function apiRequest<T>(
 
     return data as T;
   } catch (error) {
-    console.error(`[API Error] ${method} ${url}:`, error);
+    // Intentionally omitting console.error here to prevent Expo's red screen
+    // during deliberate retry loops (e.g., auth webhook latency).
+    // The calling function will handle and log the error if necessary.
     throw error;
   }
 }

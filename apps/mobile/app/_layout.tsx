@@ -58,7 +58,20 @@ function InitialLayout() {
           if (clerkToken) {
             useAuthStore.setState({ token: clerkToken });
             try {
-              const user = await authService.getMe(clerkToken);
+              let user = null;
+              for (let attempt = 0; attempt < 5; attempt++) {
+                try {
+                  user = await authService.getMe(clerkToken);
+                  if (user) break;
+                } catch (e) {
+                  await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+                }
+              }
+
+              if (!user) {
+                throw new Error("Could not fetch user profile after retries");
+              }
+
               if (isMounted) {
                 const { setStoredUser } = await import("@/utils/storage");
                 await setStoredUser(user);

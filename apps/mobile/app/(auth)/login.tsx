@@ -39,13 +39,32 @@ export default function LoginScreen() {
   const syncLocalSession = async () => {
     await clerkUser?.reload();
 
-    const token = await getToken();
+    let token: string | null = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      token = await getToken();
+      if (token) break;
+      await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+    }
 
     if (!token) {
       throw new Error("Could not restore session");
     }
 
-    const user = await authService.getMe(token);
+    let user = null;
+    let lastError = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        user = await authService.getMe(token);
+        if (user) break;
+      } catch (e) {
+        lastError = e;
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+
+    if (!user) {
+      throw lastError || new Error("Could not fetch user profile");
+    }
 
     await setToken(token);
     await setStoredUser(user);
@@ -55,6 +74,8 @@ export default function LoginScreen() {
       user,
       isHydrated: true,
     });
+
+    return user;
   };
 
   const handleGoogleOAuth = useCallback(async () => {
@@ -68,17 +89,14 @@ export default function LoginScreen() {
 
       if (createdSessionId) {
         await setOAuthActive!({ session: createdSessionId });
-        await clerkUser?.reload();
         
-        // Ensure collegeName exists
-        const metadata = clerkUser?.unsafeMetadata || {};
-        if (!metadata.collegeName) {
+        const user = await syncLocalSession();
+        
+        if (!user.collegeName) {
           router.replace("/(auth)/complete-profile");
-          return;
+        } else {
+          router.replace("/(tabs)");
         }
-
-        await syncLocalSession();
-        router.replace("/(tabs)");
       }
     } catch (err: any) {
       if (err.message && err.message.includes("canceled")) {

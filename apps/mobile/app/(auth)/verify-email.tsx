@@ -48,7 +48,22 @@ export default function VerifyEmailScreen() {
       throw new Error("Could not restore your session. Please try again.");
     }
 
-    const user = await authService.getMe(token);
+    let user = null;
+    let lastError = null;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      try {
+        user = await authService.getMe(token);
+        if (user) break;
+      } catch (e) {
+        lastError = e;
+        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+
+    if (!user) {
+      throw lastError || new Error("Could not fetch user profile");
+    }
+
     await setToken(token);
     await setStoredUser(user);
     useAuthStore.setState({ token, user, isHydrated: true });
