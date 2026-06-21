@@ -64,7 +64,7 @@ function InitialLayout() {
                   user = await authService.getMe(clerkToken);
                   if (user) break;
                 } catch (e) {
-                  await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+                  await new Promise((r) => setTimeout(r, 200));
                 }
               }
 

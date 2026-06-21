@@ -40,10 +40,10 @@ export default function LoginScreen() {
     await clerkUser?.reload();
 
     let token: string | null = null;
-    for (let attempt = 0; attempt < 5; attempt++) {
+    for (let attempt = 0; attempt < 10; attempt++) {
       token = await getToken();
       if (token) break;
-      await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+      await new Promise((r) => setTimeout(r, 100));
     }
 
     if (!token) {
@@ -58,7 +58,7 @@ export default function LoginScreen() {
         if (user) break;
       } catch (e) {
         lastError = e;
-        await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+        await new Promise((r) => setTimeout(r, 200));
       }
     }
 
